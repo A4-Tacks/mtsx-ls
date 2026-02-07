@@ -30,6 +30,7 @@ pub enum SyntaxKind {
     NUMBER,
     COLOR,
     STYLE,
+
     COMMA,
     COLON,
     L_CURLY,
@@ -43,4 +44,17 @@ pub enum SyntaxKind {
     COMMENT,
 
     ERROR,
+}
+
+/// T![]
+#[macro_export]
+macro_rules! T {
+    (,)   => { $crate::SyntaxKind::COMMA };
+    (:)   => { $crate::SyntaxKind::COLON };
+    ('{') => { $crate::SyntaxKind::L_CURLY };
+    ('}') => { $crate::SyntaxKind::R_CURLY };
+    ('[') => { $crate::SyntaxKind::L_BRACK };
+    (']') => { $crate::SyntaxKind::R_BRACK };
+    ('(') => { $crate::SyntaxKind::L_PAREN };
+    (')') => { $crate::SyntaxKind::R_PAREN };
 }
