@@ -8,4 +8,5 @@ license = "MIT"
 [workspace]
 members = ["crates/parser", "crates/syntax"]
 
-[dependencies]
+[workspace.dependencies]
+rowan = "0.16.1"
