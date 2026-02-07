@@ -1,0 +1,11 @@
+[package]
+name = "mtsx-ls"
+version = "0.1.0"
+edition = "2024"
+
+license = "MIT"
+
+[workspace]
+members = ["crates/parser", "crates/syntax"]
+
+[dependencies]
