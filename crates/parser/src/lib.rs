@@ -1,3 +1,5 @@
+mod lexer;
+
 pub type SyntaxNode = rowan::SyntaxNode<Language>;
 pub type SyntaxToken = rowan::SyntaxToken<Language>;
 
@@ -7,7 +9,7 @@ impl rowan::Language for Language {
     type Kind = SyntaxKind;
 
     fn kind_to_raw(kind: Self::Kind) -> rowan::SyntaxKind {
-        rowan::SyntaxKind(kind as u16)
+        kind.into()
     }
 
     fn kind_from_raw(raw: rowan::SyntaxKind) -> Self::Kind {
@@ -24,12 +26,14 @@ pub enum SyntaxKind {
     ARRAY,
     PAIR,
 
-    IDENT,
-    STRING,
-    REGEX,
-    NUMBER,
-    COLOR,
-    STYLE,
+    IDENT,   // a
+    STRING,  // "a"
+    REGEX,   // /a/
+    NUMBER,  // 123
+    COLOR,   // #ff1b1b
+    BUILTIN, // #xxx#
+    MARK,    // <abc>
+    STYLE,   // @B
 
     COMMA,
     COLON,
@@ -44,6 +48,11 @@ pub enum SyntaxKind {
     COMMENT,
 
     ERROR,
+}
+impl From<SyntaxKind> for rowan::SyntaxKind {
+    fn from(value: SyntaxKind) -> Self {
+        rowan::SyntaxKind(value as u16)
+    }
 }
 
 /// T![]

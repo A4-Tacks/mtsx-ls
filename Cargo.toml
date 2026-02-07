@@ -10,3 +10,4 @@ members = ["crates/parser", "crates/syntax"]
 
 [workspace.dependencies]
 rowan = "0.16.1"
+char-classes = "0.3.5"

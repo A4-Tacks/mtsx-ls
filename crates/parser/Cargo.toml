@@ -5,3 +5,5 @@ edition = "2024"
 
 [dependencies]
 rowan.workspace = true
+char-classes.workspace = true
+expect-test = "1.5.1"
