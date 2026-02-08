@@ -1,3 +1,5 @@
+pub use text_size::{TextRange, TextSize};
+
 mod lexer;
 pub mod parser;
 

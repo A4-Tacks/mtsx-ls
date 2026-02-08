@@ -55,6 +55,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e5274423e17b7c9fc20b6e7e208532f9b19825d82dfd615708b70edd83df41f1"
 
 [[package]]
+name = "line-column"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "241c42ad6aa731f04ebec52ed701d997140aba19003d402278f382df1782c942"
+dependencies = [
+ "text-size",
+]
+
+[[package]]
 name = "litrs"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -103,6 +112,10 @@ checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
 [[package]]
 name = "syntax"
 version = "0.1.0"
+dependencies = [
+ "line-column",
+ "parser",
+]
 
 [[package]]
 name = "text-size"
