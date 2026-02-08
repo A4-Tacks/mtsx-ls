@@ -1,0 +1,3407 @@
+SOURCE_FILE@0..16686
+  TABLE@0..16685
+    L_CURLY@0..1 "{"
+    WHITESPACE@1..6 "\n    "
+    COMMENT@6..26 "// @author: A4-Tacks"
+    WHITESPACE@26..31 "\n    "
+    COMMENT@31..62 "// @email: wdsjxhno10 ..."
+    WHITESPACE@62..67 "\n    "
+    COMMENT@67..90 "// @last-edit-date: ..."
+    WHITESPACE@90..95 "\n    "
+    COMMENT@95..168 "// @repo: https://git ..."
+    WHITESPACE@168..173 "\n    "
+    PAIR@173..195
+      IDENT@173..177 "name"
+      COLON@177..178 ":"
+      WHITESPACE@178..179 " "
+      L_BRACK@179..180 "["
+      ITEM@180..187
+        STRING@180..186 "\"Rust\""
+        COMMA@186..187 ","
+      WHITESPACE@187..188 " "
+      ITEM@188..193
+        STRING@188..193 "\".rs\""
+      R_BRACK@193..194 "]"
+      COMMA@194..195 ","
+    WHITESPACE@195..201 "\n\n    "
+    PAIR@201..419
+      IDENT@201..207 "styles"
+      COLON@207..208 ":"
+      WHITESPACE@208..209 " "
+      L_BRACK@209..210 "["
+      WHITESPACE@210..219 "\n        "
+      ITEM@219..240
+        STRING@219..228 "\"preproc\""
+        WHITESPACE@228..239 "           "
+        R_ANGLE@239..240 ">"
+      WHITESPACE@240..241 " "
+      ITEM@241..249
+        STRING@241..248 "\"label\""
+        COMMA@248..249 ","
+      WHITESPACE@249..258 "\n        "
+      ITEM@258..279
+        STRING@258..268 "\"funcname\""
+        WHITESPACE@268..278 "          "
+        R_ANGLE@278..279 ">"
+      WHITESPACE@279..280 " "
+      ITEM@280..290
+        STRING@280..289 "\"tagName\""
+        COMMA@289..290 ","
+      WHITESPACE@290..299 "\n        "
+      ITEM@299..320
+        STRING@299..309 "\"typename\""
+        WHITESPACE@309..319 "          "
+        R_ANGLE@319..320 ">"
+      WHITESPACE@320..321 " "
+      ITEM@321..328
+        STRING@321..327 "\"type\""
+        COMMA@327..328 ","
+      WHITESPACE@328..337 "\n        "
+      ITEM@337..358
+        STRING@337..349 "\"path-delim\""
+        WHITESPACE@349..357 "        "
+        R_ANGLE@357..358 ">"
+      WHITESPACE@358..359 " "
+      ITEM@359..370
+        STRING@359..369 "\"operator\""
+        COMMA@369..370 ","
+      WHITESPACE@370..379 "\n        "
+      ITEM@379..400
+        STRING@379..392 "\"doc-comment\""
+        WHITESPACE@392..399 "       "
+        R_ANGLE@399..400 ">"
+      WHITESPACE@400..401 " "
+      ITEM@401..412
+        STRING@401..412 "\"namespace\""
+      WHITESPACE@412..417 "\n    "
+      R_BRACK@417..418 "]"
+      COMMA@418..419 ","
+    WHITESPACE@419..425 "\n\n    "
+    COMMENT@425..450 "// default format com ..."
+    WHITESPACE@450..455 "\n    "
+    PAIR@455..568
+      IDENT@455..462 "comment"
+      COLON@462..463 ":"
+      WHITESPACE@463..464 " "
+      TABLE@464..567
+        L_CURLY@464..465 "{"
+        WHITESPACE@465..474 "\n        "
+        PAIR@474..491
+          IDENT@474..484 "startsWith"
+          COLON@484..485 ":"
+          WHITESPACE@485..486 " "
+          STRING@486..490 "\"//\""
+          COMMA@490..491 ","
+        WHITESPACE@491..500 "\n        "
+        PAIR@500..518
+          IDENT@500..511 "insertSpace"
+          COLON@511..512 ":"
+          WHITESPACE@512..513 " "
+          IDENT@513..517 "true"
+          COMMA@517..518 ","
+        WHITESPACE@518..527 "\n        "
+        PAIR@527..548
+          IDENT@527..540 "addToContains"
+          COLON@540..541 ":"
+          WHITESPACE@541..542 " "
+          IDENT@542..547 "false"
+          COMMA@547..548 ","
+        WHITESPACE@548..549 " "
+        COMMENT@549..561 "// 不高亮"
+        WHITESPACE@561..566 "\n    "
+        R_CURLY@566..567 "}"
+      COMMA@567..568 ","
+    WHITESPACE@568..573 "\n    "
+    COMMENT@573..593 "// outer doc comment"
+    WHITESPACE@593..598 "\n    "
+    PAIR@598..712
+      IDENT@598..605 "comment"
+      COLON@605..606 ":"
+      WHITESPACE@606..607 " "
+      TABLE@607..711
+        L_CURLY@607..608 "{"
+        WHITESPACE@608..617 "\n        "
+        PAIR@617..635
+          IDENT@617..627 "startsWith"
+          COLON@627..628 ":"
+          WHITESPACE@628..629 " "
+          STRING@629..634 "\"///\""
+          COMMA@634..635 ","
+        WHITESPACE@635..644 "\n        "
+        PAIR@644..662
+          IDENT@644..655 "insertSpace"
+          COLON@655..656 ":"
+          WHITESPACE@656..657 " "
+          IDENT@657..661 "true"
+          COMMA@661..662 ","
+        WHITESPACE@662..671 "\n        "
+        PAIR@671..692
+          IDENT@671..684 "addToContains"
+          COLON@684..685 ":"
+          WHITESPACE@685..686 " "
+          IDENT@686..691 "false"
+          COMMA@691..692 ","
+        WHITESPACE@692..693 " "
+        COMMENT@693..705 "// 不高亮"
+        WHITESPACE@705..710 "\n    "
+        R_CURLY@710..711 "}"
+      COMMA@711..712 ","
+    WHITESPACE@712..717 "\n    "
+    COMMENT@717..737 "// inner doc comment"
+    WHITESPACE@737..742 "\n    "
+    PAIR@742..856
+      IDENT@742..749 "comment"
+      COLON@749..750 ":"
+      WHITESPACE@750..751 " "
+      TABLE@751..855
+        L_CURLY@751..752 "{"
+        WHITESPACE@752..761 "\n        "
+        PAIR@761..779
+          IDENT@761..771 "startsWith"
+          COLON@771..772 ":"
+          WHITESPACE@772..773 " "
+          STRING@773..778 "\"//!\""
+          COMMA@778..779 ","
+        WHITESPACE@779..788 "\n        "
+        PAIR@788..806
+          IDENT@788..799 "insertSpace"
+          COLON@799..800 ":"
+          WHITESPACE@800..801 " "
+          IDENT@801..805 "true"
+          COMMA@805..806 ","
+        WHITESPACE@806..815 "\n        "
+        PAIR@815..836
+          IDENT@815..828 "addToContains"
+          COLON@828..829 ":"
+          WHITESPACE@829..830 " "
+          IDENT@830..835 "false"
+          COMMA@835..836 ","
+        WHITESPACE@836..837 " "
+        COMMENT@837..849 "// 不高亮"
+        WHITESPACE@849..854 "\n    "
+        R_CURLY@854..855 "}"
+      COMMA@855..856 ","
+    WHITESPACE@856..861 "\n    "
+    COMMENT@861..876 "// long comment"
+    WHITESPACE@876..881 "\n    "
+    PAIR@881..1019
+      IDENT@881..888 "comment"
+      COLON@888..889 ":"
+      WHITESPACE@889..890 " "
+      TABLE@890..1018
+        L_CURLY@890..891 "{"
+        WHITESPACE@891..900 "\n        "
+        PAIR@900..917
+          IDENT@900..910 "startsWith"
+          COLON@910..911 ":"
+          WHITESPACE@911..912 " "
+          STRING@912..916 "\"/*\""
+          COMMA@916..917 ","
+        WHITESPACE@917..926 "\n        "
+        PAIR@926..941
+          IDENT@926..934 "endsWith"
+          COLON@934..935 ":"
+          WHITESPACE@935..936 " "
+          STRING@936..940 "\"*/\""
+          COMMA@940..941 ","
+        WHITESPACE@941..950 "\n        "
+        PAIR@950..969
+          IDENT@950..961 "insertSpace"
+          COLON@961..962 ":"
+          WHITESPACE@962..963 " "
+          IDENT@963..968 "false"
+          COMMA@968..969 ","
+        WHITESPACE@969..978 "\n        "
+        PAIR@978..999
+          IDENT@978..991 "addToContains"
+          COLON@991..992 ":"
+          WHITESPACE@992..993 " "
+          IDENT@993..998 "false"
+          COMMA@998..999 ","
+        WHITESPACE@999..1000 " "
+        COMMENT@1000..1012 "// 不高亮"
+        WHITESPACE@1012..1017 "\n    "
+        R_CURLY@1017..1018 "}"
+      COMMA@1018..1019 ","
+    WHITESPACE@1019..1025 "\n\n    "
+    PAIR@1025..16530
+      IDENT@1025..1032 "defines"
+      COLON@1032..1033 ":"
+      WHITESPACE@1033..1034 " "
+      L_BRACK@1034..1035 "["
+      WHITESPACE@1035..1044 "\n        "
+      ITEM@1044..1110
+        STRING@1044..1060 "\"ident-continue\""
+        COLON@1060..1061 ":"
+        WHITESPACE@1061..1062 " "
+        REGEX@1062..1110 "/[^\\x00-\\x20!\"#$%&'() ..."
+      WHITESPACE@1110..1119 "\n        "
+      ITEM@1119..1218
+        STRING@1119..1131 "\"norm-ident\""
+        COLON@1131..1132 ":"
+        WHITESPACE@1132..1133 " "
+        JOIN@1133..1218
+          JOIN@1133..1211
+            JOIN@1133..1185
+              JOIN@1133..1167
+                REGEX@1133..1141 "/(?:\\b_/"
+                PLUS@1141..1142 "+"
+                CALL@1142..1167
+                  IDENT@1142..1149 "include"
+                  L_PAREN@1149..1150 "("
+                  STRING@1150..1166 "\"ident-continue\""
+                  R_PAREN@1166..1167 ")"
+              PLUS@1167..1168 "+"
+              REGEX@1168..1185 "/+\\b|\\b(?![\\d_])/"
+            PLUS@1185..1186 "+"
+            CALL@1186..1211
+              IDENT@1186..1193 "include"
+              L_PAREN@1193..1194 "("
+              STRING@1194..1210 "\"ident-continue\""
+              R_PAREN@1210..1211 ")"
+          PLUS@1211..1212 "+"
+          REGEX@1212..1218 "/+\\b)/"
+      WHITESPACE@1218..1227 "\n        "
+      ITEM@1227..1269
+        STRING@1227..1234 "\"ident\""
+        COLON@1234..1235 ":"
+        WHITESPACE@1235..1236 " "
+        JOIN@1236..1269
+          REGEX@1236..1245 "/(?:r#)?/"
+          WHITESPACE@1245..1246 " "
+          PLUS@1246..1247 "+"
+          WHITESPACE@1247..1248 " "
+          CALL@1248..1269
+            IDENT@1248..1255 "include"
+            L_PAREN@1255..1256 "("
+            STRING@1256..1268 "\"norm-ident\""
+            R_PAREN@1268..1269 ")"
+      WHITESPACE@1269..1278 "\n        "
+      ITEM@1278..1327
+        STRING@1278..1287 "\"sip-str\""
+        COLON@1287..1288 ":"
+        WHITESPACE@1288..1289 " "
+        REGEX@1289..1327 "/(?:\"(?:[^\"\\\\]|\\\\.)*\" ..."
+      WHITESPACE@1327..1336 "\n        "
+      ITEM@1336..1415
+        STRING@1336..1349 "\"sip-bounded\""
+        COLON@1349..1350 ":"
+        WHITESPACE@1350..1351 " "
+        JOIN@1351..1415
+          JOIN@1351..1393
+            REGEX@1351..1374 "/\\s*(?:[^(){}\\[\\]\"';]|/"
+            PLUS@1374..1375 "+"
+            CALL@1375..1393
+              IDENT@1375..1382 "include"
+              L_PAREN@1382..1383 "("
+              STRING@1383..1392 "\"sip-str\""
+              R_PAREN@1392..1393 ")"
+          PLUS@1393..1394 "+"
+          REGEX@1394..1415 "/|\\(\\))*(?:\\(\\))?\\s*/"
+      WHITESPACE@1415..1424 "\n        "
+      ITEM@1424..1618
+        STRING@1424..1433 "\"sip-val\""
+        COLON@1433..1434 ":"
+        WHITESPACE@1434..1435 " "
+        JOIN@1435..1618
+          JOIN@1435..1608
+            JOIN@1435..1585
+              JOIN@1435..1579
+                JOIN@1435..1556
+                  JOIN@1435..1538
+                    JOIN@1435..1515
+                      JOIN@1435..1507
+                        JOIN@1435..1484
+                          JOIN@1435..1478
+                            REGEX@1435..1459 "/(?:(?:[^(){}\\[\\]\"',;]|/"
+                            PLUS@1459..1460 "+"
+                            CALL@1460..1478
+                              IDENT@1460..1467 "include"
+                              L_PAREN@1467..1468 "("
+                              STRING@1468..1477 "\"sip-str\""
+                              R_PAREN@1477..1478 ")"
+                          PLUS@1478..1479 "+"
+                          REGEX@1479..1484 "/|\\{/"
+                        PLUS@1484..1485 "+"
+                        CALL@1485..1507
+                          IDENT@1485..1492 "include"
+                          L_PAREN@1492..1493 "("
+                          STRING@1493..1506 "\"sip-bounded\""
+                          R_PAREN@1506..1507 ")"
+                      PLUS@1507..1508 "+"
+                      REGEX@1508..1515 "/\\}|\\[/"
+                    PLUS@1515..1516 "+"
+                    CALL@1516..1538
+                      IDENT@1516..1523 "include"
+                      L_PAREN@1523..1524 "("
+                      STRING@1524..1537 "\"sip-bounded\""
+                      R_PAREN@1537..1538 ")"
+                  PLUS@1538..1539 "+"
+                  REGEX@1539..1556 "/\\]|\\((?:\\(\\)|\\(/"
+                PLUS@1556..1557 "+"
+                CALL@1557..1579
+                  IDENT@1557..1564 "include"
+                  L_PAREN@1564..1565 "("
+                  STRING@1565..1578 "\"sip-bounded\""
+                  R_PAREN@1578..1579 ")"
+              PLUS@1579..1580 "+"
+              REGEX@1580..1585 "/\\)|/"
+            PLUS@1585..1586 "+"
+            CALL@1586..1608
+              IDENT@1586..1593 "include"
+              L_PAREN@1593..1594 "("
+              STRING@1594..1607 "\"sip-bounded\""
+              R_PAREN@1607..1608 ")"
+          PLUS@1608..1609 "+"
+          REGEX@1609..1618 "/)?\\))+)/"
+      WHITESPACE@1618..1627 "\n        "
+      ITEM@1627..1670
+        STRING@1627..1633 "\"isuf\""
+        COLON@1633..1634 ":"
+        WHITESPACE@1634..1635 " "
+        REGEX@1635..1670 "/(?:[iu](?:8|16|32|64 ..."
+      WHITESPACE@1670..1679 "\n        "
+      ITEM@1679..1712
+        STRING@1679..1685 "\"fsuf\""
+        COLON@1685..1686 ":"
+        WHITESPACE@1686..1687 " "
+        REGEX@1687..1712 "/(?:f(?:16|32|64|128) ..."
+      WHITESPACE@1712..1721 "\n        "
+      ITEM@1721..1774
+        STRING@1721..1727 "\"nsuf\""
+        COLON@1727..1728 ":"
+        WHITESPACE@1728..1729 " "
+        JOIN@1729..1774
+          JOIN@1729..1770
+            JOIN@1729..1754
+              JOIN@1729..1750
+                REGEX@1729..1734 "/(?:/"
+                PLUS@1734..1735 "+"
+                CALL@1735..1750
+                  IDENT@1735..1742 "include"
+                  L_PAREN@1742..1743 "("
+                  STRING@1743..1749 "\"isuf\""
+                  R_PAREN@1749..1750 ")"
+              PLUS@1750..1751 "+"
+              REGEX@1751..1754 "/|/"
+            PLUS@1754..1755 "+"
+            CALL@1755..1770
+              IDENT@1755..1762 "include"
+              L_PAREN@1762..1763 "("
+              STRING@1763..1769 "\"fsuf\""
+              R_PAREN@1769..1770 ")"
+          PLUS@1770..1771 "+"
+          REGEX@1771..1774 "/)/"
+      WHITESPACE@1774..1784 "\n\n        "
+      ITEM@1784..1897
+        STRING@1784..1790 "\"todo\""
+        COLON@1790..1791 ":"
+        WHITESPACE@1791..1792 " "
+        TABLE@1792..1897
+          L_CURLY@1792..1793 "{"
+          WHITESPACE@1793..1806 "\n            "
+          PAIR@1806..1861
+            IDENT@1806..1811 "match"
+            COLON@1811..1812 ":"
+            WHITESPACE@1812..1813 " "
+            CALL@1813..1861
+              IDENT@1813..1828 "keywordsToRegex"
+              L_PAREN@1828..1829 "("
+              STRING@1829..1860 "\"TODO FIXME XXX NB NO ..."
+              R_PAREN@1860..1861 ")"
+          WHITESPACE@1861..1874 "\n            "
+          PAIR@1874..1887
+            NUMBER@1874..1875 "0"
+            COLON@1875..1876 ":"
+            WHITESPACE@1876..1877 " "
+            STRING@1877..1887 "\"variable\""
+          WHITESPACE@1887..1896 "\n        "
+          R_CURLY@1896..1897 "}"
+      WHITESPACE@1897..1906 "\n        "
+      ITEM@1906..2161
+        STRING@1906..1925 "\"rust-derive-trait\""
+        COLON@1925..1926 ":"
+        WHITESPACE@1926..1927 " "
+        TABLE@1927..2161
+          L_CURLY@1927..1928 "{"
+          PAIR@1928..2146
+            IDENT@1928..1933 "match"
+            COLON@1933..1934 ":"
+            WHITESPACE@1934..1935 " "
+            CALL@1935..2145
+              IDENT@1935..1950 "keywordsToRegex"
+              L_PAREN@1950..1951 "("
+              WHITESPACE@1951..1964 "\n            "
+              STRING@1964..2026 "\"Clone Hash RustcEnco ..."
+              WHITESPACE@2026..2039 "\n            "
+              STRING@2039..2092 "\"PartialEq Eq Partial ..."
+              WHITESPACE@2092..2105 "\n            "
+              STRING@2105..2135 "\"FromPrimitive Send S ..."
+              WHITESPACE@2135..2144 "\n        "
+              R_PAREN@2144..2145 ")"
+            COMMA@2145..2146 ","
+          WHITESPACE@2146..2147 " "
+          PAIR@2147..2160
+            NUMBER@2147..2148 "0"
+            COLON@2148..2149 ":"
+            WHITESPACE@2149..2150 " "
+            STRING@2150..2160 "\"variable\""
+          R_CURLY@2160..2161 "}"
+      WHITESPACE@2161..2170 "\n        "
+      ITEM@2170..3112
+        STRING@2170..2197 "\"attribute-proc-macro ..."
+        COLON@2197..2198 ":"
+        WHITESPACE@2198..2199 " "
+        L_BRACK@2199..2200 "["
+        WHITESPACE@2200..2213 "\n            "
+        ITEM@2213..2234
+          TABLE@2213..2234
+            L_CURLY@2213..2214 "{"
+            PAIR@2214..2233
+              IDENT@2214..2221 "include"
+              COLON@2221..2222 ":"
+              WHITESPACE@2222..2223 " "
+              STRING@2223..2233 "\"comments\""
+            R_CURLY@2233..2234 "}"
+        WHITESPACE@2234..2247 "\n            "
+        ITEM@2247..2267
+          TABLE@2247..2267
+            L_CURLY@2247..2248 "{"
+            PAIR@2248..2266
+              IDENT@2248..2255 "include"
+              COLON@2255..2256 ":"
+              WHITESPACE@2256..2257 " "
+              STRING@2257..2266 "\"strings\""
+            R_CURLY@2266..2267 "}"
+        WHITESPACE@2267..2280 "\n            "
+        ITEM@2280..2531
+          TABLE@2280..2531
+            L_CURLY@2280..2281 "{"
+            WHITESPACE@2281..2298 "\n                "
+            PAIR@2298..2326
+              IDENT@2298..2303 "start"
+              COLON@2303..2304 ":"
+              WHITESPACE@2304..2305 " "
+              TABLE@2305..2326
+                L_CURLY@2305..2306 "{"
+                PAIR@2306..2325
+                  IDENT@2306..2311 "match"
+                  COLON@2311..2312 ":"
+                  WHITESPACE@2312..2313 " "
+                  REGEX@2313..2325 "/\\bderive\\(/"
+                R_CURLY@2325..2326 "}"
+            WHITESPACE@2326..2343 "\n                "
+            PAIR@2343..2361
+              IDENT@2343..2346 "end"
+              COLON@2346..2347 ":"
+              WHITESPACE@2347..2348 " "
+              TABLE@2348..2361
+                L_CURLY@2348..2349 "{"
+                PAIR@2349..2360
+                  IDENT@2349..2354 "match"
+                  COLON@2354..2355 ":"
+                  WHITESPACE@2355..2356 " "
+                  REGEX@2356..2360 "/\\)/"
+                R_CURLY@2360..2361 "}"
+            WHITESPACE@2361..2378 "\n                "
+            PAIR@2378..2517
+              IDENT@2378..2386 "contains"
+              COLON@2386..2387 ":"
+              WHITESPACE@2387..2388 " "
+              L_BRACK@2388..2389 "["
+              WHITESPACE@2389..2410 "\n                    "
+              ITEM@2410..2448
+                TABLE@2410..2448
+                  L_CURLY@2410..2411 "{"
+                  PAIR@2411..2447
+                    IDENT@2411..2418 "include"
+                    COLON@2418..2419 ":"
+                    WHITESPACE@2419..2420 " "
+                    STRING@2420..2447 "\"attribute-proc-macro ..."
+                  R_CURLY@2447..2448 "}"
+              WHITESPACE@2448..2469 "\n                    "
+              ITEM@2469..2499
+                TABLE@2469..2499
+                  L_CURLY@2469..2470 "{"
+                  PAIR@2470..2498
+                    IDENT@2470..2477 "include"
+                    COLON@2477..2478 ":"
+                    WHITESPACE@2478..2479 " "
+                    STRING@2479..2498 "\"rust-derive-trait\""
+                  R_CURLY@2498..2499 "}"
+              WHITESPACE@2499..2516 "\n                "
+              R_BRACK@2516..2517 "]"
+            WHITESPACE@2517..2530 "\n            "
+            R_CURLY@2530..2531 "}"
+        WHITESPACE@2531..2544 "\n            "
+        ITEM@2544..2708
+          TABLE@2544..2708
+            L_CURLY@2544..2545 "{"
+            WHITESPACE@2545..2562 "\n                "
+            PAIR@2562..2582
+              IDENT@2562..2567 "start"
+              COLON@2567..2568 ":"
+              WHITESPACE@2568..2569 " "
+              TABLE@2569..2582
+                L_CURLY@2569..2570 "{"
+                PAIR@2570..2581
+                  IDENT@2570..2575 "match"
+                  COLON@2575..2576 ":"
+                  WHITESPACE@2576..2577 " "
+                  REGEX@2577..2581 "/\\(/"
+                R_CURLY@2581..2582 "}"
+            WHITESPACE@2582..2599 "\n                "
+            PAIR@2599..2627
+              IDENT@2599..2602 "end"
+              COLON@2602..2603 ":"
+              WHITESPACE@2603..2604 " "
+              TABLE@2604..2627
+                L_CURLY@2604..2605 "{"
+                PAIR@2605..2626
+                  IDENT@2605..2610 "match"
+                  COLON@2610..2611 ":"
+                  WHITESPACE@2611..2612 " "
+                  REGEX@2612..2626 "/\\)|(?=[\\]}])/"
+                R_CURLY@2626..2627 "}"
+            WHITESPACE@2627..2644 "\n                "
+            PAIR@2644..2694
+              IDENT@2644..2652 "contains"
+              COLON@2652..2653 ":"
+              WHITESPACE@2653..2654 " "
+              L_BRACK@2654..2655 "["
+              ITEM@2655..2693
+                TABLE@2655..2693
+                  L_CURLY@2655..2656 "{"
+                  PAIR@2656..2692
+                    IDENT@2656..2663 "include"
+                    COLON@2663..2664 ":"
+                    WHITESPACE@2664..2665 " "
+                    STRING@2665..2692 "\"attribute-proc-macro ..."
+                  R_CURLY@2692..2693 "}"
+              R_BRACK@2693..2694 "]"
+            WHITESPACE@2694..2707 "\n            "
+            R_CURLY@2707..2708 "}"
+        WHITESPACE@2708..2721 "\n            "
+        ITEM@2721..2884
+          TABLE@2721..2884
+            L_CURLY@2721..2722 "{"
+            WHITESPACE@2722..2739 "\n                "
+            PAIR@2739..2759
+              IDENT@2739..2744 "start"
+              COLON@2744..2745 ":"
+              WHITESPACE@2745..2746 " "
+              TABLE@2746..2759
+                L_CURLY@2746..2747 "{"
+                PAIR@2747..2758
+                  IDENT@2747..2752 "match"
+                  COLON@2752..2753 ":"
+                  WHITESPACE@2753..2754 " "
+                  REGEX@2754..2758 "/\\[/"
+                R_CURLY@2758..2759 "}"
+            WHITESPACE@2759..2776 "\n                "
+            PAIR@2776..2803
+              IDENT@2776..2779 "end"
+              COLON@2779..2780 ":"
+              WHITESPACE@2780..2781 " "
+              TABLE@2781..2803
+                L_CURLY@2781..2782 "{"
+                PAIR@2782..2802
+                  IDENT@2782..2787 "match"
+                  COLON@2787..2788 ":"
+                  WHITESPACE@2788..2789 " "
+                  REGEX@2789..2802 "/\\]|(?=[)}])/"
+                R_CURLY@2802..2803 "}"
+            WHITESPACE@2803..2820 "\n                "
+            PAIR@2820..2870
+              IDENT@2820..2828 "contains"
+              COLON@2828..2829 ":"
+              WHITESPACE@2829..2830 " "
+              L_BRACK@2830..2831 "["
+              ITEM@2831..2869
+                TABLE@2831..2869
+                  L_CURLY@2831..2832 "{"
+                  PAIR@2832..2868
+                    IDENT@2832..2839 "include"
+                    COLON@2839..2840 ":"
+                    WHITESPACE@2840..2841 " "
+                    STRING@2841..2868 "\"attribute-proc-macro ..."
+                  R_CURLY@2868..2869 "}"
+              R_BRACK@2869..2870 "]"
+            WHITESPACE@2870..2883 "\n            "
+            R_CURLY@2883..2884 "}"
+        WHITESPACE@2884..2897 "\n            "
+        ITEM@2897..3061
+          TABLE@2897..3061
+            L_CURLY@2897..2898 "{"
+            WHITESPACE@2898..2915 "\n                "
+            PAIR@2915..2935
+              IDENT@2915..2920 "start"
+              COLON@2920..2921 ":"
+              WHITESPACE@2921..2922 " "
+              TABLE@2922..2935
+                L_CURLY@2922..2923 "{"
+                PAIR@2923..2934
+                  IDENT@2923..2928 "match"
+                  COLON@2928..2929 ":"
+                  WHITESPACE@2929..2930 " "
+                  REGEX@2930..2934 "/\\{/"
+                R_CURLY@2934..2935 "}"
+            WHITESPACE@2935..2952 "\n                "
+            PAIR@2952..2980
+              IDENT@2952..2955 "end"
+              COLON@2955..2956 ":"
+              WHITESPACE@2956..2957 " "
+              TABLE@2957..2980
+                L_CURLY@2957..2958 "{"
+                PAIR@2958..2979
+                  IDENT@2958..2963 "match"
+                  COLON@2963..2964 ":"
+                  WHITESPACE@2964..2965 " "
+                  REGEX@2965..2979 "/\\}|(?=[)\\]])/"
+                R_CURLY@2979..2980 "}"
+            WHITESPACE@2980..2997 "\n                "
+            PAIR@2997..3047
+              IDENT@2997..3005 "contains"
+              COLON@3005..3006 ":"
+              WHITESPACE@3006..3007 " "
+              L_BRACK@3007..3008 "["
+              ITEM@3008..3046
+                TABLE@3008..3046
+                  L_CURLY@3008..3009 "{"
+                  PAIR@3009..3045
+                    IDENT@3009..3016 "include"
+                    COLON@3016..3017 ":"
+                    WHITESPACE@3017..3018 " "
+                    STRING@3018..3045 "\"attribute-proc-macro ..."
+                  R_CURLY@3045..3046 "}"
+              R_BRACK@3046..3047 "]"
+            WHITESPACE@3047..3060 "\n            "
+            R_CURLY@3060..3061 "}"
+        WHITESPACE@3061..3074 "\n            "
+        ITEM@3074..3102
+          TABLE@3074..3102
+            L_CURLY@3074..3075 "{"
+            PAIR@3075..3101
+              IDENT@3075..3082 "include"
+              COLON@3082..3083 ":"
+              WHITESPACE@3083..3084 " "
+              STRING@3084..3101 "\"decl-macro-meta\""
+            R_CURLY@3101..3102 "}"
+        WHITESPACE@3102..3111 "\n        "
+        R_BRACK@3111..3112 "]"
+      WHITESPACE@3112..3121 "\n        "
+      ITEM@3121..4030
+        STRING@3121..3131 "\"comments\""
+        COLON@3131..3132 ":"
+        WHITESPACE@3132..3133 " "
+        L_BRACK@3133..3134 "["
+        WHITESPACE@3134..3147 "\n            "
+        ITEM@3147..3295
+          TABLE@3147..3294
+            L_CURLY@3147..3148 "{"
+            WHITESPACE@3148..3149 " "
+            COMMENT@3149..3163 "// doc comment"
+            WHITESPACE@3163..3180 "\n                "
+            PAIR@3180..3209
+              IDENT@3180..3185 "match"
+              COLON@3185..3186 ":"
+              WHITESPACE@3186..3187 " "
+              REGEX@3187..3208 "/\\/\\/[!\\/].*(?:\\n|$)/"
+              COMMA@3208..3209 ","
+            WHITESPACE@3209..3226 "\n                "
+            PAIR@3226..3243
+              NUMBER@3226..3227 "0"
+              COLON@3227..3228 ":"
+              WHITESPACE@3228..3229 " "
+              STRING@3229..3242 "\"doc-comment\""
+              COMMA@3242..3243 ","
+            WHITESPACE@3243..3260 "\n                "
+            PAIR@3260..3280
+              NUMBER@3260..3261 "0"
+              COLON@3261..3262 ":"
+              WHITESPACE@3262..3263 " "
+              TABLE@3263..3280
+                L_CURLY@3263..3264 "{"
+                PAIR@3264..3279
+                  IDENT@3264..3271 "include"
+                  COLON@3271..3272 ":"
+                  WHITESPACE@3272..3273 " "
+                  STRING@3273..3279 "\"todo\""
+                R_CURLY@3279..3280 "}"
+            WHITESPACE@3280..3293 "\n            "
+            R_CURLY@3293..3294 "}"
+          COMMA@3294..3295 ","
+        WHITESPACE@3295..3308 "\n            "
+        ITEM@3308..3443
+          TABLE@3308..3442
+            L_CURLY@3308..3309 "{"
+            WHITESPACE@3309..3310 " "
+            COMMENT@3310..3320 "// comment"
+            WHITESPACE@3320..3337 "\n                "
+            PAIR@3337..3361
+              IDENT@3337..3342 "match"
+              COLON@3342..3343 ":"
+              WHITESPACE@3343..3344 " "
+              REGEX@3344..3360 "/\\/\\/.*(?:\\n|$)/"
+              COMMA@3360..3361 ","
+            WHITESPACE@3361..3378 "\n                "
+            PAIR@3378..3391
+              NUMBER@3378..3379 "0"
+              COLON@3379..3380 ":"
+              WHITESPACE@3380..3381 " "
+              STRING@3381..3390 "\"comment\""
+              COMMA@3390..3391 ","
+            WHITESPACE@3391..3408 "\n                "
+            PAIR@3408..3428
+              NUMBER@3408..3409 "0"
+              COLON@3409..3410 ":"
+              WHITESPACE@3410..3411 " "
+              TABLE@3411..3428
+                L_CURLY@3411..3412 "{"
+                PAIR@3412..3427
+                  IDENT@3412..3419 "include"
+                  COLON@3419..3420 ":"
+                  WHITESPACE@3420..3421 " "
+                  STRING@3421..3427 "\"todo\""
+                R_CURLY@3427..3428 "}"
+            WHITESPACE@3428..3441 "\n            "
+            R_CURLY@3441..3442 "}"
+          COMMA@3442..3443 ","
+        WHITESPACE@3443..3456 "\n            "
+        ITEM@3456..3602
+          TABLE@3456..3601
+            L_CURLY@3456..3457 "{"
+            WHITESPACE@3457..3458 " "
+            COMMENT@3458..3485 "// zero length long c ..."
+            WHITESPACE@3485..3502 "\n                "
+            PAIR@3502..3520
+              IDENT@3502..3507 "match"
+              COLON@3507..3508 ":"
+              WHITESPACE@3508..3509 " "
+              REGEX@3509..3519 "/\\/\\*\\*\\//"
+              COMMA@3519..3520 ","
+            WHITESPACE@3520..3537 "\n                "
+            PAIR@3537..3550
+              NUMBER@3537..3538 "0"
+              COLON@3538..3539 ":"
+              WHITESPACE@3539..3540 " "
+              STRING@3540..3549 "\"comment\""
+              COMMA@3549..3550 ","
+            WHITESPACE@3550..3567 "\n                "
+            PAIR@3567..3587
+              NUMBER@3567..3568 "0"
+              COLON@3568..3569 ":"
+              WHITESPACE@3569..3570 " "
+              TABLE@3570..3587
+                L_CURLY@3570..3571 "{"
+                PAIR@3571..3586
+                  IDENT@3571..3578 "include"
+                  COLON@3578..3579 ":"
+                  WHITESPACE@3579..3580 " "
+                  STRING@3580..3586 "\"todo\""
+                R_CURLY@3586..3587 "}"
+            WHITESPACE@3587..3600 "\n            "
+            R_CURLY@3600..3601 "}"
+          COMMA@3601..3602 ","
+        WHITESPACE@3602..3615 "\n            "
+        ITEM@3615..3817
+          TABLE@3615..3816
+            L_CURLY@3615..3616 "{"
+            WHITESPACE@3616..3617 " "
+            COMMENT@3617..3636 "// long doc comment"
+            WHITESPACE@3636..3653 "\n                "
+            PAIR@3653..3680
+              IDENT@3653..3658 "start"
+              COLON@3658..3659 ":"
+              WHITESPACE@3659..3660 " "
+              TABLE@3660..3679
+                L_CURLY@3660..3661 "{"
+                PAIR@3661..3678
+                  IDENT@3661..3666 "match"
+                  COLON@3666..3667 ":"
+                  WHITESPACE@3667..3668 " "
+                  REGEX@3668..3678 "/\\/\\*[*!]/"
+                R_CURLY@3678..3679 "}"
+              COMMA@3679..3680 ","
+            WHITESPACE@3680..3697 "\n                "
+            PAIR@3697..3718
+              IDENT@3697..3700 "end"
+              COLON@3700..3701 ":"
+              WHITESPACE@3701..3702 " "
+              TABLE@3702..3717
+                L_CURLY@3702..3703 "{"
+                PAIR@3703..3716
+                  IDENT@3703..3708 "match"
+                  COLON@3708..3709 ":"
+                  WHITESPACE@3709..3710 " "
+                  REGEX@3710..3716 "/\\*\\//"
+                R_CURLY@3716..3717 "}"
+              COMMA@3717..3718 ","
+            WHITESPACE@3718..3735 "\n                "
+            PAIR@3735..3756
+              IDENT@3735..3740 "style"
+              COLON@3740..3741 ":"
+              WHITESPACE@3741..3742 " "
+              STRING@3742..3755 "\"doc-comment\""
+              COMMA@3755..3756 ","
+            WHITESPACE@3756..3773 "\n                "
+            PAIR@3773..3802
+              IDENT@3773..3781 "contains"
+              COLON@3781..3782 ":"
+              WHITESPACE@3782..3783 " "
+              L_BRACK@3783..3784 "["
+              ITEM@3784..3801
+                TABLE@3784..3801
+                  L_CURLY@3784..3785 "{"
+                  PAIR@3785..3800
+                    IDENT@3785..3792 "include"
+                    COLON@3792..3793 ":"
+                    WHITESPACE@3793..3794 " "
+                    STRING@3794..3800 "\"todo\""
+                  R_CURLY@3800..3801 "}"
+              R_BRACK@3801..3802 "]"
+            WHITESPACE@3802..3815 "\n            "
+            R_CURLY@3815..3816 "}"
+          COMMA@3816..3817 ","
+        WHITESPACE@3817..3830 "\n            "
+        ITEM@3830..4020
+          TABLE@3830..4019
+            L_CURLY@3830..3831 "{"
+            WHITESPACE@3831..3832 " "
+            COMMENT@3832..3847 "// long comment"
+            WHITESPACE@3847..3864 "\n                "
+            PAIR@3864..3887
+              IDENT@3864..3869 "start"
+              COLON@3869..3870 ":"
+              WHITESPACE@3870..3871 " "
+              TABLE@3871..3886
+                L_CURLY@3871..3872 "{"
+                PAIR@3872..3885
+                  IDENT@3872..3877 "match"
+                  COLON@3877..3878 ":"
+                  WHITESPACE@3878..3879 " "
+                  REGEX@3879..3885 "/\\/\\*/"
+                R_CURLY@3885..3886 "}"
+              COMMA@3886..3887 ","
+            WHITESPACE@3887..3904 "\n                "
+            PAIR@3904..3925
+              IDENT@3904..3907 "end"
+              COLON@3907..3908 ":"
+              WHITESPACE@3908..3909 " "
+              TABLE@3909..3924
+                L_CURLY@3909..3910 "{"
+                PAIR@3910..3923
+                  IDENT@3910..3915 "match"
+                  COLON@3915..3916 ":"
+                  WHITESPACE@3916..3917 " "
+                  REGEX@3917..3923 "/\\*\\//"
+                R_CURLY@3923..3924 "}"
+              COMMA@3924..3925 ","
+            WHITESPACE@3925..3942 "\n                "
+            PAIR@3942..3959
+              IDENT@3942..3947 "style"
+              COLON@3947..3948 ":"
+              WHITESPACE@3948..3949 " "
+              STRING@3949..3958 "\"comment\""
+              COMMA@3958..3959 ","
+            WHITESPACE@3959..3976 "\n                "
+            PAIR@3976..4005
+              IDENT@3976..3984 "contains"
+              COLON@3984..3985 ":"
+              WHITESPACE@3985..3986 " "
+              L_BRACK@3986..3987 "["
+              ITEM@3987..4004
+                TABLE@3987..4004
+                  L_CURLY@3987..3988 "{"
+                  PAIR@3988..4003
+                    IDENT@3988..3995 "include"
+                    COLON@3995..3996 ":"
+                    WHITESPACE@3996..3997 " "
+                    STRING@3997..4003 "\"todo\""
+                  R_CURLY@4003..4004 "}"
+              R_BRACK@4004..4005 "]"
+            WHITESPACE@4005..4018 "\n            "
+            R_CURLY@4018..4019 "}"
+          COMMA@4019..4020 ","
+        WHITESPACE@4020..4029 "\n        "
+        R_BRACK@4029..4030 "]"
+      WHITESPACE@4030..4039 "\n        "
+      ITEM@4039..4238
+        STRING@4039..4054 "\"string-escape\""
+        COLON@4054..4055 ":"
+        WHITESPACE@4055..4056 " "
+        TABLE@4056..4238
+          L_CURLY@4056..4057 "{"
+          WHITESPACE@4057..4070 "\n            "
+          PAIR@4070..4176
+            IDENT@4070..4075 "match"
+            COLON@4075..4076 ":"
+            WHITESPACE@4076..4077 " "
+            JOIN@4077..4175
+              REGEX@4077..4115 "/(?:(\\\\(?:u\\{(?:[_a-f ..."
+              WHITESPACE@4115..4132 "\n                "
+              PLUS@4132..4133 "+"
+              WHITESPACE@4133..4134 " "
+              REGEX@4134..4175 "/|x[a-fA-F\\d]{2}|[nrt ..."
+            COMMA@4175..4176 ","
+          WHITESPACE@4176..4189 "\n            "
+          PAIR@4189..4204
+            NUMBER@4189..4190 "1"
+            COLON@4190..4191 ":"
+            WHITESPACE@4191..4192 " "
+            STRING@4192..4203 "\"strEscape\""
+            COMMA@4203..4204 ","
+          WHITESPACE@4204..4217 "\n            "
+          PAIR@4217..4228
+            NUMBER@4217..4218 "2"
+            COLON@4218..4219 ":"
+            WHITESPACE@4219..4220 " "
+            STRING@4220..4227 "\"error\""
+            COMMA@4227..4228 ","
+          WHITESPACE@4228..4237 "\n        "
+          R_CURLY@4237..4238 "}"
+      WHITESPACE@4238..4247 "\n        "
+      ITEM@4247..4817
+        STRING@4247..4264 "\"format-template\""
+        COLON@4264..4265 ":"
+        WHITESPACE@4265..4266 " "
+        L_BRACK@4266..4267 "["
+        WHITESPACE@4267..4280 "\n            "
+        ITEM@4280..4361
+          TABLE@4280..4361
+            L_CURLY@4280..4281 "{"
+            WHITESPACE@4281..4298 "\n                "
+            PAIR@4298..4316
+              IDENT@4298..4303 "match"
+              COLON@4303..4304 ":"
+              WHITESPACE@4304..4305 " "
+              REGEX@4305..4316 "/\\{\\{|\\}\\}/"
+            WHITESPACE@4316..4333 "\n                "
+            PAIR@4333..4347
+              NUMBER@4333..4334 "0"
+              COLON@4334..4335 ":"
+              WHITESPACE@4335..4336 " "
+              STRING@4336..4347 "\"strEscape\""
+            WHITESPACE@4347..4360 "\n            "
+            R_CURLY@4360..4361 "}"
+        WHITESPACE@4361..4374 "\n            "
+        ITEM@4374..4807
+          TABLE@4374..4807
+            L_CURLY@4374..4375 "{"
+            WHITESPACE@4375..4392 "\n                "
+            PAIR@4392..4438
+              IDENT@4392..4397 "match"
+              COLON@4397..4398 ":"
+              WHITESPACE@4398..4399 " "
+              REGEX@4399..4438 "/\\{([^:{}]*)((:)(?:.( ..."
+            WHITESPACE@4438..4455 "\n                "
+            PAIR@4455..4467
+              NUMBER@4455..4456 "0"
+              COLON@4456..4457 ":"
+              WHITESPACE@4457..4458 " "
+              STRING@4458..4467 "\"preproc\""
+            WHITESPACE@4467..4484 "\n                "
+            PAIR@4484..4496
+              NUMBER@4484..4485 "1"
+              COLON@4485..4486 ":"
+              WHITESPACE@4486..4487 " "
+              STRING@4487..4496 "\"default\""
+            WHITESPACE@4496..4513 "\n                "
+            PAIR@4513..4525
+              NUMBER@4513..4514 "2"
+              COLON@4514..4515 ":"
+              WHITESPACE@4515..4516 " "
+              STRING@4516..4525 "\"default\""
+            WHITESPACE@4525..4542 "\n                "
+            PAIR@4542..4612
+              NUMBER@4542..4543 "2"
+              COLON@4543..4544 ":"
+              WHITESPACE@4544..4545 " "
+              TABLE@4545..4612
+                L_CURLY@4545..4546 "{"
+                PAIR@4546..4598
+                  IDENT@4546..4551 "match"
+                  COLON@4551..4552 ":"
+                  WHITESPACE@4552..4553 " "
+                  JOIN@4553..4597
+                    JOIN@4553..4580
+                      REGEX@4553..4558 "/(?:/"
+                      PLUS@4558..4559 "+"
+                      CALL@4559..4580
+                        IDENT@4559..4566 "include"
+                        L_PAREN@4566..4567 "("
+                        STRING@4567..4579 "\"norm-ident\""
+                        R_PAREN@4579..4580 ")"
+                    PLUS@4580..4581 "+"
+                    REGEX@4581..4597 "/|0|[1-9]\\d*)\\$/"
+                  COMMA@4597..4598 ","
+                WHITESPACE@4598..4599 " "
+                PAIR@4599..4611
+                  NUMBER@4599..4600 "0"
+                  COLON@4600..4601 ":"
+                  WHITESPACE@4601..4602 " "
+                  STRING@4602..4611 "\"preproc\""
+                R_CURLY@4611..4612 "}"
+            WHITESPACE@4612..4629 "\n                "
+            PAIR@4629..4666
+              NUMBER@4629..4630 "2"
+              COLON@4630..4631 ":"
+              WHITESPACE@4631..4632 " "
+              TABLE@4632..4666
+                L_CURLY@4632..4633 "{"
+                PAIR@4633..4652
+                  IDENT@4633..4638 "match"
+                  COLON@4638..4639 ":"
+                  WHITESPACE@4639..4640 " "
+                  REGEX@4640..4651 "/(?<=\\.)\\*/"
+                  COMMA@4651..4652 ","
+                WHITESPACE@4652..4653 " "
+                PAIR@4653..4665
+                  NUMBER@4653..4654 "0"
+                  COLON@4654..4655 ":"
+                  WHITESPACE@4655..4656 " "
+                  STRING@4656..4665 "\"preproc\""
+                R_CURLY@4665..4666 "}"
+            WHITESPACE@4666..4683 "\n                "
+            PAIR@4683..4735
+              NUMBER@4683..4684 "2"
+              COLON@4684..4685 ":"
+              WHITESPACE@4685..4686 " "
+              TABLE@4686..4735
+                L_CURLY@4686..4687 "{"
+                PAIR@4687..4721
+                  IDENT@4687..4692 "match"
+                  COLON@4692..4693 ":"
+                  WHITESPACE@4693..4694 " "
+                  REGEX@4694..4720 "/(?:[xX]\\?|\\?|[oxXpbe ..."
+                  COMMA@4720..4721 ","
+                WHITESPACE@4721..4722 " "
+                PAIR@4722..4734
+                  NUMBER@4722..4723 "0"
+                  COLON@4723..4724 ":"
+                  WHITESPACE@4724..4725 " "
+                  STRING@4725..4734 "\"keyword\""
+                R_CURLY@4734..4735 "}"
+            WHITESPACE@4735..4752 "\n                "
+            PAIR@4752..4764
+              NUMBER@4752..4753 "3"
+              COLON@4753..4754 ":"
+              WHITESPACE@4754..4755 " "
+              STRING@4755..4764 "\"preproc\""
+            WHITESPACE@4764..4781 "\n                "
+            PAIR@4781..4793
+              NUMBER@4781..4782 "4"
+              COLON@4782..4783 ":"
+              WHITESPACE@4783..4784 " "
+              STRING@4784..4793 "\"keyword\""
+            WHITESPACE@4793..4806 "\n            "
+            R_CURLY@4806..4807 "}"
+        WHITESPACE@4807..4816 "\n        "
+        R_BRACK@4816..4817 "]"
+      WHITESPACE@4817..4826 "\n        "
+      ITEM@4826..6597
+        STRING@4826..4856 "\"format-macro-templat ..."
+        COLON@4856..4857 ":"
+        WHITESPACE@4857..4858 " "
+        L_BRACK@4858..4859 "["
+        WHITESPACE@4859..4872 "\n            "
+        ITEM@4872..5141
+          TABLE@4872..5140
+            L_CURLY@4872..4873 "{"
+            WHITESPACE@4873..4890 "\n                "
+            PAIR@4890..4915
+              IDENT@4890..4895 "start"
+              COLON@4895..4896 ":"
+              WHITESPACE@4896..4897 " "
+              TABLE@4897..4914
+                L_CURLY@4897..4898 "{"
+                PAIR@4898..4913
+                  IDENT@4898..4903 "match"
+                  COLON@4903..4904 ":"
+                  WHITESPACE@4904..4905 " "
+                  REGEX@4905..4913 "/[bc]?\"/"
+                R_CURLY@4913..4914 "}"
+              COMMA@4914..4915 ","
+            WHITESPACE@4915..4932 "\n                "
+            PAIR@4932..4950
+              IDENT@4932..4935 "end"
+              COLON@4935..4936 ":"
+              WHITESPACE@4936..4937 " "
+              TABLE@4937..4949
+                L_CURLY@4937..4938 "{"
+                PAIR@4938..4948
+                  IDENT@4938..4943 "match"
+                  COLON@4943..4944 ":"
+                  WHITESPACE@4944..4945 " "
+                  REGEX@4945..4948 "/\"/"
+                R_CURLY@4948..4949 "}"
+              COMMA@4949..4950 ","
+            WHITESPACE@4950..4967 "\n                "
+            PAIR@4967..4983
+              IDENT@4967..4972 "style"
+              COLON@4972..4973 ":"
+              WHITESPACE@4973..4974 " "
+              STRING@4974..4982 "\"string\""
+              COMMA@4982..4983 ","
+            WHITESPACE@4983..5000 "\n                "
+            PAIR@5000..5126
+              IDENT@5000..5008 "contains"
+              COLON@5008..5009 ":"
+              WHITESPACE@5009..5010 " "
+              L_BRACK@5010..5011 "["
+              WHITESPACE@5011..5032 "\n                    "
+              ITEM@5032..5058
+                TABLE@5032..5058
+                  L_CURLY@5032..5033 "{"
+                  PAIR@5033..5057
+                    IDENT@5033..5040 "include"
+                    COLON@5040..5041 ":"
+                    WHITESPACE@5041..5042 " "
+                    STRING@5042..5057 "\"string-escape\""
+                  R_CURLY@5057..5058 "}"
+              WHITESPACE@5058..5079 "\n                    "
+              ITEM@5079..5107
+                TABLE@5079..5107
+                  L_CURLY@5079..5080 "{"
+                  PAIR@5080..5106
+                    IDENT@5080..5087 "include"
+                    COLON@5087..5088 ":"
+                    WHITESPACE@5088..5089 " "
+                    STRING@5089..5106 "\"format-template\""
+                  R_CURLY@5106..5107 "}"
+              WHITESPACE@5107..5124 "\n                "
+              R_BRACK@5124..5125 "]"
+              COMMA@5125..5126 ","
+            WHITESPACE@5126..5139 "\n            "
+            R_CURLY@5139..5140 "}"
+          COMMA@5140..5141 ","
+        WHITESPACE@5141..5154 "\n            "
+        ITEM@5154..5377
+          TABLE@5154..5376
+            L_CURLY@5154..5155 "{"
+            WHITESPACE@5155..5172 "\n                "
+            PAIR@5172..5198
+              IDENT@5172..5177 "start"
+              COLON@5177..5178 ":"
+              WHITESPACE@5178..5179 " "
+              TABLE@5179..5197
+                L_CURLY@5179..5180 "{"
+                PAIR@5180..5196
+                  IDENT@5180..5185 "match"
+                  COLON@5185..5186 ":"
+                  WHITESPACE@5186..5187 " "
+                  REGEX@5187..5196 "/[bc]?r\"/"
+                R_CURLY@5196..5197 "}"
+              COMMA@5197..5198 ","
+            WHITESPACE@5198..5215 "\n                "
+            PAIR@5215..5233
+              IDENT@5215..5218 "end"
+              COLON@5218..5219 ":"
+              WHITESPACE@5219..5220 " "
+              TABLE@5220..5232
+                L_CURLY@5220..5221 "{"
+                PAIR@5221..5231
+                  IDENT@5221..5226 "match"
+                  COLON@5226..5227 ":"
+                  WHITESPACE@5227..5228 " "
+                  REGEX@5228..5231 "/\"/"
+                R_CURLY@5231..5232 "}"
+              COMMA@5232..5233 ","
+            WHITESPACE@5233..5250 "\n                "
+            PAIR@5250..5266
+              IDENT@5250..5255 "style"
+              COLON@5255..5256 ":"
+              WHITESPACE@5256..5257 " "
+              STRING@5257..5265 "\"string\""
+              COMMA@5265..5266 ","
+            WHITESPACE@5266..5283 "\n                "
+            PAIR@5283..5362
+              IDENT@5283..5291 "contains"
+              COLON@5291..5292 ":"
+              WHITESPACE@5292..5293 " "
+              L_BRACK@5293..5294 "["
+              WHITESPACE@5294..5315 "\n                    "
+              ITEM@5315..5343
+                TABLE@5315..5343
+                  L_CURLY@5315..5316 "{"
+                  PAIR@5316..5342
+                    IDENT@5316..5323 "include"
+                    COLON@5323..5324 ":"
+                    WHITESPACE@5324..5325 " "
+                    STRING@5325..5342 "\"format-template\""
+                  R_CURLY@5342..5343 "}"
+              WHITESPACE@5343..5360 "\n                "
+              R_BRACK@5360..5361 "]"
+              COMMA@5361..5362 ","
+            WHITESPACE@5362..5375 "\n            "
+            R_CURLY@5375..5376 "}"
+          COMMA@5376..5377 ","
+        WHITESPACE@5377..5390 "\n            "
+        ITEM@5390..5615
+          TABLE@5390..5614
+            L_CURLY@5390..5391 "{"
+            WHITESPACE@5391..5408 "\n                "
+            PAIR@5408..5435
+              IDENT@5408..5413 "start"
+              COLON@5413..5414 ":"
+              WHITESPACE@5414..5415 " "
+              TABLE@5415..5434
+                L_CURLY@5415..5416 "{"
+                PAIR@5416..5433
+                  IDENT@5416..5421 "match"
+                  COLON@5421..5422 ":"
+                  WHITESPACE@5422..5423 " "
+                  REGEX@5423..5433 "/[bc]?r#\"/"
+                R_CURLY@5433..5434 "}"
+              COMMA@5434..5435 ","
+            WHITESPACE@5435..5452 "\n                "
+            PAIR@5452..5471
+              IDENT@5452..5455 "end"
+              COLON@5455..5456 ":"
+              WHITESPACE@5456..5457 " "
+              TABLE@5457..5470
+                L_CURLY@5457..5458 "{"
+                PAIR@5458..5469
+                  IDENT@5458..5463 "match"
+                  COLON@5463..5464 ":"
+                  WHITESPACE@5464..5465 " "
+                  REGEX@5465..5469 "/\"#/"
+                R_CURLY@5469..5470 "}"
+              COMMA@5470..5471 ","
+            WHITESPACE@5471..5488 "\n                "
+            PAIR@5488..5504
+              IDENT@5488..5493 "style"
+              COLON@5493..5494 ":"
+              WHITESPACE@5494..5495 " "
+              STRING@5495..5503 "\"string\""
+              COMMA@5503..5504 ","
+            WHITESPACE@5504..5521 "\n                "
+            PAIR@5521..5600
+              IDENT@5521..5529 "contains"
+              COLON@5529..5530 ":"
+              WHITESPACE@5530..5531 " "
+              L_BRACK@5531..5532 "["
+              WHITESPACE@5532..5553 "\n                    "
+              ITEM@5553..5581
+                TABLE@5553..5581
+                  L_CURLY@5553..5554 "{"
+                  PAIR@5554..5580
+                    IDENT@5554..5561 "include"
+                    COLON@5561..5562 ":"
+                    WHITESPACE@5562..5563 " "
+                    STRING@5563..5580 "\"format-template\""
+                  R_CURLY@5580..5581 "}"
+              WHITESPACE@5581..5598 "\n                "
+              R_BRACK@5598..5599 "]"
+              COMMA@5599..5600 ","
+            WHITESPACE@5600..5613 "\n            "
+            R_CURLY@5613..5614 "}"
+          COMMA@5614..5615 ","
+        WHITESPACE@5615..5628 "\n            "
+        ITEM@5628..5855
+          TABLE@5628..5854
+            L_CURLY@5628..5629 "{"
+            WHITESPACE@5629..5646 "\n                "
+            PAIR@5646..5674
+              IDENT@5646..5651 "start"
+              COLON@5651..5652 ":"
+              WHITESPACE@5652..5653 " "
+              TABLE@5653..5673
+                L_CURLY@5653..5654 "{"
+                PAIR@5654..5672
+                  IDENT@5654..5659 "match"
+                  COLON@5659..5660 ":"
+                  WHITESPACE@5660..5661 " "
+                  REGEX@5661..5672 "/[bc]?r##\"/"
+                R_CURLY@5672..5673 "}"
+              COMMA@5673..5674 ","
+            WHITESPACE@5674..5691 "\n                "
+            PAIR@5691..5711
+              IDENT@5691..5694 "end"
+              COLON@5694..5695 ":"
+              WHITESPACE@5695..5696 " "
+              TABLE@5696..5710
+                L_CURLY@5696..5697 "{"
+                PAIR@5697..5709
+                  IDENT@5697..5702 "match"
+                  COLON@5702..5703 ":"
+                  WHITESPACE@5703..5704 " "
+                  REGEX@5704..5709 "/\"##/"
+                R_CURLY@5709..5710 "}"
+              COMMA@5710..5711 ","
+            WHITESPACE@5711..5728 "\n                "
+            PAIR@5728..5744
+              IDENT@5728..5733 "style"
+              COLON@5733..5734 ":"
+              WHITESPACE@5734..5735 " "
+              STRING@5735..5743 "\"string\""
+              COMMA@5743..5744 ","
+            WHITESPACE@5744..5761 "\n                "
+            PAIR@5761..5840
+              IDENT@5761..5769 "contains"
+              COLON@5769..5770 ":"
+              WHITESPACE@5770..5771 " "
+              L_BRACK@5771..5772 "["
+              WHITESPACE@5772..5793 "\n                    "
+              ITEM@5793..5821
+                TABLE@5793..5821
+                  L_CURLY@5793..5794 "{"
+                  PAIR@5794..5820
+                    IDENT@5794..5801 "include"
+                    COLON@5801..5802 ":"
+                    WHITESPACE@5802..5803 " "
+                    STRING@5803..5820 "\"format-template\""
+                  R_CURLY@5820..5821 "}"
+              WHITESPACE@5821..5838 "\n                "
+              R_BRACK@5838..5839 "]"
+              COMMA@5839..5840 ","
+            WHITESPACE@5840..5853 "\n            "
+            R_CURLY@5853..5854 "}"
+          COMMA@5854..5855 ","
+        WHITESPACE@5855..5868 "\n            "
+        ITEM@5868..6097
+          TABLE@5868..6096
+            L_CURLY@5868..5869 "{"
+            WHITESPACE@5869..5886 "\n                "
+            PAIR@5886..5915
+              IDENT@5886..5891 "start"
+              COLON@5891..5892 ":"
+              WHITESPACE@5892..5893 " "
+              TABLE@5893..5914
+                L_CURLY@5893..5894 "{"
+                PAIR@5894..5913
+                  IDENT@5894..5899 "match"
+                  COLON@5899..5900 ":"
+                  WHITESPACE@5900..5901 " "
+                  REGEX@5901..5913 "/[bc]?r###\"/"
+                R_CURLY@5913..5914 "}"
+              COMMA@5914..5915 ","
+            WHITESPACE@5915..5932 "\n                "
+            PAIR@5932..5953
+              IDENT@5932..5935 "end"
+              COLON@5935..5936 ":"
+              WHITESPACE@5936..5937 " "
+              TABLE@5937..5952
+                L_CURLY@5937..5938 "{"
+                PAIR@5938..5951
+                  IDENT@5938..5943 "match"
+                  COLON@5943..5944 ":"
+                  WHITESPACE@5944..5945 " "
+                  REGEX@5945..5951 "/\"###/"
+                R_CURLY@5951..5952 "}"
+              COMMA@5952..5953 ","
+            WHITESPACE@5953..5970 "\n                "
+            PAIR@5970..5986
+              IDENT@5970..5975 "style"
+              COLON@5975..5976 ":"
+              WHITESPACE@5976..5977 " "
+              STRING@5977..5985 "\"string\""
+              COMMA@5985..5986 ","
+            WHITESPACE@5986..6003 "\n                "
+            PAIR@6003..6082
+              IDENT@6003..6011 "contains"
+              COLON@6011..6012 ":"
+              WHITESPACE@6012..6013 " "
+              L_BRACK@6013..6014 "["
+              WHITESPACE@6014..6035 "\n                    "
+              ITEM@6035..6063
+                TABLE@6035..6063
+                  L_CURLY@6035..6036 "{"
+                  PAIR@6036..6062
+                    IDENT@6036..6043 "include"
+                    COLON@6043..6044 ":"
+                    WHITESPACE@6044..6045 " "
+                    STRING@6045..6062 "\"format-template\""
+                  R_CURLY@6062..6063 "}"
+              WHITESPACE@6063..6080 "\n                "
+              R_BRACK@6080..6081 "]"
+              COMMA@6081..6082 ","
+            WHITESPACE@6082..6095 "\n            "
+            R_CURLY@6095..6096 "}"
+          COMMA@6096..6097 ","
+        WHITESPACE@6097..6110 "\n            "
+        ITEM@6110..6341
+          TABLE@6110..6340
+            L_CURLY@6110..6111 "{"
+            WHITESPACE@6111..6128 "\n                "
+            PAIR@6128..6158
+              IDENT@6128..6133 "start"
+              COLON@6133..6134 ":"
+              WHITESPACE@6134..6135 " "
+              TABLE@6135..6157
+                L_CURLY@6135..6136 "{"
+                PAIR@6136..6156
+                  IDENT@6136..6141 "match"
+                  COLON@6141..6142 ":"
+                  WHITESPACE@6142..6143 " "
+                  REGEX@6143..6156 "/[bc]?r####\"/"
+                R_CURLY@6156..6157 "}"
+              COMMA@6157..6158 ","
+            WHITESPACE@6158..6175 "\n                "
+            PAIR@6175..6197
+              IDENT@6175..6178 "end"
+              COLON@6178..6179 ":"
+              WHITESPACE@6179..6180 " "
+              TABLE@6180..6196
+                L_CURLY@6180..6181 "{"
+                PAIR@6181..6195
+                  IDENT@6181..6186 "match"
+                  COLON@6186..6187 ":"
+                  WHITESPACE@6187..6188 " "
+                  REGEX@6188..6195 "/\"####/"
+                R_CURLY@6195..6196 "}"
+              COMMA@6196..6197 ","
+            WHITESPACE@6197..6214 "\n                "
+            PAIR@6214..6230
+              IDENT@6214..6219 "style"
+              COLON@6219..6220 ":"
+              WHITESPACE@6220..6221 " "
+              STRING@6221..6229 "\"string\""
+              COMMA@6229..6230 ","
+            WHITESPACE@6230..6247 "\n                "
+            PAIR@6247..6326
+              IDENT@6247..6255 "contains"
+              COLON@6255..6256 ":"
+              WHITESPACE@6256..6257 " "
+              L_BRACK@6257..6258 "["
+              WHITESPACE@6258..6279 "\n                    "
+              ITEM@6279..6307
+                TABLE@6279..6307
+                  L_CURLY@6279..6280 "{"
+                  PAIR@6280..6306
+                    IDENT@6280..6287 "include"
+                    COLON@6287..6288 ":"
+                    WHITESPACE@6288..6289 " "
+                    STRING@6289..6306 "\"format-template\""
+                  R_CURLY@6306..6307 "}"
+              WHITESPACE@6307..6324 "\n                "
+              R_BRACK@6324..6325 "]"
+              COMMA@6325..6326 ","
+            WHITESPACE@6326..6339 "\n            "
+            R_CURLY@6339..6340 "}"
+          COMMA@6340..6341 ","
+        WHITESPACE@6341..6354 "\n            "
+        ITEM@6354..6587
+          TABLE@6354..6586
+            L_CURLY@6354..6355 "{"
+            WHITESPACE@6355..6372 "\n                "
+            PAIR@6372..6403
+              IDENT@6372..6377 "start"
+              COLON@6377..6378 ":"
+              WHITESPACE@6378..6379 " "
+              TABLE@6379..6402
+                L_CURLY@6379..6380 "{"
+                PAIR@6380..6401
+                  IDENT@6380..6385 "match"
+                  COLON@6385..6386 ":"
+                  WHITESPACE@6386..6387 " "
+                  REGEX@6387..6401 "/[bc]?r#####\"/"
+                R_CURLY@6401..6402 "}"
+              COMMA@6402..6403 ","
+            WHITESPACE@6403..6420 "\n                "
+            PAIR@6420..6443
+              IDENT@6420..6423 "end"
+              COLON@6423..6424 ":"
+              WHITESPACE@6424..6425 " "
+              TABLE@6425..6442
+                L_CURLY@6425..6426 "{"
+                PAIR@6426..6441
+                  IDENT@6426..6431 "match"
+                  COLON@6431..6432 ":"
+                  WHITESPACE@6432..6433 " "
+                  REGEX@6433..6441 "/\"#####/"
+                R_CURLY@6441..6442 "}"
+              COMMA@6442..6443 ","
+            WHITESPACE@6443..6460 "\n                "
+            PAIR@6460..6476
+              IDENT@6460..6465 "style"
+              COLON@6465..6466 ":"
+              WHITESPACE@6466..6467 " "
+              STRING@6467..6475 "\"string\""
+              COMMA@6475..6476 ","
+            WHITESPACE@6476..6493 "\n                "
+            PAIR@6493..6572
+              IDENT@6493..6501 "contains"
+              COLON@6501..6502 ":"
+              WHITESPACE@6502..6503 " "
+              L_BRACK@6503..6504 "["
+              WHITESPACE@6504..6525 "\n                    "
+              ITEM@6525..6553
+                TABLE@6525..6553
+                  L_CURLY@6525..6526 "{"
+                  PAIR@6526..6552
+                    IDENT@6526..6533 "include"
+                    COLON@6533..6534 ":"
+                    WHITESPACE@6534..6535 " "
+                    STRING@6535..6552 "\"format-template\""
+                  R_CURLY@6552..6553 "}"
+              WHITESPACE@6553..6570 "\n                "
+              R_BRACK@6570..6571 "]"
+              COMMA@6571..6572 ","
+            WHITESPACE@6572..6585 "\n            "
+            R_CURLY@6585..6586 "}"
+          COMMA@6586..6587 ","
+        WHITESPACE@6587..6596 "\n        "
+        R_BRACK@6596..6597 "]"
+      WHITESPACE@6597..6606 "\n        "
+      ITEM@6606..8986
+        STRING@6606..6615 "\"strings\""
+        COLON@6615..6616 ":"
+        WHITESPACE@6616..6617 " "
+        L_BRACK@6617..6618 "["
+        WHITESPACE@6618..6631 "\n            "
+        ITEM@6631..6837
+          TABLE@6631..6836
+            L_CURLY@6631..6632 "{"
+            WHITESPACE@6632..6633 " "
+            COMMENT@6633..6656 "// double quoted string"
+            WHITESPACE@6656..6673 "\n                "
+            PAIR@6673..6698
+              IDENT@6673..6678 "start"
+              COLON@6678..6679 ":"
+              WHITESPACE@6679..6680 " "
+              TABLE@6680..6697
+                L_CURLY@6680..6681 "{"
+                PAIR@6681..6696
+                  IDENT@6681..6686 "match"
+                  COLON@6686..6687 ":"
+                  WHITESPACE@6687..6688 " "
+                  REGEX@6688..6696 "/[bc]?\"/"
+                R_CURLY@6696..6697 "}"
+              COMMA@6697..6698 ","
+            WHITESPACE@6698..6715 "\n                "
+            PAIR@6715..6733
+              IDENT@6715..6718 "end"
+              COLON@6718..6719 ":"
+              WHITESPACE@6719..6720 " "
+              TABLE@6720..6732
+                L_CURLY@6720..6721 "{"
+                PAIR@6721..6731
+                  IDENT@6721..6726 "match"
+                  COLON@6726..6727 ":"
+                  WHITESPACE@6727..6728 " "
+                  REGEX@6728..6731 "/\"/"
+                R_CURLY@6731..6732 "}"
+              COMMA@6732..6733 ","
+            WHITESPACE@6733..6750 "\n                "
+            PAIR@6750..6766
+              IDENT@6750..6755 "style"
+              COLON@6755..6756 ":"
+              WHITESPACE@6756..6757 " "
+              STRING@6757..6765 "\"string\""
+              COMMA@6765..6766 ","
+            WHITESPACE@6766..6783 "\n                "
+            PAIR@6783..6822
+              IDENT@6783..6791 "contains"
+              COLON@6791..6792 ":"
+              WHITESPACE@6792..6793 " "
+              L_BRACK@6793..6794 "["
+              ITEM@6794..6820
+                TABLE@6794..6820
+                  L_CURLY@6794..6795 "{"
+                  PAIR@6795..6819
+                    IDENT@6795..6802 "include"
+                    COLON@6802..6803 ":"
+                    WHITESPACE@6803..6804 " "
+                    STRING@6804..6819 "\"string-escape\""
+                  R_CURLY@6819..6820 "}"
+              R_BRACK@6820..6821 "]"
+              COMMA@6821..6822 ","
+            WHITESPACE@6822..6835 "\n            "
+            R_CURLY@6835..6836 "}"
+          COMMA@6836..6837 ","
+        WHITESPACE@6837..6850 "\n            "
+        ITEM@6850..6991
+          TABLE@6850..6990
+            L_CURLY@6850..6851 "{"
+            WHITESPACE@6851..6852 " "
+            COMMENT@6852..6865 "// raw string"
+            WHITESPACE@6865..6882 "\n                "
+            PAIR@6882..6908
+              IDENT@6882..6887 "start"
+              COLON@6887..6888 ":"
+              WHITESPACE@6888..6889 " "
+              TABLE@6889..6907
+                L_CURLY@6889..6890 "{"
+                PAIR@6890..6906
+                  IDENT@6890..6895 "match"
+                  COLON@6895..6896 ":"
+                  WHITESPACE@6896..6897 " "
+                  REGEX@6897..6906 "/[bc]?r\"/"
+                R_CURLY@6906..6907 "}"
+              COMMA@6907..6908 ","
+            WHITESPACE@6908..6925 "\n                "
+            PAIR@6925..6943
+              IDENT@6925..6928 "end"
+              COLON@6928..6929 ":"
+              WHITESPACE@6929..6930 " "
+              TABLE@6930..6942
+                L_CURLY@6930..6931 "{"
+                PAIR@6931..6941
+                  IDENT@6931..6936 "match"
+                  COLON@6936..6937 ":"
+                  WHITESPACE@6937..6938 " "
+                  REGEX@6938..6941 "/\"/"
+                R_CURLY@6941..6942 "}"
+              COMMA@6942..6943 ","
+            WHITESPACE@6943..6960 "\n                "
+            PAIR@6960..6976
+              IDENT@6960..6965 "style"
+              COLON@6965..6966 ":"
+              WHITESPACE@6966..6967 " "
+              STRING@6967..6975 "\"string\""
+              COMMA@6975..6976 ","
+            WHITESPACE@6976..6989 "\n            "
+            R_CURLY@6989..6990 "}"
+          COMMA@6990..6991 ","
+        WHITESPACE@6991..7004 "\n            "
+        ITEM@7004..7157
+          TABLE@7004..7156
+            L_CURLY@7004..7005 "{"
+            WHITESPACE@7005..7006 " "
+            COMMENT@7006..7029 "// raw string tag......"
+            WHITESPACE@7029..7046 "\n                "
+            PAIR@7046..7073
+              IDENT@7046..7051 "start"
+              COLON@7051..7052 ":"
+              WHITESPACE@7052..7053 " "
+              TABLE@7053..7072
+                L_CURLY@7053..7054 "{"
+                PAIR@7054..7071
+                  IDENT@7054..7059 "match"
+                  COLON@7059..7060 ":"
+                  WHITESPACE@7060..7061 " "
+                  REGEX@7061..7071 "/[bc]?r#\"/"
+                R_CURLY@7071..7072 "}"
+              COMMA@7072..7073 ","
+            WHITESPACE@7073..7090 "\n                "
+            PAIR@7090..7109
+              IDENT@7090..7093 "end"
+              COLON@7093..7094 ":"
+              WHITESPACE@7094..7095 " "
+              TABLE@7095..7108
+                L_CURLY@7095..7096 "{"
+                PAIR@7096..7107
+                  IDENT@7096..7101 "match"
+                  COLON@7101..7102 ":"
+                  WHITESPACE@7102..7103 " "
+                  REGEX@7103..7107 "/\"#/"
+                R_CURLY@7107..7108 "}"
+              COMMA@7108..7109 ","
+            WHITESPACE@7109..7126 "\n                "
+            PAIR@7126..7142
+              IDENT@7126..7131 "style"
+              COLON@7131..7132 ":"
+              WHITESPACE@7132..7133 " "
+              STRING@7133..7141 "\"string\""
+              COMMA@7141..7142 ","
+            WHITESPACE@7142..7155 "\n            "
+            R_CURLY@7155..7156 "}"
+          COMMA@7156..7157 ","
+        WHITESPACE@7157..7170 "\n            "
+        ITEM@7170..7325
+          TABLE@7170..7324
+            L_CURLY@7170..7171 "{"
+            WHITESPACE@7171..7172 " "
+            COMMENT@7172..7195 "// raw string tag......"
+            WHITESPACE@7195..7212 "\n                "
+            PAIR@7212..7240
+              IDENT@7212..7217 "start"
+              COLON@7217..7218 ":"
+              WHITESPACE@7218..7219 " "
+              TABLE@7219..7239
+                L_CURLY@7219..7220 "{"
+                PAIR@7220..7238
+                  IDENT@7220..7225 "match"
+                  COLON@7225..7226 ":"
+                  WHITESPACE@7226..7227 " "
+                  REGEX@7227..7238 "/[bc]?r##\"/"
+                R_CURLY@7238..7239 "}"
+              COMMA@7239..7240 ","
+            WHITESPACE@7240..7257 "\n                "
+            PAIR@7257..7277
+              IDENT@7257..7260 "end"
+              COLON@7260..7261 ":"
+              WHITESPACE@7261..7262 " "
+              TABLE@7262..7276
+                L_CURLY@7262..7263 "{"
+                PAIR@7263..7275
+                  IDENT@7263..7268 "match"
+                  COLON@7268..7269 ":"
+                  WHITESPACE@7269..7270 " "
+                  REGEX@7270..7275 "/\"##/"
+                R_CURLY@7275..7276 "}"
+              COMMA@7276..7277 ","
+            WHITESPACE@7277..7294 "\n                "
+            PAIR@7294..7310
+              IDENT@7294..7299 "style"
+              COLON@7299..7300 ":"
+              WHITESPACE@7300..7301 " "
+              STRING@7301..7309 "\"string\""
+              COMMA@7309..7310 ","
+            WHITESPACE@7310..7323 "\n            "
+            R_CURLY@7323..7324 "}"
+          COMMA@7324..7325 ","
+        WHITESPACE@7325..7338 "\n            "
+        ITEM@7338..7495
+          TABLE@7338..7494
+            L_CURLY@7338..7339 "{"
+            WHITESPACE@7339..7340 " "
+            COMMENT@7340..7363 "// raw string tag......"
+            WHITESPACE@7363..7380 "\n                "
+            PAIR@7380..7409
+              IDENT@7380..7385 "start"
+              COLON@7385..7386 ":"
+              WHITESPACE@7386..7387 " "
+              TABLE@7387..7408
+                L_CURLY@7387..7388 "{"
+                PAIR@7388..7407
+                  IDENT@7388..7393 "match"
+                  COLON@7393..7394 ":"
+                  WHITESPACE@7394..7395 " "
+                  REGEX@7395..7407 "/[bc]?r###\"/"
+                R_CURLY@7407..7408 "}"
+              COMMA@7408..7409 ","
+            WHITESPACE@7409..7426 "\n                "
+            PAIR@7426..7447
+              IDENT@7426..7429 "end"
+              COLON@7429..7430 ":"
+              WHITESPACE@7430..7431 " "
+              TABLE@7431..7446
+                L_CURLY@7431..7432 "{"
+                PAIR@7432..7445
+                  IDENT@7432..7437 "match"
+                  COLON@7437..7438 ":"
+                  WHITESPACE@7438..7439 " "
+                  REGEX@7439..7445 "/\"###/"
+                R_CURLY@7445..7446 "}"
+              COMMA@7446..7447 ","
+            WHITESPACE@7447..7464 "\n                "
+            PAIR@7464..7480
+              IDENT@7464..7469 "style"
+              COLON@7469..7470 ":"
+              WHITESPACE@7470..7471 " "
+              STRING@7471..7479 "\"string\""
+              COMMA@7479..7480 ","
+            WHITESPACE@7480..7493 "\n            "
+            R_CURLY@7493..7494 "}"
+          COMMA@7494..7495 ","
+        WHITESPACE@7495..7508 "\n            "
+        ITEM@7508..7667
+          TABLE@7508..7666
+            L_CURLY@7508..7509 "{"
+            WHITESPACE@7509..7510 " "
+            COMMENT@7510..7533 "// raw string tag......"
+            WHITESPACE@7533..7550 "\n                "
+            PAIR@7550..7580
+              IDENT@7550..7555 "start"
+              COLON@7555..7556 ":"
+              WHITESPACE@7556..7557 " "
+              TABLE@7557..7579
+                L_CURLY@7557..7558 "{"
+                PAIR@7558..7578
+                  IDENT@7558..7563 "match"
+                  COLON@7563..7564 ":"
+                  WHITESPACE@7564..7565 " "
+                  REGEX@7565..7578 "/[bc]?r####\"/"
+                R_CURLY@7578..7579 "}"
+              COMMA@7579..7580 ","
+            WHITESPACE@7580..7597 "\n                "
+            PAIR@7597..7619
+              IDENT@7597..7600 "end"
+              COLON@7600..7601 ":"
+              WHITESPACE@7601..7602 " "
+              TABLE@7602..7618
+                L_CURLY@7602..7603 "{"
+                PAIR@7603..7617
+                  IDENT@7603..7608 "match"
+                  COLON@7608..7609 ":"
+                  WHITESPACE@7609..7610 " "
+                  REGEX@7610..7617 "/\"####/"
+                R_CURLY@7617..7618 "}"
+              COMMA@7618..7619 ","
+            WHITESPACE@7619..7636 "\n                "
+            PAIR@7636..7652
+              IDENT@7636..7641 "style"
+              COLON@7641..7642 ":"
+              WHITESPACE@7642..7643 " "
+              STRING@7643..7651 "\"string\""
+              COMMA@7651..7652 ","
+            WHITESPACE@7652..7665 "\n            "
+            R_CURLY@7665..7666 "}"
+          COMMA@7666..7667 ","
+        WHITESPACE@7667..7680 "\n            "
+        ITEM@7680..7841
+          TABLE@7680..7840
+            L_CURLY@7680..7681 "{"
+            WHITESPACE@7681..7682 " "
+            COMMENT@7682..7705 "// raw string tag......"
+            WHITESPACE@7705..7722 "\n                "
+            PAIR@7722..7753
+              IDENT@7722..7727 "start"
+              COLON@7727..7728 ":"
+              WHITESPACE@7728..7729 " "
+              TABLE@7729..7752
+                L_CURLY@7729..7730 "{"
+                PAIR@7730..7751
+                  IDENT@7730..7735 "match"
+                  COLON@7735..7736 ":"
+                  WHITESPACE@7736..7737 " "
+                  REGEX@7737..7751 "/[bc]?r#####\"/"
+                R_CURLY@7751..7752 "}"
+              COMMA@7752..7753 ","
+            WHITESPACE@7753..7770 "\n                "
+            PAIR@7770..7793
+              IDENT@7770..7773 "end"
+              COLON@7773..7774 ":"
+              WHITESPACE@7774..7775 " "
+              TABLE@7775..7792
+                L_CURLY@7775..7776 "{"
+                PAIR@7776..7791
+                  IDENT@7776..7781 "match"
+                  COLON@7781..7782 ":"
+                  WHITESPACE@7782..7783 " "
+                  REGEX@7783..7791 "/\"#####/"
+                R_CURLY@7791..7792 "}"
+              COMMA@7792..7793 ","
+            WHITESPACE@7793..7810 "\n                "
+            PAIR@7810..7826
+              IDENT@7810..7815 "style"
+              COLON@7815..7816 ":"
+              WHITESPACE@7816..7817 " "
+              STRING@7817..7825 "\"string\""
+              COMMA@7825..7826 ","
+            WHITESPACE@7826..7839 "\n            "
+            R_CURLY@7839..7840 "}"
+          COMMA@7840..7841 ","
+        WHITESPACE@7841..7854 "\n            "
+        ITEM@7854..8017
+          TABLE@7854..8016
+            L_CURLY@7854..7855 "{"
+            WHITESPACE@7855..7856 " "
+            COMMENT@7856..7879 "// raw string tag......"
+            WHITESPACE@7879..7896 "\n                "
+            PAIR@7896..7928
+              IDENT@7896..7901 "start"
+              COLON@7901..7902 ":"
+              WHITESPACE@7902..7903 " "
+              TABLE@7903..7927
+                L_CURLY@7903..7904 "{"
+                PAIR@7904..7926
+                  IDENT@7904..7909 "match"
+                  COLON@7909..7910 ":"
+                  WHITESPACE@7910..7911 " "
+                  REGEX@7911..7926 "/[bc]?r######\"/"
+                R_CURLY@7926..7927 "}"
+              COMMA@7927..7928 ","
+            WHITESPACE@7928..7945 "\n                "
+            PAIR@7945..7969
+              IDENT@7945..7948 "end"
+              COLON@7948..7949 ":"
+              WHITESPACE@7949..7950 " "
+              TABLE@7950..7968
+                L_CURLY@7950..7951 "{"
+                PAIR@7951..7967
+                  IDENT@7951..7956 "match"
+                  COLON@7956..7957 ":"
+                  WHITESPACE@7957..7958 " "
+                  REGEX@7958..7967 "/\"######/"
+                R_CURLY@7967..7968 "}"
+              COMMA@7968..7969 ","
+            WHITESPACE@7969..7986 "\n                "
+            PAIR@7986..8002
+              IDENT@7986..7991 "style"
+              COLON@7991..7992 ":"
+              WHITESPACE@7992..7993 " "
+              STRING@7993..8001 "\"string\""
+              COMMA@8001..8002 ","
+            WHITESPACE@8002..8015 "\n            "
+            R_CURLY@8015..8016 "}"
+          COMMA@8016..8017 ","
+        WHITESPACE@8017..8030 "\n            "
+        ITEM@8030..8195
+          TABLE@8030..8194
+            L_CURLY@8030..8031 "{"
+            WHITESPACE@8031..8032 " "
+            COMMENT@8032..8055 "// raw string tag......"
+            WHITESPACE@8055..8072 "\n                "
+            PAIR@8072..8105
+              IDENT@8072..8077 "start"
+              COLON@8077..8078 ":"
+              WHITESPACE@8078..8079 " "
+              TABLE@8079..8104
+                L_CURLY@8079..8080 "{"
+                PAIR@8080..8103
+                  IDENT@8080..8085 "match"
+                  COLON@8085..8086 ":"
+                  WHITESPACE@8086..8087 " "
+                  REGEX@8087..8103 "/[bc]?r#######\"/"
+                R_CURLY@8103..8104 "}"
+              COMMA@8104..8105 ","
+            WHITESPACE@8105..8122 "\n                "
+            PAIR@8122..8147
+              IDENT@8122..8125 "end"
+              COLON@8125..8126 ":"
+              WHITESPACE@8126..8127 " "
+              TABLE@8127..8146
+                L_CURLY@8127..8128 "{"
+                PAIR@8128..8145
+                  IDENT@8128..8133 "match"
+                  COLON@8133..8134 ":"
+                  WHITESPACE@8134..8135 " "
+                  REGEX@8135..8145 "/\"#######/"
+                R_CURLY@8145..8146 "}"
+              COMMA@8146..8147 ","
+            WHITESPACE@8147..8164 "\n                "
+            PAIR@8164..8180
+              IDENT@8164..8169 "style"
+              COLON@8169..8170 ":"
+              WHITESPACE@8170..8171 " "
+              STRING@8171..8179 "\"string\""
+              COMMA@8179..8180 ","
+            WHITESPACE@8180..8193 "\n            "
+            R_CURLY@8193..8194 "}"
+          COMMA@8194..8195 ","
+        WHITESPACE@8195..8208 "\n            "
+        ITEM@8208..8375
+          TABLE@8208..8374
+            L_CURLY@8208..8209 "{"
+            WHITESPACE@8209..8210 " "
+            COMMENT@8210..8233 "// raw string tag......"
+            WHITESPACE@8233..8250 "\n                "
+            PAIR@8250..8284
+              IDENT@8250..8255 "start"
+              COLON@8255..8256 ":"
+              WHITESPACE@8256..8257 " "
+              TABLE@8257..8283
+                L_CURLY@8257..8258 "{"
+                PAIR@8258..8282
+                  IDENT@8258..8263 "match"
+                  COLON@8263..8264 ":"
+                  WHITESPACE@8264..8265 " "
+                  REGEX@8265..8282 "/[bc]?r########\"/"
+                R_CURLY@8282..8283 "}"
+              COMMA@8283..8284 ","
+            WHITESPACE@8284..8301 "\n                "
+            PAIR@8301..8327
+              IDENT@8301..8304 "end"
+              COLON@8304..8305 ":"
+              WHITESPACE@8305..8306 " "
+              TABLE@8306..8326
+                L_CURLY@8306..8307 "{"
+                PAIR@8307..8325
+                  IDENT@8307..8312 "match"
+                  COLON@8312..8313 ":"
+                  WHITESPACE@8313..8314 " "
+                  REGEX@8314..8325 "/\"########/"
+                R_CURLY@8325..8326 "}"
+              COMMA@8326..8327 ","
+            WHITESPACE@8327..8344 "\n                "
+            PAIR@8344..8360
+              IDENT@8344..8349 "style"
+              COLON@8349..8350 ":"
+              WHITESPACE@8350..8351 " "
+              STRING@8351..8359 "\"string\""
+              COMMA@8359..8360 ","
+            WHITESPACE@8360..8373 "\n            "
+            R_CURLY@8373..8374 "}"
+          COMMA@8374..8375 ","
+        WHITESPACE@8375..8388 "\n            "
+        ITEM@8388..8557
+          TABLE@8388..8556
+            L_CURLY@8388..8389 "{"
+            WHITESPACE@8389..8390 " "
+            COMMENT@8390..8413 "// raw string tag......"
+            WHITESPACE@8413..8430 "\n                "
+            PAIR@8430..8465
+              IDENT@8430..8435 "start"
+              COLON@8435..8436 ":"
+              WHITESPACE@8436..8437 " "
+              TABLE@8437..8464
+                L_CURLY@8437..8438 "{"
+                PAIR@8438..8463
+                  IDENT@8438..8443 "match"
+                  COLON@8443..8444 ":"
+                  WHITESPACE@8444..8445 " "
+                  REGEX@8445..8463 "/[bc]?r#########\"/"
+                R_CURLY@8463..8464 "}"
+              COMMA@8464..8465 ","
+            WHITESPACE@8465..8482 "\n                "
+            PAIR@8482..8509
+              IDENT@8482..8485 "end"
+              COLON@8485..8486 ":"
+              WHITESPACE@8486..8487 " "
+              TABLE@8487..8508
+                L_CURLY@8487..8488 "{"
+                PAIR@8488..8507
+                  IDENT@8488..8493 "match"
+                  COLON@8493..8494 ":"
+                  WHITESPACE@8494..8495 " "
+                  REGEX@8495..8507 "/\"#########/"
+                R_CURLY@8507..8508 "}"
+              COMMA@8508..8509 ","
+            WHITESPACE@8509..8526 "\n                "
+            PAIR@8526..8542
+              IDENT@8526..8531 "style"
+              COLON@8531..8532 ":"
+              WHITESPACE@8532..8533 " "
+              STRING@8533..8541 "\"string\""
+              COMMA@8541..8542 ","
+            WHITESPACE@8542..8555 "\n            "
+            R_CURLY@8555..8556 "}"
+          COMMA@8556..8557 ","
+        WHITESPACE@8557..8570 "\n            "
+        ITEM@8570..8741
+          TABLE@8570..8740
+            L_CURLY@8570..8571 "{"
+            WHITESPACE@8571..8572 " "
+            COMMENT@8572..8595 "// raw string tag......"
+            WHITESPACE@8595..8612 "\n                "
+            PAIR@8612..8648
+              IDENT@8612..8617 "start"
+              COLON@8617..8618 ":"
+              WHITESPACE@8618..8619 " "
+              TABLE@8619..8647
+                L_CURLY@8619..8620 "{"
+                PAIR@8620..8646
+                  IDENT@8620..8625 "match"
+                  COLON@8625..8626 ":"
+                  WHITESPACE@8626..8627 " "
+                  REGEX@8627..8646 "/[bc]?r##########\"/"
+                R_CURLY@8646..8647 "}"
+              COMMA@8647..8648 ","
+            WHITESPACE@8648..8665 "\n                "
+            PAIR@8665..8693
+              IDENT@8665..8668 "end"
+              COLON@8668..8669 ":"
+              WHITESPACE@8669..8670 " "
+              TABLE@8670..8692
+                L_CURLY@8670..8671 "{"
+                PAIR@8671..8691
+                  IDENT@8671..8676 "match"
+                  COLON@8676..8677 ":"
+                  WHITESPACE@8677..8678 " "
+                  REGEX@8678..8691 "/\"##########/"
+                R_CURLY@8691..8692 "}"
+              COMMA@8692..8693 ","
+            WHITESPACE@8693..8710 "\n                "
+            PAIR@8710..8726
+              IDENT@8710..8715 "style"
+              COLON@8715..8716 ":"
+              WHITESPACE@8716..8717 " "
+              STRING@8717..8725 "\"string\""
+              COMMA@8725..8726 ","
+            WHITESPACE@8726..8739 "\n            "
+            R_CURLY@8739..8740 "}"
+          COMMA@8740..8741 ","
+        WHITESPACE@8741..8755 "\n\n            "
+        ITEM@8755..8976
+          TABLE@8755..8975
+            L_CURLY@8755..8756 "{"
+            WHITESPACE@8756..8757 " "
+            COMMENT@8757..8764 "// char"
+            WHITESPACE@8764..8781 "\n                "
+            PAIR@8781..8872
+              IDENT@8781..8786 "match"
+              COLON@8786..8787 ":"
+              WHITESPACE@8787..8788 " "
+              REGEX@8788..8871 "/b?'(?:(\\\\(?:u\\{(?:[_ ..."
+              COMMA@8871..8872 ","
+            WHITESPACE@8872..8889 "\n                "
+            PAIR@8889..8901
+              NUMBER@8889..8890 "0"
+              COLON@8890..8891 ":"
+              WHITESPACE@8891..8892 " "
+              STRING@8892..8900 "\"string\""
+              COMMA@8900..8901 ","
+            WHITESPACE@8901..8918 "\n                "
+            PAIR@8918..8933
+              NUMBER@8918..8919 "1"
+              COLON@8919..8920 ":"
+              WHITESPACE@8920..8921 " "
+              STRING@8921..8932 "\"strEscape\""
+              COMMA@8932..8933 ","
+            WHITESPACE@8933..8950 "\n                "
+            PAIR@8950..8961
+              NUMBER@8950..8951 "2"
+              COLON@8951..8952 ":"
+              WHITESPACE@8952..8953 " "
+              STRING@8953..8960 "\"error\""
+              COMMA@8960..8961 ","
+            WHITESPACE@8961..8974 "\n            "
+            R_CURLY@8974..8975 "}"
+          COMMA@8975..8976 ","
+        WHITESPACE@8976..8985 "\n        "
+        R_BRACK@8985..8986 "]"
+      WHITESPACE@8986..8995 "\n        "
+      ITEM@8995..9267
+        STRING@8995..9012 "\"decl-macro-meta\""
+        COLON@9012..9013 ":"
+        WHITESPACE@9013..9014 " "
+        L_BRACK@9014..9015 "["
+        WHITESPACE@9015..9028 "\n            "
+        ITEM@9028..9140
+          TABLE@9028..9139
+            L_CURLY@9028..9029 "{"
+            WHITESPACE@9029..9030 " "
+            COMMENT@9030..9047 "// macro meta var"
+            WHITESPACE@9047..9064 "\n                "
+            PAIR@9064..9095
+              IDENT@9064..9069 "match"
+              COLON@9069..9070 ":"
+              WHITESPACE@9070..9071 " "
+              JOIN@9071..9094
+                REGEX@9071..9075 "/\\$/"
+                WHITESPACE@9075..9076 " "
+                PLUS@9076..9077 "+"
+                WHITESPACE@9077..9078 " "
+                CALL@9078..9094
+                  IDENT@9078..9085 "include"
+                  L_PAREN@9085..9086 "("
+                  STRING@9086..9093 "\"ident\""
+                  R_PAREN@9093..9094 ")"
+              COMMA@9094..9095 ","
+            WHITESPACE@9095..9112 "\n                "
+            PAIR@9112..9125
+              NUMBER@9112..9113 "0"
+              COLON@9113..9114 ":"
+              WHITESPACE@9114..9115 " "
+              STRING@9115..9124 "\"preproc\""
+              COMMA@9124..9125 ","
+            WHITESPACE@9125..9138 "\n            "
+            R_CURLY@9138..9139 "}"
+          COMMA@9139..9140 ","
+        WHITESPACE@9140..9153 "\n            "
+        ITEM@9153..9257
+          TABLE@9153..9256
+            L_CURLY@9153..9154 "{"
+            WHITESPACE@9154..9155 " "
+            COMMENT@9155..9175 "// macro meta braces"
+            WHITESPACE@9175..9192 "\n                "
+            PAIR@9192..9212
+              IDENT@9192..9197 "match"
+              COLON@9197..9198 ":"
+              WHITESPACE@9198..9199 " "
+              REGEX@9199..9211 "/\\$(?=[({])/"
+              COMMA@9211..9212 ","
+            WHITESPACE@9212..9229 "\n                "
+            PAIR@9229..9242
+              NUMBER@9229..9230 "0"
+              COLON@9230..9231 ":"
+              WHITESPACE@9231..9232 " "
+              STRING@9232..9241 "\"preproc\""
+              COMMA@9241..9242 ","
+            WHITESPACE@9242..9255 "\n            "
+            R_CURLY@9255..9256 "}"
+          COMMA@9256..9257 ","
+        WHITESPACE@9257..9266 "\n        "
+        R_BRACK@9266..9267 "]"
+      WHITESPACE@9267..9276 "\n        "
+      ITEM@9276..10904
+        STRING@9276..9291 "\"format-macros\""
+        COLON@9291..9292 ":"
+        WHITESPACE@9292..9293 " "
+        L_BRACK@9293..9294 "["
+        WHITESPACE@9294..9307 "\n            "
+        ITEM@9307..9986
+          TABLE@9307..9986
+            L_CURLY@9307..9308 "{"
+            WHITESPACE@9308..9309 " "
+            COMMENT@9309..9335 "// formats template s ..."
+            WHITESPACE@9335..9352 "\n                "
+            PAIR@9352..9363
+              IDENT@9352..9357 "group"
+              COLON@9357..9358 ":"
+              WHITESPACE@9358..9359 " "
+              IDENT@9359..9363 "link"
+            WHITESPACE@9363..9380 "\n                "
+            PAIR@9380..9972
+              IDENT@9380..9388 "contains"
+              COLON@9388..9389 ":"
+              WHITESPACE@9389..9390 " "
+              L_BRACK@9390..9391 "["
+              WHITESPACE@9391..9412 "\n                    "
+              ITEM@9412..9892
+                TABLE@9412..9892
+                  L_CURLY@9412..9413 "{"
+                  WHITESPACE@9413..9438 "\n                     ..."
+                  PAIR@9438..9714
+                    IDENT@9438..9443 "match"
+                    COLON@9443..9444 ":"
+                    WHITESPACE@9444..9445 " "
+                    JOIN@9445..9714
+                      JOIN@9445..9702
+                        REGEX@9445..9448 "/(/"
+                        WHITESPACE@9448..9449 " "
+                        PLUS@9449..9450 "+"
+                        WHITESPACE@9450..9451 " "
+                        CALL@9451..9702
+                          IDENT@9451..9466 "keywordsToRegex"
+                          L_PAREN@9466..9467 "("
+                          WHITESPACE@9467..9496 "\n                     ..."
+                          STRING@9496..9549 "\"format format_args f ..."
+                          WHITESPACE@9549..9578 "\n                     ..."
+                          STRING@9578..9609 "\"print println eprint ..."
+                          WHITESPACE@9609..9638 "\n                     ..."
+                          STRING@9638..9676 "\"panic todo unimpleme ..."
+                          WHITESPACE@9676..9701 "\n                     ..."
+                          R_PAREN@9701..9702 ")"
+                      WHITESPACE@9702..9703 " "
+                      PLUS@9703..9704 "+"
+                      WHITESPACE@9704..9705 " "
+                      REGEX@9705..9714 "/!)\\(\\s*/"
+                  WHITESPACE@9714..9739 "\n                     ..."
+                  COMMENT@9739..9833 "// NOTE: 未来不要 ..."
+                  WHITESPACE@9833..9858 "\n                     ..."
+                  PAIR@9858..9870
+                    NUMBER@9858..9859 "1"
+                    COLON@9859..9860 ":"
+                    WHITESPACE@9860..9861 " "
+                    STRING@9861..9870 "\"preproc\""
+                  WHITESPACE@9870..9891 "\n                    "
+                  R_CURLY@9891..9892 "}"
+              WHITESPACE@9892..9913 "\n                    "
+              ITEM@9913..9954
+                TABLE@9913..9954
+                  L_CURLY@9913..9914 "{"
+                  PAIR@9914..9953
+                    IDENT@9914..9921 "include"
+                    COLON@9921..9922 ":"
+                    WHITESPACE@9922..9923 " "
+                    STRING@9923..9953 "\"format-macro-templat ..."
+                  R_CURLY@9953..9954 "}"
+              WHITESPACE@9954..9971 "\n                "
+              R_BRACK@9971..9972 "]"
+            WHITESPACE@9972..9985 "\n            "
+            R_CURLY@9985..9986 "}"
+        WHITESPACE@9986..10000 "\n\n            "
+        ITEM@10000..10428
+          TABLE@10000..10428
+            L_CURLY@10000..10001 "{"
+            WHITESPACE@10001..10002 " "
+            COMMENT@10002..10045 "// formats (write & a ..."
+            WHITESPACE@10045..10062 "\n                "
+            PAIR@10062..10073
+              IDENT@10062..10067 "group"
+              COLON@10067..10068 ":"
+              WHITESPACE@10068..10069 " "
+              IDENT@10069..10073 "link"
+            WHITESPACE@10073..10090 "\n                "
+            PAIR@10090..10414
+              IDENT@10090..10098 "contains"
+              COLON@10098..10099 ":"
+              WHITESPACE@10099..10100 " "
+              L_BRACK@10100..10101 "["
+              WHITESPACE@10101..10122 "\n                    "
+              ITEM@10122..10334
+                TABLE@10122..10334
+                  L_CURLY@10122..10123 "{"
+                  WHITESPACE@10123..10148 "\n                     ..."
+                  PAIR@10148..10231
+                    IDENT@10148..10153 "match"
+                    COLON@10153..10154 ":"
+                    WHITESPACE@10154..10155 " "
+                    JOIN@10155..10231
+                      JOIN@10155..10223
+                        REGEX@10155..10204 "/\\b((?:write(?:ln)?|a ..."
+                        PLUS@10204..10205 "+"
+                        CALL@10205..10223
+                          IDENT@10205..10212 "include"
+                          L_PAREN@10212..10213 "("
+                          STRING@10213..10222 "\"sip-val\""
+                          R_PAREN@10222..10223 ")"
+                      PLUS@10223..10224 "+"
+                      REGEX@10224..10231 "/),\\s*/"
+                  WHITESPACE@10231..10256 "\n                     ..."
+                  PAIR@10256..10268
+                    NUMBER@10256..10257 "1"
+                    COLON@10257..10258 ":"
+                    WHITESPACE@10258..10259 " "
+                    STRING@10259..10268 "\"preproc\""
+                  WHITESPACE@10268..10293 "\n                     ..."
+                  PAIR@10293..10312
+                    NUMBER@10293..10294 "2"
+                    COLON@10294..10295 ":"
+                    WHITESPACE@10295..10296 " "
+                    TABLE@10296..10312
+                      L_CURLY@10296..10297 "{"
+                      PAIR@10297..10311
+                        IDENT@10297..10304 "include"
+                        COLON@10304..10305 ":"
+                        WHITESPACE@10305..10306 " "
+                        STRING@10306..10311 "\"top\""
+                      R_CURLY@10311..10312 "}"
+                  WHITESPACE@10312..10333 "\n                    "
+                  R_CURLY@10333..10334 "}"
+              WHITESPACE@10334..10355 "\n                    "
+              ITEM@10355..10396
+                TABLE@10355..10396
+                  L_CURLY@10355..10356 "{"
+                  PAIR@10356..10395
+                    IDENT@10356..10363 "include"
+                    COLON@10363..10364 ":"
+                    WHITESPACE@10364..10365 " "
+                    STRING@10365..10395 "\"format-macro-templat ..."
+                  R_CURLY@10395..10396 "}"
+              WHITESPACE@10396..10413 "\n                "
+              R_BRACK@10413..10414 "]"
+            WHITESPACE@10414..10427 "\n            "
+            R_CURLY@10427..10428 "}"
+        WHITESPACE@10428..10442 "\n\n            "
+        ITEM@10442..10894
+          TABLE@10442..10894
+            L_CURLY@10442..10443 "{"
+            WHITESPACE@10443..10444 " "
+            COMMENT@10444..10482 "// formats (assert_eq ..."
+            WHITESPACE@10482..10499 "\n                "
+            PAIR@10499..10510
+              IDENT@10499..10504 "group"
+              COLON@10504..10505 ":"
+              WHITESPACE@10505..10506 " "
+              IDENT@10506..10510 "link"
+            WHITESPACE@10510..10527 "\n                "
+            PAIR@10527..10880
+              IDENT@10527..10535 "contains"
+              COLON@10535..10536 ":"
+              WHITESPACE@10536..10537 " "
+              L_BRACK@10537..10538 "["
+              WHITESPACE@10538..10559 "\n                    "
+              ITEM@10559..10800
+                TABLE@10559..10800
+                  L_CURLY@10559..10560 "{"
+                  WHITESPACE@10560..10585 "\n                     ..."
+                  PAIR@10585..10697
+                    IDENT@10585..10590 "match"
+                    COLON@10590..10591 ":"
+                    WHITESPACE@10591..10592 " "
+                    JOIN@10592..10697
+                      JOIN@10592..10689
+                        JOIN@10592..10670
+                          JOIN@10592..10663
+                            REGEX@10592..10644 "/\\b((?:(?:debug_)?ass ..."
+                            PLUS@10644..10645 "+"
+                            CALL@10645..10663
+                              IDENT@10645..10652 "include"
+                              L_PAREN@10652..10653 "("
+                              STRING@10653..10662 "\"sip-val\""
+                              R_PAREN@10662..10663 ")"
+                          PLUS@10663..10664 "+"
+                          REGEX@10664..10670 "/,\\s*/"
+                        PLUS@10670..10671 "+"
+                        CALL@10671..10689
+                          IDENT@10671..10678 "include"
+                          L_PAREN@10678..10679 "("
+                          STRING@10679..10688 "\"sip-val\""
+                          R_PAREN@10688..10689 ")"
+                      PLUS@10689..10690 "+"
+                      REGEX@10690..10697 "/),\\s*/"
+                  WHITESPACE@10697..10722 "\n                     ..."
+                  PAIR@10722..10734
+                    NUMBER@10722..10723 "1"
+                    COLON@10723..10724 ":"
+                    WHITESPACE@10724..10725 " "
+                    STRING@10725..10734 "\"preproc\""
+                  WHITESPACE@10734..10759 "\n                     ..."
+                  PAIR@10759..10778
+                    NUMBER@10759..10760 "2"
+                    COLON@10760..10761 ":"
+                    WHITESPACE@10761..10762 " "
+                    TABLE@10762..10778
+                      L_CURLY@10762..10763 "{"
+                      PAIR@10763..10777
+                        IDENT@10763..10770 "include"
+                        COLON@10770..10771 ":"
+                        WHITESPACE@10771..10772 " "
+                        STRING@10772..10777 "\"top\""
+                      R_CURLY@10777..10778 "}"
+                  WHITESPACE@10778..10799 "\n                    "
+                  R_CURLY@10799..10800 "}"
+              WHITESPACE@10800..10821 "\n                    "
+              ITEM@10821..10862
+                TABLE@10821..10862
+                  L_CURLY@10821..10822 "{"
+                  PAIR@10822..10861
+                    IDENT@10822..10829 "include"
+                    COLON@10829..10830 ":"
+                    WHITESPACE@10830..10831 " "
+                    STRING@10831..10861 "\"format-macro-templat ..."
+                  R_CURLY@10861..10862 "}"
+              WHITESPACE@10862..10879 "\n                "
+              R_BRACK@10879..10880 "]"
+            WHITESPACE@10880..10893 "\n            "
+            R_CURLY@10893..10894 "}"
+        WHITESPACE@10894..10903 "\n        "
+        R_BRACK@10903..10904 "]"
+      WHITESPACE@10904..10913 "\n        "
+      ITEM@10913..16524
+        STRING@10913..10918 "\"top\""
+        COLON@10918..10919 ":"
+        WHITESPACE@10919..10920 " "
+        L_BRACK@10920..10921 "["
+        WHITESPACE@10921..10934 "\n            "
+        ITEM@10934..10955
+          TABLE@10934..10955
+            L_CURLY@10934..10935 "{"
+            PAIR@10935..10954
+              IDENT@10935..10942 "include"
+              COLON@10942..10943 ":"
+              WHITESPACE@10943..10944 " "
+              STRING@10944..10954 "\"comments\""
+            R_CURLY@10954..10955 "}"
+        WHITESPACE@10955..10968 "\n            "
+        ITEM@10968..10994
+          TABLE@10968..10994
+            L_CURLY@10968..10969 "{"
+            PAIR@10969..10993
+              IDENT@10969..10976 "include"
+              COLON@10976..10977 ":"
+              WHITESPACE@10977..10978 " "
+              STRING@10978..10993 "\"format-macros\""
+            R_CURLY@10993..10994 "}"
+        WHITESPACE@10994..11007 "\n            "
+        ITEM@11007..11027
+          TABLE@11007..11027
+            L_CURLY@11007..11008 "{"
+            PAIR@11008..11026
+              IDENT@11008..11015 "include"
+              COLON@11015..11016 ":"
+              WHITESPACE@11016..11017 " "
+              STRING@11017..11026 "\"strings\""
+            R_CURLY@11026..11027 "}"
+        WHITESPACE@11027..11041 "\n\n            "
+        ITEM@11041..11135
+          TABLE@11041..11135
+            L_CURLY@11041..11042 "{"
+            WHITESPACE@11042..11043 " "
+            COMMENT@11043..11057 "// literal neg"
+            WHITESPACE@11057..11074 "\n                "
+            PAIR@11074..11091
+              IDENT@11074..11079 "match"
+              COLON@11079..11080 ":"
+              WHITESPACE@11080..11081 " "
+              REGEX@11081..11090 "/-(?=\\d)/"
+              COMMA@11090..11091 ","
+            WHITESPACE@11091..11108 "\n                "
+            PAIR@11108..11121
+              NUMBER@11108..11109 "0"
+              COLON@11109..11110 ":"
+              WHITESPACE@11110..11111 " "
+              STRING@11111..11121 "\"operator\""
+            WHITESPACE@11121..11134 "\n            "
+            R_CURLY@11134..11135 "}"
+        WHITESPACE@11135..11149 "\n\n            "
+        ITEM@11149..11442
+          TABLE@11149..11442
+            L_CURLY@11149..11150 "{"
+            WHITESPACE@11150..11151 " "
+            COMMENT@11151..11160 "// number"
+            WHITESPACE@11160..11177 "\n                "
+            PAIR@11177..11399
+              IDENT@11177..11182 "match"
+              COLON@11182..11183 ":"
+              WHITESPACE@11183..11184 " "
+              JOIN@11184..11398
+                JOIN@11184..11392
+                  JOIN@11184..11376
+                    JOIN@11184..11357
+                      JOIN@11184..11341
+                        JOIN@11184..11287
+                          JOIN@11184..11243
+                            JOIN@11184..11239
+                              REGEX@11184..11223 "/\\b0(?:x[_a-fA-F\\d]+| ..."
+                              PLUS@11223..11224 "+"
+                              CALL@11224..11239
+                                IDENT@11224..11231 "include"
+                                L_PAREN@11231..11232 "("
+                                STRING@11232..11238 "\"isuf\""
+                                R_PAREN@11238..11239 ")"
+                            PLUS@11239..11240 "+"
+                            REGEX@11240..11243 "/?/"
+                          WHITESPACE@11243..11264 "\n                    "
+                          PLUS@11264..11265 "+"
+                          WHITESPACE@11265..11266 " "
+                          REGEX@11266..11287 "/|\\b\\d[_\\d]*\\.(?!\\d)/"
+                        WHITESPACE@11287..11308 "\n                    "
+                        PLUS@11308..11309 "+"
+                        WHITESPACE@11309..11310 " "
+                        REGEX@11310..11341 "/|\\b\\d[_\\d]*(?:\\.\\d[_ ..."
+                      PLUS@11341..11342 "+"
+                      CALL@11342..11357
+                        IDENT@11342..11349 "include"
+                        L_PAREN@11349..11350 "("
+                        STRING@11350..11356 "\"nsuf\""
+                        R_PAREN@11356..11357 ")"
+                    PLUS@11357..11358 "+"
+                    REGEX@11358..11376 "/|[eE][+-]?[_\\d]+/"
+                  PLUS@11376..11377 "+"
+                  CALL@11377..11392
+                    IDENT@11377..11384 "include"
+                    L_PAREN@11384..11385 "("
+                    STRING@11385..11391 "\"fsuf\""
+                    R_PAREN@11391..11392 ")"
+                PLUS@11392..11393 "+"
+                REGEX@11393..11398 "/?)?/"
+              COMMA@11398..11399 ","
+            WHITESPACE@11399..11416 "\n                "
+            PAIR@11416..11428
+              NUMBER@11416..11417 "0"
+              COLON@11417..11418 ":"
+              WHITESPACE@11418..11419 " "
+              STRING@11419..11427 "\"number\""
+              COMMA@11427..11428 ","
+            WHITESPACE@11428..11441 "\n            "
+            R_CURLY@11441..11442 "}"
+        WHITESPACE@11442..11456 "\n\n            "
+        ITEM@11456..11553
+          TABLE@11456..11553
+            L_CURLY@11456..11457 "{"
+            WHITESPACE@11457..11458 " "
+            COMMENT@11458..11470 "// raw ident"
+            WHITESPACE@11470..11487 "\n                "
+            PAIR@11487..11539
+              IDENT@11487..11492 "match"
+              COLON@11492..11493 ":"
+              WHITESPACE@11493..11494 " "
+              JOIN@11494..11539
+                JOIN@11494..11522
+                  REGEX@11494..11498 "/r#/"
+                  WHITESPACE@11498..11499 " "
+                  PLUS@11499..11500 "+"
+                  WHITESPACE@11500..11501 " "
+                  CALL@11501..11522
+                    IDENT@11501..11508 "include"
+                    L_PAREN@11508..11509 "("
+                    STRING@11509..11521 "\"norm-ident\""
+                    R_PAREN@11521..11522 ")"
+                WHITESPACE@11522..11523 " "
+                PLUS@11523..11524 "+"
+                WHITESPACE@11524..11525 " "
+                REGEX@11525..11539 "/(?!::|[!\\(])/"
+            WHITESPACE@11539..11552 "\n            "
+            R_CURLY@11552..11553 "}"
+        WHITESPACE@11553..11567 "\n\n            "
+        ITEM@11567..11721
+          TABLE@11567..11720
+            L_CURLY@11567..11568 "{"
+            WHITESPACE@11568..11569 " "
+            COMMENT@11569..11587 "// function define"
+            WHITESPACE@11587..11604 "\n                "
+            PAIR@11604..11645
+              IDENT@11604..11609 "match"
+              COLON@11609..11610 ":"
+              WHITESPACE@11610..11611 " "
+              JOIN@11611..11644
+                JOIN@11611..11640
+                  REGEX@11611..11623 "/\\b(fn)\\s+(/"
+                  PLUS@11623..11624 "+"
+                  CALL@11624..11640
+                    IDENT@11624..11631 "include"
+                    L_PAREN@11631..11632 "("
+                    STRING@11632..11639 "\"ident\""
+                    R_PAREN@11639..11640 ")"
+                PLUS@11640..11641 "+"
+                REGEX@11641..11644 "/)/"
+              COMMA@11644..11645 ","
+            WHITESPACE@11645..11662 "\n                "
+            PAIR@11662..11675
+              NUMBER@11662..11663 "1"
+              COLON@11663..11664 ":"
+              WHITESPACE@11664..11665 " "
+              STRING@11665..11674 "\"keyword\""
+              COMMA@11674..11675 ","
+            WHITESPACE@11675..11692 "\n                "
+            PAIR@11692..11706
+              NUMBER@11692..11693 "2"
+              COLON@11693..11694 ":"
+              WHITESPACE@11694..11695 " "
+              STRING@11695..11705 "\"funcname\""
+              COMMA@11705..11706 ","
+            WHITESPACE@11706..11719 "\n            "
+            R_CURLY@11719..11720 "}"
+          COMMA@11720..11721 ","
+        WHITESPACE@11721..11734 "\n            "
+        ITEM@11734..11894
+          TABLE@11734..11893
+            L_CURLY@11734..11735 "{"
+            WHITESPACE@11735..11736 " "
+            COMMENT@11736..11757 "// weak union keyword"
+            WHITESPACE@11757..11774 "\n                "
+            PAIR@11774..11818
+              IDENT@11774..11779 "match"
+              COLON@11779..11780 ":"
+              WHITESPACE@11780..11781 " "
+              JOIN@11781..11817
+                JOIN@11781..11813
+                  REGEX@11781..11796 "/\\b(union)\\s+(/"
+                  PLUS@11796..11797 "+"
+                  CALL@11797..11813
+                    IDENT@11797..11804 "include"
+                    L_PAREN@11804..11805 "("
+                    STRING@11805..11812 "\"ident\""
+                    R_PAREN@11812..11813 ")"
+                PLUS@11813..11814 "+"
+                REGEX@11814..11817 "/)/"
+              COMMA@11817..11818 ","
+            WHITESPACE@11818..11835 "\n                "
+            PAIR@11835..11848
+              NUMBER@11835..11836 "1"
+              COLON@11836..11837 ":"
+              WHITESPACE@11837..11838 " "
+              STRING@11838..11847 "\"keyword\""
+              COMMA@11847..11848 ","
+            WHITESPACE@11848..11865 "\n                "
+            PAIR@11865..11879
+              NUMBER@11865..11866 "2"
+              COLON@11866..11867 ":"
+              WHITESPACE@11867..11868 " "
+              STRING@11868..11878 "\"typename\""
+              COMMA@11878..11879 ","
+            WHITESPACE@11879..11892 "\n            "
+            R_CURLY@11892..11893 "}"
+          COMMA@11893..11894 ","
+        WHITESPACE@11894..11907 "\n            "
+        ITEM@11907..12121
+          TABLE@11907..12120
+            L_CURLY@11907..11908 "{"
+            WHITESPACE@11908..11909 " "
+            COMMENT@11909..11932 "// weak default keyword"
+            WHITESPACE@11932..11949 "\n                "
+            PAIR@11949..12076
+              IDENT@11949..11954 "match"
+              COLON@11954..11955 ":"
+              WHITESPACE@11955..11956 " "
+              REGEX@11956..12075 "/\\b(default)\\s+(?=(?: ..."
+              COMMA@12075..12076 ","
+            WHITESPACE@12076..12093 "\n                "
+            PAIR@12093..12106
+              NUMBER@12093..12094 "1"
+              COLON@12094..12095 ":"
+              WHITESPACE@12095..12096 " "
+              STRING@12096..12105 "\"keyword\""
+              COMMA@12105..12106 ","
+            WHITESPACE@12106..12119 "\n            "
+            R_CURLY@12119..12120 "}"
+          COMMA@12120..12121 ","
+        WHITESPACE@12121..12134 "\n            "
+        ITEM@12134..12265
+          TABLE@12134..12264
+            L_CURLY@12134..12135 "{"
+            WHITESPACE@12135..12136 " "
+            COMMENT@12136..12156 "// weak safe keyword"
+            WHITESPACE@12156..12173 "\n                "
+            PAIR@12173..12220
+              IDENT@12173..12178 "match"
+              COLON@12178..12179 ":"
+              WHITESPACE@12179..12180 " "
+              REGEX@12180..12219 "/\\b(safe)\\s+(?=(?:sta ..."
+              COMMA@12219..12220 ","
+            WHITESPACE@12220..12237 "\n                "
+            PAIR@12237..12250
+              NUMBER@12237..12238 "1"
+              COLON@12238..12239 ":"
+              WHITESPACE@12239..12240 " "
+              STRING@12240..12249 "\"keyword\""
+              COMMA@12249..12250 ","
+            WHITESPACE@12250..12263 "\n            "
+            R_CURLY@12263..12264 "}"
+          COMMA@12264..12265 ","
+        WHITESPACE@12265..12278 "\n            "
+        ITEM@12278..12394
+          TABLE@12278..12393
+            L_CURLY@12278..12279 "{"
+            WHITESPACE@12279..12280 " "
+            COMMENT@12280..12300 "// weak auto keyword"
+            WHITESPACE@12300..12317 "\n                "
+            PAIR@12317..12349
+              IDENT@12317..12322 "match"
+              COLON@12322..12323 ":"
+              WHITESPACE@12323..12324 " "
+              REGEX@12324..12348 "/\\b(auto)\\s+(?=trait\\b)/"
+              COMMA@12348..12349 ","
+            WHITESPACE@12349..12366 "\n                "
+            PAIR@12366..12379
+              NUMBER@12366..12367 "1"
+              COLON@12367..12368 ":"
+              WHITESPACE@12368..12369 " "
+              STRING@12369..12378 "\"keyword\""
+              COMMA@12378..12379 ","
+            WHITESPACE@12379..12392 "\n            "
+            R_CURLY@12392..12393 "}"
+          COMMA@12393..12394 ","
+        WHITESPACE@12394..12407 "\n            "
+        ITEM@12407..12578
+          TABLE@12407..12577
+            L_CURLY@12407..12408 "{"
+            WHITESPACE@12408..12409 " "
+            COMMENT@12409..12428 "// weak gen keyword"
+            WHITESPACE@12428..12445 "\n                "
+            PAIR@12445..12533
+              IDENT@12445..12450 "match"
+              COLON@12450..12451 ":"
+              WHITESPACE@12451..12452 " "
+              REGEX@12452..12532 "/\\b(gen)(?=\\s+(?:unsa ..."
+              COMMA@12532..12533 ","
+            WHITESPACE@12533..12550 "\n                "
+            PAIR@12550..12563
+              NUMBER@12550..12551 "1"
+              COLON@12551..12552 ":"
+              WHITESPACE@12552..12553 " "
+              STRING@12553..12562 "\"keyword\""
+              COMMA@12562..12563 ","
+            WHITESPACE@12563..12576 "\n            "
+            R_CURLY@12576..12577 "}"
+          COMMA@12577..12578 ","
+        WHITESPACE@12578..12591 "\n            "
+        ITEM@12591..12763
+          TABLE@12591..12762
+            L_CURLY@12591..12592 "{"
+            WHITESPACE@12592..12593 " "
+            COMMENT@12593..12623 "// weak &raw const|mu ..."
+            WHITESPACE@12623..12640 "\n                "
+            PAIR@12640..12687
+              IDENT@12640..12645 "match"
+              COLON@12645..12646 ":"
+              WHITESPACE@12646..12647 " "
+              REGEX@12647..12686 "/(&)\\s*(raw|pin)\\s+(? ..."
+              COMMA@12686..12687 ","
+            WHITESPACE@12687..12704 "\n                "
+            PAIR@12704..12718
+              NUMBER@12704..12705 "1"
+              COLON@12705..12706 ":"
+              WHITESPACE@12706..12707 " "
+              STRING@12707..12717 "\"operator\""
+              COMMA@12717..12718 ","
+            WHITESPACE@12718..12735 "\n                "
+            PAIR@12735..12748
+              NUMBER@12735..12736 "2"
+              COLON@12736..12737 ":"
+              WHITESPACE@12737..12738 " "
+              STRING@12738..12747 "\"keyword\""
+              COMMA@12747..12748 ","
+            WHITESPACE@12748..12761 "\n            "
+            R_CURLY@12761..12762 "}"
+          COMMA@12762..12763 ","
+        WHITESPACE@12763..12776 "\n            "
+        ITEM@12776..13017
+          TABLE@12776..13016
+            L_CURLY@12776..12777 "{"
+            WHITESPACE@12777..12778 " "
+            COMMENT@12778..12798 "// reserved keywords"
+            WHITESPACE@12798..12815 "\n                "
+            PAIR@12815..12974
+              IDENT@12815..12820 "match"
+              COLON@12820..12821 ":"
+              WHITESPACE@12821..12822 " "
+              CALL@12822..12973
+                IDENT@12822..12837 "keywordsToRegex"
+                L_PAREN@12837..12838 "("
+                WHITESPACE@12838..12859 "\n                    "
+                STRING@12859..12898 "\"abstract become box  ..."
+                WHITESPACE@12898..12919 "\n                    "
+                STRING@12919..12955 "\"priv typeof unsized  ..."
+                WHITESPACE@12955..12972 "\n                "
+                R_PAREN@12972..12973 ")"
+              COMMA@12973..12974 ","
+            WHITESPACE@12974..12991 "\n                "
+            PAIR@12991..13002
+              NUMBER@12991..12992 "0"
+              COLON@12992..12993 ":"
+              WHITESPACE@12993..12994 " "
+              STRING@12994..13001 "\"error\""
+              COMMA@13001..13002 ","
+            WHITESPACE@13002..13015 "\n            "
+            R_CURLY@13015..13016 "}"
+          COMMA@13016..13017 ","
+        WHITESPACE@13017..13030 "\n            "
+        ITEM@13030..13496
+          TABLE@13030..13495
+            L_CURLY@13030..13031 "{"
+            WHITESPACE@13031..13032 " "
+            COMMENT@13032..13050 "// strict keywords"
+            WHITESPACE@13050..13067 "\n                "
+            PAIR@13067..13451
+              IDENT@13067..13072 "match"
+              COLON@13072..13073 ":"
+              WHITESPACE@13073..13074 " "
+              CALL@13074..13450
+                IDENT@13074..13089 "keywordsToRegex"
+                L_PAREN@13089..13090 "("
+                WHITESPACE@13090..13111 "\n                    "
+                STRING@13111..13146 "\"as break const conti ..."
+                WHITESPACE@13146..13167 "\n                    "
+                STRING@13167..13198 "\"else enum extern fal ..."
+                WHITESPACE@13198..13219 "\n                    "
+                STRING@13219..13246 "\"if impl in let loop  ..."
+                WHITESPACE@13246..13267 "\n                    "
+                STRING@13267..13296 "\"mod move mut pub ref ..."
+                WHITESPACE@13296..13317 "\n                    "
+                STRING@13317..13344 "\"static struct super  ..."
+                WHITESPACE@13344..13365 "\n                    "
+                STRING@13365..13399 "\"true type unsafe use ..."
+                WHITESPACE@13399..13420 "\n                    "
+                STRING@13420..13449 "\"async await macro tr ..."
+                R_PAREN@13449..13450 ")"
+              COMMA@13450..13451 ","
+            WHITESPACE@13451..13468 "\n                "
+            PAIR@13468..13481
+              NUMBER@13468..13469 "0"
+              COLON@13469..13470 ":"
+              WHITESPACE@13470..13471 " "
+              STRING@13471..13480 "\"keyword\""
+              COMMA@13480..13481 ","
+            WHITESPACE@13481..13494 "\n            "
+            R_CURLY@13494..13495 "}"
+          COMMA@13495..13496 ","
+        WHITESPACE@13496..13509 "\n            "
+        ITEM@13509..13796
+          TABLE@13509..13795
+            L_CURLY@13509..13510 "{"
+            WHITESPACE@13510..13511 " "
+            COMMENT@13511..13518 "// type"
+            WHITESPACE@13518..13535 "\n                "
+            PAIR@13535..13754
+              IDENT@13535..13540 "match"
+              COLON@13540..13541 ":"
+              WHITESPACE@13541..13542 " "
+              CALL@13542..13753
+                IDENT@13542..13557 "keywordsToRegex"
+                L_PAREN@13557..13558 "("
+                WHITESPACE@13558..13575 "\n                "
+                STRING@13575..13586 "\"bool char\""
+                WHITESPACE@13586..13603 "\n                "
+                STRING@13603..13607 "\"fn\""
+                WHITESPACE@13607..13624 "\n                "
+                STRING@13624..13629 "\"str\""
+                WHITESPACE@13629..13646 "\n                "
+                STRING@13646..13664 "\"f16 f32 f64 f128\""
+                WHITESPACE@13664..13681 "\n                "
+                STRING@13681..13708 "\"i8 i16 i32 i64 i128  ..."
+                WHITESPACE@13708..13725 "\n                "
+                STRING@13725..13752 "\"u8 u16 u32 u64 u128  ..."
+                R_PAREN@13752..13753 ")"
+              COMMA@13753..13754 ","
+            WHITESPACE@13754..13771 "\n                "
+            PAIR@13771..13781
+              NUMBER@13771..13772 "0"
+              COLON@13772..13773 ":"
+              WHITESPACE@13773..13774 " "
+              STRING@13774..13780 "\"type\""
+              COMMA@13780..13781 ","
+            WHITESPACE@13781..13794 "\n            "
+            R_CURLY@13794..13795 "}"
+          COMMA@13795..13796 ","
+        WHITESPACE@13796..13809 "\n            "
+        ITEM@13809..14437
+          TABLE@13809..14436
+            L_CURLY@13809..13810 "{"
+            WHITESPACE@13810..13811 " "
+            COMMENT@13811..13880 "// 被预导入的结 ..."
+            WHITESPACE@13880..13897 "\n                "
+            PAIR@13897..14391
+              IDENT@13897..13902 "match"
+              COLON@13902..13903 ":"
+              WHITESPACE@13903..13904 " "
+              CALL@13904..14390
+                IDENT@13904..13919 "keywordsToRegex"
+                L_PAREN@13919..13920 "("
+                WHITESPACE@13920..13941 "\n                    "
+                STRING@13941..13997 "\"Send Sized Sync Unpi ..."
+                WHITESPACE@13997..14018 "\n                    "
+                STRING@14018..14074 "\"From Into DoubleEnde ..."
+                WHITESPACE@14074..14095 "\n                    "
+                STRING@14095..14154 "\"IntoIterator Iterato ..."
+                WHITESPACE@14154..14175 "\n                    "
+                STRING@14175..14233 "\"PartialOrd ToOwned T ..."
+                WHITESPACE@14233..14254 "\n                    "
+                STRING@14254..14319 "\"Box String Vec Optio ..."
+                WHITESPACE@14319..14340 "\n                    "
+                STRING@14340..14372 "\"AsyncFn AsyncFnMut A ..."
+                WHITESPACE@14372..14389 "\n                "
+                R_PAREN@14389..14390 ")"
+              COMMA@14390..14391 ","
+            WHITESPACE@14391..14408 "\n                "
+            PAIR@14408..14422
+              NUMBER@14408..14409 "0"
+              COLON@14409..14410 ":"
+              WHITESPACE@14410..14411 " "
+              STRING@14411..14421 "\"variable\""
+              COMMA@14421..14422 ","
+            WHITESPACE@14422..14435 "\n            "
+            R_CURLY@14435..14436 "}"
+          COMMA@14436..14437 ","
+        WHITESPACE@14437..14450 "\n            "
+        ITEM@14450..14545
+          TABLE@14450..14544
+            L_CURLY@14450..14451 "{"
+            WHITESPACE@14451..14452 " "
+            COMMENT@14452..14464 "// Self type"
+            WHITESPACE@14464..14481 "\n                "
+            PAIR@14481..14499
+              IDENT@14481..14486 "match"
+              COLON@14486..14487 ":"
+              WHITESPACE@14487..14488 " "
+              REGEX@14488..14498 "/\\bSelf\\b/"
+              COMMA@14498..14499 ","
+            WHITESPACE@14499..14516 "\n                "
+            PAIR@14516..14530
+              NUMBER@14516..14517 "0"
+              COLON@14517..14518 ":"
+              WHITESPACE@14518..14519 " "
+              STRING@14519..14529 "\"variable\""
+              COMMA@14529..14530 ","
+            WHITESPACE@14530..14543 "\n            "
+            R_CURLY@14543..14544 "}"
+          COMMA@14544..14545 ","
+        WHITESPACE@14545..14558 "\n            "
+        ITEM@14558..14654
+          TABLE@14558..14653
+            L_CURLY@14558..14559 "{"
+            WHITESPACE@14559..14560 " "
+            COMMENT@14560..14573 "// self value"
+            WHITESPACE@14573..14590 "\n                "
+            PAIR@14590..14608
+              IDENT@14590..14595 "match"
+              COLON@14595..14596 ":"
+              WHITESPACE@14596..14597 " "
+              REGEX@14597..14607 "/\\bself\\b/"
+              COMMA@14607..14608 ","
+            WHITESPACE@14608..14625 "\n                "
+            PAIR@14625..14639
+              NUMBER@14625..14626 "0"
+              COLON@14626..14627 ":"
+              WHITESPACE@14627..14628 " "
+              STRING@14628..14638 "\"constant\""
+              COMMA@14638..14639 ","
+            WHITESPACE@14639..14652 "\n            "
+            R_CURLY@14652..14653 "}"
+          COMMA@14653..14654 ","
+        WHITESPACE@14654..14668 "\n\n            "
+        ITEM@14668..14760
+          TABLE@14668..14759
+            L_CURLY@14668..14669 "{"
+            WHITESPACE@14669..14670 " "
+            COMMENT@14670..14683 "// path-delim"
+            WHITESPACE@14683..14700 "\n                "
+            PAIR@14700..14712
+              IDENT@14700..14705 "match"
+              COLON@14705..14706 ":"
+              WHITESPACE@14706..14707 " "
+              REGEX@14707..14711 "/::/"
+              COMMA@14711..14712 ","
+            WHITESPACE@14712..14729 "\n                "
+            PAIR@14729..14745
+              NUMBER@14729..14730 "0"
+              COLON@14730..14731 ":"
+              WHITESPACE@14731..14732 " "
+              STRING@14732..14744 "\"path-delim\""
+              COMMA@14744..14745 ","
+            WHITESPACE@14745..14758 "\n            "
+            R_CURLY@14758..14759 "}"
+          COMMA@14759..14760 ","
+        WHITESPACE@14760..14773 "\n            "
+        ITEM@14773..14904
+          TABLE@14773..14903
+            L_CURLY@14773..14774 "{"
+            WHITESPACE@14774..14775 " "
+            COMMENT@14775..14801 "// module like path ( ..."
+            WHITESPACE@14801..14818 "\n                "
+            PAIR@14818..14857
+              IDENT@14818..14823 "match"
+              COLON@14823..14824 ":"
+              WHITESPACE@14824..14825 " "
+              JOIN@14825..14856
+                CALL@14825..14841
+                  IDENT@14825..14832 "include"
+                  L_PAREN@14832..14833 "("
+                  STRING@14833..14840 "\"ident\""
+                  R_PAREN@14840..14841 ")"
+                WHITESPACE@14841..14842 " "
+                PLUS@14842..14843 "+"
+                WHITESPACE@14843..14844 " "
+                REGEX@14844..14856 "/(?=::[^<])/"
+              COMMA@14856..14857 ","
+            WHITESPACE@14857..14874 "\n                "
+            PAIR@14874..14889
+              NUMBER@14874..14875 "0"
+              COLON@14875..14876 ":"
+              WHITESPACE@14876..14877 " "
+              STRING@14877..14888 "\"namespace\""
+              COMMA@14888..14889 ","
+            WHITESPACE@14889..14902 "\n            "
+            R_CURLY@14902..14903 "}"
+          COMMA@14903..14904 ","
+        WHITESPACE@14904..14917 "\n            "
+        ITEM@14917..15051
+          TABLE@14917..15050
+            L_CURLY@14917..14918 "{"
+            WHITESPACE@14918..14919 " "
+            COMMENT@14919..14949 "// call function and  ..."
+            WHITESPACE@14949..14966 "\n                "
+            PAIR@14966..15005
+              IDENT@14966..14971 "match"
+              COLON@14971..14972 ":"
+              WHITESPACE@14972..14973 " "
+              JOIN@14973..15004
+                CALL@14973..14989
+                  IDENT@14973..14980 "include"
+                  L_PAREN@14980..14981 "("
+                  STRING@14981..14988 "\"ident\""
+                  R_PAREN@14988..14989 ")"
+                WHITESPACE@14989..14990 " "
+                PLUS@14990..14991 "+"
+                WHITESPACE@14991..14992 " "
+                REGEX@14992..15004 "/(?=::<|\\()/"
+              COMMA@15004..15005 ","
+            WHITESPACE@15005..15022 "\n                "
+            PAIR@15022..15036
+              NUMBER@15022..15023 "0"
+              COLON@15023..15024 ":"
+              WHITESPACE@15024..15025 " "
+              STRING@15025..15035 "\"funcname\""
+              COMMA@15035..15036 ","
+            WHITESPACE@15036..15049 "\n            "
+            R_CURLY@15049..15050 "}"
+          COMMA@15050..15051 ","
+        WHITESPACE@15051..15064 "\n            "
+        ITEM@15064..15176
+          TABLE@15064..15175
+            L_CURLY@15064..15065 "{"
+            WHITESPACE@15065..15066 " "
+            COMMENT@15066..15079 "// call macro"
+            WHITESPACE@15079..15096 "\n                "
+            PAIR@15096..15131
+              IDENT@15096..15101 "match"
+              COLON@15101..15102 ":"
+              WHITESPACE@15102..15103 " "
+              JOIN@15103..15130
+                CALL@15103..15119
+                  IDENT@15103..15110 "include"
+                  L_PAREN@15110..15111 "("
+                  STRING@15111..15118 "\"ident\""
+                  R_PAREN@15118..15119 ")"
+                WHITESPACE@15119..15120 " "
+                PLUS@15120..15121 "+"
+                WHITESPACE@15121..15122 " "
+                REGEX@15122..15130 "/!(?!=)/"
+              COMMA@15130..15131 ","
+            WHITESPACE@15131..15148 "\n                "
+            PAIR@15148..15161
+              NUMBER@15148..15149 "0"
+              COLON@15149..15150 ":"
+              WHITESPACE@15150..15151 " "
+              STRING@15151..15160 "\"preproc\""
+              COMMA@15160..15161 ","
+            WHITESPACE@15161..15174 "\n            "
+            R_CURLY@15174..15175 "}"
+          COMMA@15175..15176 ","
+        WHITESPACE@15176..15189 "\n            "
+        ITEM@15189..15217
+          TABLE@15189..15217
+            L_CURLY@15189..15190 "{"
+            PAIR@15190..15216
+              IDENT@15190..15197 "include"
+              COLON@15197..15198 ":"
+              WHITESPACE@15198..15199 " "
+              STRING@15199..15216 "\"decl-macro-meta\""
+            R_CURLY@15216..15217 "}"
+        WHITESPACE@15217..15230 "\n            "
+        ITEM@15230..15353
+          TABLE@15230..15352
+            L_CURLY@15230..15231 "{"
+            WHITESPACE@15231..15232 " "
+            COMMENT@15232..15261 "// attribute proc-mac ..."
+            WHITESPACE@15261..15278 "\n                "
+            PAIR@15278..15308
+              IDENT@15278..15283 "match"
+              COLON@15283..15284 ":"
+              WHITESPACE@15284..15285 " "
+              JOIN@15285..15307
+                REGEX@15285..15288 "/#/"
+                WHITESPACE@15288..15289 " "
+                PLUS@15289..15290 "+"
+                WHITESPACE@15290..15291 " "
+                CALL@15291..15307
+                  IDENT@15291..15298 "include"
+                  L_PAREN@15298..15299 "("
+                  STRING@15299..15306 "\"ident\""
+                  R_PAREN@15306..15307 ")"
+              COMMA@15307..15308 ","
+            WHITESPACE@15308..15325 "\n                "
+            PAIR@15325..15338
+              NUMBER@15325..15326 "0"
+              COLON@15326..15327 ":"
+              WHITESPACE@15327..15328 " "
+              STRING@15328..15337 "\"preproc\""
+              COMMA@15337..15338 ","
+            WHITESPACE@15338..15351 "\n            "
+            R_CURLY@15351..15352 "}"
+          COMMA@15352..15353 ","
+        WHITESPACE@15353..15366 "\n            "
+        ITEM@15366..15623
+          TABLE@15366..15622
+            L_CURLY@15366..15367 "{"
+            WHITESPACE@15367..15368 " "
+            COMMENT@15368..15391 "// attribute proc-macro"
+            WHITESPACE@15391..15408 "\n                "
+            PAIR@15408..15432
+              IDENT@15408..15413 "start"
+              COLON@15413..15414 ":"
+              WHITESPACE@15414..15415 " "
+              TABLE@15415..15431
+                L_CURLY@15415..15416 "{"
+                PAIR@15416..15430
+                  IDENT@15416..15421 "match"
+                  COLON@15421..15422 ":"
+                  WHITESPACE@15422..15423 " "
+                  REGEX@15423..15430 "/#!?\\[/"
+                R_CURLY@15430..15431 "}"
+              COMMA@15431..15432 ","
+            WHITESPACE@15432..15449 "\n                "
+            PAIR@15449..15468
+              IDENT@15449..15452 "end"
+              COLON@15452..15453 ":"
+              WHITESPACE@15453..15454 " "
+              TABLE@15454..15467
+                L_CURLY@15454..15455 "{"
+                PAIR@15455..15466
+                  IDENT@15455..15460 "match"
+                  COLON@15460..15461 ":"
+                  WHITESPACE@15461..15462 " "
+                  REGEX@15462..15466 "/\\]/"
+                R_CURLY@15466..15467 "}"
+              COMMA@15467..15468 ","
+            WHITESPACE@15468..15485 "\n                "
+            PAIR@15485..15502
+              IDENT@15485..15490 "style"
+              COLON@15490..15491 ":"
+              WHITESPACE@15491..15492 " "
+              STRING@15492..15501 "\"preproc\""
+              COMMA@15501..15502 ","
+            WHITESPACE@15502..15519 "\n                "
+            PAIR@15519..15608
+              IDENT@15519..15527 "contains"
+              COLON@15527..15528 ":"
+              WHITESPACE@15528..15529 " "
+              L_BRACK@15529..15530 "["
+              WHITESPACE@15530..15551 "\n                    "
+              ITEM@15551..15590
+                TABLE@15551..15589
+                  L_CURLY@15551..15552 "{"
+                  PAIR@15552..15588
+                    IDENT@15552..15559 "include"
+                    COLON@15559..15560 ":"
+                    WHITESPACE@15560..15561 " "
+                    STRING@15561..15588 "\"attribute-proc-macro ..."
+                  R_CURLY@15588..15589 "}"
+                COMMA@15589..15590 ","
+              WHITESPACE@15590..15607 "\n                "
+              R_BRACK@15607..15608 "]"
+            WHITESPACE@15608..15621 "\n            "
+            R_CURLY@15621..15622 "}"
+          COMMA@15622..15623 ","
+        WHITESPACE@15623..15636 "\n            "
+        ITEM@15636..15742
+          TABLE@15636..15741
+            L_CURLY@15636..15637 "{"
+            WHITESPACE@15637..15638 " "
+            COMMENT@15638..15651 "// loop label"
+            WHITESPACE@15651..15668 "\n                "
+            PAIR@15668..15700
+              IDENT@15668..15673 "match"
+              COLON@15673..15674 ":"
+              WHITESPACE@15674..15675 " "
+              JOIN@15675..15699
+                JOIN@15675..15695
+                  REGEX@15675..15678 "/'/"
+                  PLUS@15678..15679 "+"
+                  CALL@15679..15695
+                    IDENT@15679..15686 "include"
+                    L_PAREN@15686..15687 "("
+                    STRING@15687..15694 "\"ident\""
+                    R_PAREN@15694..15695 ")"
+                PLUS@15695..15696 "+"
+                REGEX@15696..15699 "/:/"
+              COMMA@15699..15700 ","
+            WHITESPACE@15700..15717 "\n                "
+            PAIR@15717..15727
+              NUMBER@15717..15718 "0"
+              COLON@15718..15719 ":"
+              WHITESPACE@15719..15720 " "
+              STRING@15720..15727 "\"label\""
+            WHITESPACE@15727..15740 "\n            "
+            R_CURLY@15740..15741 "}"
+          COMMA@15741..15742 ","
+        WHITESPACE@15742..15755 "\n            "
+        ITEM@15755..15870
+          TABLE@15755..15869
+            L_CURLY@15755..15756 "{"
+            WHITESPACE@15756..15757 " "
+            COMMENT@15757..15768 "// lifetime"
+            WHITESPACE@15768..15785 "\n                "
+            PAIR@15785..15829
+              IDENT@15785..15790 "match"
+              COLON@15790..15791 ":"
+              WHITESPACE@15791..15792 " "
+              JOIN@15792..15828
+                JOIN@15792..15815
+                  REGEX@15792..15798 "/'(?:/"
+                  PLUS@15798..15799 "+"
+                  CALL@15799..15815
+                    IDENT@15799..15806 "include"
+                    L_PAREN@15806..15807 "("
+                    STRING@15807..15814 "\"ident\""
+                    R_PAREN@15814..15815 ")"
+                PLUS@15815..15816 "+"
+                REGEX@15816..15828 "/|_\\b)(?!')/"
+              COMMA@15828..15829 ","
+            WHITESPACE@15829..15846 "\n                "
+            PAIR@15846..15855
+              NUMBER@15846..15847 "0"
+              COLON@15847..15848 ":"
+              WHITESPACE@15848..15849 " "
+              STRING@15849..15855 "\"meta\""
+            WHITESPACE@15855..15868 "\n            "
+            R_CURLY@15868..15869 "}"
+          COMMA@15869..15870 ","
+        WHITESPACE@15870..15884 "\n\n            "
+        ITEM@15884..16137
+          TABLE@15884..16136
+            L_CURLY@15884..15885 "{"
+            WHITESPACE@15885..15886 " "
+            COMMENT@15886..15907 "// 一些突出符号"
+            WHITESPACE@15907..15924 "\n                "
+            PAIR@15924..16061
+              IDENT@15924..15929 "match"
+              COLON@15929..15930 ":"
+              WHITESPACE@15930..15931 " "
+              REGEX@15931..16060 "/([?]|&&|\\|\\|(?![ \\t] ..."
+              COMMA@16060..16061 ","
+            WHITESPACE@16061..16078 "\n                "
+            PAIR@16078..16091
+              NUMBER@16078..16079 "1"
+              COLON@16079..16080 ":"
+              WHITESPACE@16080..16081 " "
+              STRING@16081..16090 "\"keyword\""
+              COMMA@16090..16091 ","
+            WHITESPACE@16091..16108 "\n                "
+            PAIR@16108..16122
+              NUMBER@16108..16109 "2"
+              COLON@16109..16110 ":"
+              WHITESPACE@16110..16111 " "
+              STRING@16111..16121 "\"operator\""
+              COMMA@16121..16122 ","
+            WHITESPACE@16122..16135 "\n            "
+            R_CURLY@16135..16136 "}"
+          COMMA@16136..16137 ","
+        WHITESPACE@16137..16150 "\n            "
+        ITEM@16150..16259
+          TABLE@16150..16259
+            L_CURLY@16150..16151 "{"
+            WHITESPACE@16151..16152 " "
+            COMMENT@16152..16176 "// 比较相关运算符"
+            WHITESPACE@16176..16193 "\n                "
+            PAIR@16193..16215
+              IDENT@16193..16198 "match"
+              COLON@16198..16199 ":"
+              WHITESPACE@16199..16200 " "
+              REGEX@16200..16214 "/[<!>=]=|[<>]/"
+              COMMA@16214..16215 ","
+            WHITESPACE@16215..16232 "\n                "
+            PAIR@16232..16245
+              NUMBER@16232..16233 "0"
+              COLON@16233..16234 ":"
+              WHITESPACE@16234..16235 " "
+              STRING@16235..16245 "\"operator\""
+            WHITESPACE@16245..16258 "\n            "
+            R_CURLY@16258..16259 "}"
+        WHITESPACE@16259..16272 "\n            "
+        ITEM@16272..16388
+          TABLE@16272..16387
+            L_CURLY@16272..16273 "{"
+            WHITESPACE@16273..16274 " "
+            COMMENT@16274..16295 "// 一些前导符号"
+            WHITESPACE@16295..16312 "\n                "
+            PAIR@16312..16342
+              IDENT@16312..16317 "match"
+              COLON@16317..16318 ":"
+              WHITESPACE@16318..16319 " "
+              REGEX@16319..16341 "/([&~@*!])(?![)= \\s])/"
+              COMMA@16341..16342 ","
+            WHITESPACE@16342..16359 "\n                "
+            PAIR@16359..16373
+              NUMBER@16359..16360 "1"
+              COLON@16360..16361 ":"
+              WHITESPACE@16361..16362 " "
+              STRING@16362..16372 "\"operator\""
+              COMMA@16372..16373 ","
+            WHITESPACE@16373..16386 "\n            "
+            R_CURLY@16386..16387 "}"
+          COMMA@16387..16388 ","
+        WHITESPACE@16388..16401 "\n            "
+        ITEM@16401..16514
+          TABLE@16401..16514
+            L_CURLY@16401..16402 "{"
+            WHITESPACE@16402..16403 " "
+            COMMENT@16403..16427 "// 一些运算及赋值"
+            WHITESPACE@16427..16444 "\n                "
+            PAIR@16444..16469
+              IDENT@16444..16449 "match"
+              COLON@16449..16450 ":"
+              WHITESPACE@16450..16451 " "
+              REGEX@16451..16469 "/[+\\-*\\/%^&|]=?|=/"
+            WHITESPACE@16469..16486 "\n                "
+            PAIR@16486..16500
+              NUMBER@16486..16487 "0"
+              COLON@16487..16488 ":"
+              WHITESPACE@16488..16489 " "
+              STRING@16489..16499 "\"keyword2\""
+              COMMA@16499..16500 ","
+            WHITESPACE@16500..16513 "\n            "
+            R_CURLY@16513..16514 "}"
+        WHITESPACE@16514..16523 "\n        "
+        R_BRACK@16523..16524 "]"
+      WHITESPACE@16524..16529 "\n    "
+      R_BRACK@16529..16530 "]"
+    WHITESPACE@16530..16536 "\n\n    "
+    PAIR@16536..16683
+      IDENT@16536..16544 "contains"
+      COLON@16544..16545 ":"
+      WHITESPACE@16545..16546 " "
+      L_BRACK@16546..16547 "["
+      WHITESPACE@16547..16556 "\n        "
+      ITEM@16556..16651
+        TABLE@16556..16651
+          L_CURLY@16556..16557 "{"
+          WHITESPACE@16557..16558 " "
+          COMMENT@16558..16573 "// rust shebang"
+          WHITESPACE@16573..16586 "\n            "
+          PAIR@16586..16616
+            IDENT@16586..16591 "match"
+            COLON@16591..16592 ":"
+            WHITESPACE@16592..16593 " "
+            REGEX@16593..16615 "/^#![^\\[\\r\\n][^\\r\\n]*/"
+            COMMA@16615..16616 ","
+          WHITESPACE@16616..16629 "\n            "
+          PAIR@16629..16641
+            NUMBER@16629..16630 "0"
+            COLON@16630..16631 ":"
+            WHITESPACE@16631..16632 " "
+            STRING@16632..16641 "\"comment\""
+          WHITESPACE@16641..16650 "\n        "
+          R_CURLY@16650..16651 "}"
+      WHITESPACE@16651..16660 "\n        "
+      ITEM@16660..16676
+        TABLE@16660..16676
+          L_CURLY@16660..16661 "{"
+          PAIR@16661..16675
+            IDENT@16661..16668 "include"
+            COLON@16668..16669 ":"
+            WHITESPACE@16669..16670 " "
+            STRING@16670..16675 "\"top\""
+          R_CURLY@16675..16676 "}"
+      WHITESPACE@16676..16681 "\n    "
+      R_BRACK@16681..16682 "]"
+      COMMA@16682..16683 ","
+    WHITESPACE@16683..16684 "\n"
+    R_CURLY@16684..16685 "}"
+  WHITESPACE@16685..16686 "\n"

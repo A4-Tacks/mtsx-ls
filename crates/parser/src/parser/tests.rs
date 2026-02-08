@@ -1,5 +1,5 @@
 use std::fmt::Write;
-use expect_test::{Expect, expect};
+use expect_test::{expect, expect_file};
 
 use super::*;
 
@@ -115,8 +115,33 @@ fn test_apply_inline_lints() {
     "#]].assert_debug_eq(&apply_inline_lints("a\n", vec![]));
 }
 
+trait ExpectLike {
+    #[track_caller]
+    fn assert_eq(&self, actual: &str);
+
+    #[expect(dead_code)]
+    #[track_caller]
+    fn assert_debug_eq(&self, actual: &impl std::fmt::Debug);
+}
+impl ExpectLike for expect_test::Expect {
+    fn assert_eq(&self, actual: &str) {
+        self.assert_eq(actual);
+    }
+    fn assert_debug_eq(&self, actual: &impl std::fmt::Debug) {
+        self.assert_debug_eq(actual);
+    }
+}
+impl ExpectLike for expect_test::ExpectFile {
+    fn assert_eq(&self, actual: &str) {
+        self.assert_eq(actual);
+    }
+    fn assert_debug_eq(&self, actual: &impl std::fmt::Debug) {
+        self.assert_debug_eq(actual);
+    }
+}
+
 #[track_caller]
-fn check(src: &str, expect: Expect) {
+fn check(src: &str, expect: impl ExpectLike) {
     let clean_src = &clean_inline_lints(src);
 
     let mut parser = Parser::new(clean_src);
@@ -434,4 +459,12 @@ fn unexpected_top_input() {
               WHITESPACE@43..52 "\n        "
         "#]],
     );
+}
+
+#[test]
+fn full_work() {
+    let src = include_str!("./test_datas/rust-syntax.mtsx");
+    let expect = expect_file!["./test_datas/rust-syntax.rast"];
+
+    check(src, expect);
 }
