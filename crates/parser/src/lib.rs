@@ -1,4 +1,5 @@
 mod lexer;
+pub mod parser;
 
 pub type SyntaxNode = rowan::SyntaxNode<Language>;
 pub type SyntaxToken = rowan::SyntaxToken<Language>;

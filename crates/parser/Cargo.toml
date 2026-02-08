@@ -6,4 +6,7 @@ edition = "2024"
 [dependencies]
 rowan.workspace = true
 char-classes.workspace = true
-expect-test = "1.5.1"
+expect-test.workspace = true
+text-size.workspace = true
+dissimilar.workspace = true
+either.workspace = true
