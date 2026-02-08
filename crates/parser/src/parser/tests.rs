@@ -318,10 +318,12 @@ fn parse_array() {
                   WHITESPACE@22..23 " "
                   L_BRACK@23..24 "["
                   ITEM@24..32
-                    STRING@24..27 "\"x\""
+                    LITERAL@24..27
+                      STRING@24..27 "\"x\""
                     COLON@27..28 ":"
                     WHITESPACE@28..29 " "
-                    REGEX@29..32 "/a/"
+                    LITERAL@29..32
+                      REGEX@29..32 "/a/"
                   R_BRACK@32..33 "]"
                 WHITESPACE@33..46 "\n            "
                 PAIR@46..64
@@ -336,7 +338,8 @@ fn parse_array() {
                         IDENT@58..59 "x"
                         COLON@59..60 ":"
                         WHITESPACE@60..61 " "
-                        NUMBER@61..62 "2"
+                        LITERAL@61..62
+                          NUMBER@61..62 "2"
                       R_CURLY@62..63 "}"
                   R_BRACK@63..64 "]"
                 WHITESPACE@64..73 "\n        "
@@ -367,11 +370,13 @@ fn parse_values() {
                   JOIN@21..83
                     JOIN@21..47
                       JOIN@21..30
-                        REGEX@21..24 "/a/"
+                        LITERAL@21..24
+                          REGEX@21..24 "/a/"
                         WHITESPACE@24..25 " "
                         PLUS@25..26 "+"
                         WHITESPACE@26..27 " "
-                        STRING@27..30 "\"b\""
+                        LITERAL@27..30
+                          STRING@27..30 "\"b\""
                       WHITESPACE@30..31 " "
                       PLUS@31..32 "+"
                       WHITESPACE@32..33 " "
@@ -396,7 +401,8 @@ fn parse_values() {
                   IDENT@96..102 "format"
                   COLON@102..103 ":"
                   WHITESPACE@103..104 " "
-                  BUILTIN@104..113 "#BUILTIN#"
+                  LITERAL@104..113
+                    BUILTIN@104..113 "#BUILTIN#"
                 WHITESPACE@113..126 "\n            "
                 PAIR@126..182
                   IDENT@126..131 "color"
@@ -405,12 +411,14 @@ fn parse_values() {
                   L_BRACK@133..134 "["
                   WHITESPACE@134..151 "\n                "
                   ITEM@151..160
-                    COLOR@151..158 "#ff0000"
+                    LITERAL@151..158
+                      COLOR@151..158 "#ff0000"
                     WHITESPACE@158..159 " "
                     R_ANGLE@159..160 ">"
                   WHITESPACE@160..161 " "
                   ITEM@161..168
-                    STRING@161..168 "\"color\""
+                    LITERAL@161..168
+                      STRING@161..168 "\"color\""
                   WHITESPACE@168..181 "\n            "
                   R_BRACK@181..182 "]"
                 WHITESPACE@182..191 "\n        "
@@ -449,7 +457,8 @@ fn unexpected_top_input() {
                   IDENT@25..28 "bar"
                   COLON@28..29 ":"
                   WHITESPACE@29..30 " "
-                  NUMBER@30..31 "3"
+                  LITERAL@30..31
+                    NUMBER@30..31 "3"
                 R_CURLY@31..32 "}"
               WHITESPACE@32..41 "\n        "
               ERROR@41..42

@@ -15,6 +15,9 @@ expect-test = "1.5.1"
 text-size = "1.1.1"
 dissimilar = "1.0.10"
 either = "1.15.0"
+line-column = { version = "0.3.1", features = ["span"] }
 parser = { version = "*", path = "crates/parser" }
 syntax = { version = "*", path = "crates/syntax" }
-line-column = { version = "0.3.1", features = ["span"] }
+
+[profile.dev.package]
+dissimilar.opt-level = 3

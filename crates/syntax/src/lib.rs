@@ -1,6 +1,8 @@
 use line_column::span::Span;
 pub use parser::{SyntaxKind, SyntaxNode, SyntaxToken, T, TextSize, TextRange};
 
+pub mod ast;
+
 pub fn parse_file(src: &str) -> (SyntaxNode, Vec<(Span, String)>) {
     let mut parser = parser::parser::Parser::new(src);
     let full_span = Span::new_full(src);

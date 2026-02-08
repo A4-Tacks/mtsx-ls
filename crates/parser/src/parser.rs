@@ -8,7 +8,8 @@ use SyntaxKind::*;
 // TABLE        = "{" PAIR* "}"
 // PAIR         = key ":" value [","]
 // key          = IDENT | NUMBER
-// value        = JOIN | TABLE | ARRAY | BUILTIN | STRING | NUMBER | REGEX | MARK | COLOR | CALL | IDENT
+// value        = JOIN | TABLE | ARRAY | LITERAL | CALL
+// LITERAL      = BUILTIN | STRING | NUMBER | REGEX | MARK | COLOR | IDENT
 // JOIN         = value "+" value
 // ARRAY        = "{" ITEM "}"
 // ITEM         = value [">"] [":" value] [","]
@@ -136,7 +137,11 @@ impl<'input> Parser<'input> {
                     self.report_error(format_args!("unexpected {}, expected value", kind.human_readable()));
                 }
                 IDENT => self.ident_or_call(),
-                BUILTIN | STRING | NUMBER | REGEX | MARK | COLOR => self.bump(kind),
+                BUILTIN | STRING | NUMBER | REGEX | MARK | COLOR => {
+                    let mark = self.mark();
+                    self.bump(kind);
+                    self.node(LITERAL, mark);
+                },
                 _ => {
                     self.bump_error(format_args!("unexpected {}, expected value", kind.human_readable()));
                 }
@@ -190,6 +195,8 @@ impl<'input> Parser<'input> {
             }
             self.bump_or_expect(R_PAREN);
             self.node(CALL, mark);
+        } else {
+            self.node(LITERAL, mark);
         }
     }
 

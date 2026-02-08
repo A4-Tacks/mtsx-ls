@@ -1,4 +1,6 @@
 pub use text_size::{TextRange, TextSize};
+pub use rowan::ast::{self, AstNode, support};
+pub use rowan::NodeOrToken;
 
 mod lexer;
 pub mod parser;
@@ -31,6 +33,7 @@ pub enum SyntaxKind {
     JOIN,
     CALL,
     ITEM,
+    LITERAL,
 
     IDENT,   // a
     STRING,  // "a"
@@ -83,6 +86,7 @@ impl SyntaxKind {
             SyntaxKind::JOIN => "expr",
             SyntaxKind::CALL => "call",
             SyntaxKind::ITEM => "item",
+            SyntaxKind::LITERAL => "literal",
             SyntaxKind::IDENT => "ident",
             SyntaxKind::STRING => "string",
             SyntaxKind::REGEX => "regex",
