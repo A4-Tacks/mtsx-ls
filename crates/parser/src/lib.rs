@@ -13,8 +13,7 @@ impl rowan::Language for Language {
     }
 
     fn kind_from_raw(raw: rowan::SyntaxKind) -> Self::Kind {
-        assert!(raw.0 <= Self::Kind::ERROR as u16, "{raw:?}");
-        unsafe { std::mem::transmute::<u16, Self::Kind>(raw.0) }
+        raw.into()
     }
 }
 
@@ -22,9 +21,13 @@ impl rowan::Language for Language {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u16)]
 pub enum SyntaxKind {
-    TABLE = 0,
+    SOURCE_FILE = 0,
+    TABLE,
     ARRAY,
     PAIR,
+    JOIN,
+    CALL,
+    ITEM,
 
     IDENT,   // a
     STRING,  // "a"
@@ -37,21 +40,68 @@ pub enum SyntaxKind {
 
     COMMA,
     COLON,
+    PLUS,
     L_CURLY,
     R_CURLY,
     L_BRACK,
     R_BRACK,
     L_PAREN,
     R_PAREN,
+    R_ANGLE,
 
     WHITESPACE,
     COMMENT,
 
     ERROR,
 }
+
 impl From<SyntaxKind> for rowan::SyntaxKind {
     fn from(value: SyntaxKind) -> Self {
         rowan::SyntaxKind(value as u16)
+    }
+}
+impl From<rowan::SyntaxKind> for SyntaxKind {
+    fn from(raw: rowan::SyntaxKind) -> Self {
+        assert!(raw.0 <= Self::ERROR as u16, "{raw:?}");
+        unsafe { std::mem::transmute::<u16, Self>(raw.0) }
+    }
+}
+impl SyntaxKind {
+    pub fn is_trivia(self) -> bool {
+        matches!(self, Self::COMMENT | Self::WHITESPACE)
+    }
+
+    pub fn human_readable(self) -> &'static str {
+        match self {
+            SyntaxKind::SOURCE_FILE => "source file",
+            SyntaxKind::TABLE => "table",
+            SyntaxKind::ARRAY => "array",
+            SyntaxKind::PAIR => "pair",
+            SyntaxKind::JOIN => "expr",
+            SyntaxKind::CALL => "call",
+            SyntaxKind::ITEM => "item",
+            SyntaxKind::IDENT => "ident",
+            SyntaxKind::STRING => "string",
+            SyntaxKind::REGEX => "regex",
+            SyntaxKind::NUMBER => "number",
+            SyntaxKind::COLOR => "color",
+            SyntaxKind::BUILTIN => "builtin",
+            SyntaxKind::MARK => "mark",
+            SyntaxKind::STYLE => "style",
+            SyntaxKind::COMMA => "comma",
+            SyntaxKind::COLON => "colon",
+            SyntaxKind::PLUS => "`+`",
+            SyntaxKind::L_CURLY => "`{`",
+            SyntaxKind::R_CURLY => "`}`",
+            SyntaxKind::L_BRACK => "`[`",
+            SyntaxKind::R_BRACK => "`]`",
+            SyntaxKind::L_PAREN => "`(`",
+            SyntaxKind::R_PAREN => "`)`",
+            SyntaxKind::R_ANGLE => "`>`",
+            SyntaxKind::WHITESPACE => "whitespace",
+            SyntaxKind::COMMENT => "comment",
+            SyntaxKind::ERROR => "error token",
+        }
     }
 }
 
@@ -60,6 +110,8 @@ impl From<SyntaxKind> for rowan::SyntaxKind {
 macro_rules! T {
     (,)   => { $crate::SyntaxKind::COMMA };
     (:)   => { $crate::SyntaxKind::COLON };
+    (+)   => { $crate::SyntaxKind::PLUS };
+    (>)   => { $crate::SyntaxKind::R_ANGLE };
     ('{') => { $crate::SyntaxKind::L_CURLY };
     ('}') => { $crate::SyntaxKind::R_CURLY };
     ('[') => { $crate::SyntaxKind::L_BRACK };

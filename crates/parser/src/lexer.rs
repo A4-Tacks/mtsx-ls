@@ -89,6 +89,8 @@ fn lex<'input>(source: &mut &'input str) -> Option<(SyntaxKind, &'input str)> {
         let syntax_kind = match ch {
             ':' => T![:],
             ',' => T![,],
+            '+' => T![+],
+            '>' => T![>],
             '{' => T!['{'],
             '}' => T!['}'],
             '[' => T!['['],
@@ -106,11 +108,12 @@ fn lex<'input>(source: &mut &'input str) -> Option<(SyntaxKind, &'input str)> {
 pub struct Lexer<'input> {
     source: &'input str,
     current: Option<(SyntaxKind, &'input str)>,
+    index: usize,
 }
 
 impl<'input> Lexer<'input> {
     pub fn new(source: &'input str) -> Self {
-        Self { source, current: None }
+        Self { source, current: None, index: 0 }
     }
 
     pub fn current(&mut self) -> Option<(SyntaxKind, &'input str)> {
@@ -131,7 +134,13 @@ impl<'input> Lexer<'input> {
 
     pub fn bump_any(&mut self) -> bool {
         self.current();
-        self.current.take().is_some()
+        self.current.take()
+            .inspect(|(_, content)| self.index += content.len())
+            .is_some()
+    }
+
+    pub fn index(&self) -> usize {
+        self.index
     }
 }
 
@@ -224,7 +233,7 @@ mod tests {
     fn full() {
         check(r#"
             ident"string"/regex/234#ff1b1B<mark>#builtin#@style
-            ,:[]{}()// comment
+            ,:[]{}()+// comment
         "#, expect![[r##"
             WHITESPACE "\n            "
             IDENT      "ident"
@@ -244,6 +253,7 @@ mod tests {
             R_CURLY    "}"
             L_PAREN    "("
             R_PAREN    ")"
+            PLUS       "+"
             COMMENT    "// comment"
             WHITESPACE "\n        "
         "##]]);
@@ -258,6 +268,7 @@ mod tests {
             #b##b#
             <mark><mark>
             (()){{}}[[]]
+            >
         "#, expect![[r##"
             WHITESPACE "\n            "
             STYLE      "@a"
@@ -287,6 +298,8 @@ mod tests {
             L_BRACK    "["
             R_BRACK    "]"
             R_BRACK    "]"
+            WHITESPACE "\n            "
+            R_ANGLE    ">"
             WHITESPACE "\n        "
         "##]]);
     }
