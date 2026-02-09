@@ -54,6 +54,9 @@ fn regex_escape(src: &str) -> usize {
         if ch == '/' {
             return i + 1;
         }
+        if any!("\r\n", ch) {
+            return i;
+        }
     }
     src.len()
 }
@@ -302,5 +305,19 @@ mod tests {
             R_ANGLE    ">"
             WHITESPACE "\n        "
         "##]]);
+    }
+
+    #[test]
+    fn incomplete_regex() {
+        check(r#"
+            /regex
+            new
+        "#, expect![[r#"
+            WHITESPACE "\n            "
+            REGEX      "/regex"
+            WHITESPACE "\n            "
+            IDENT      "new"
+            WHITESPACE "\n        "
+        "#]]);
     }
 }
