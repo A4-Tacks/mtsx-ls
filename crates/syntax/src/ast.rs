@@ -1,5 +1,41 @@
 pub use parser::{AstNode, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken};
 
+use crate::AstToken;
+
+macro_rules! impl_ast_token_for_enum {
+    ($name:ident $(. $variant:ident)+ for $parent:ident.$method:ident) => {
+        impl $parent {
+            pub fn $method(&self) -> Option<$name> {
+                self.syntax().children_with_tokens()
+                    .filter_map(NodeOrToken::into_token)
+                    .find_map(|it| match it.kind() {
+                        $(SyntaxKind::$variant => Some($name::$variant(it)),)+
+                        _ => None,
+                    })
+            }
+        }
+
+        #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+        pub enum Key {
+            $($variant(SyntaxToken),)+
+        }
+
+        impl crate::AstToken for $name {
+            fn syntax(&self) -> SyntaxToken {
+                match self {
+                    $(Self::$variant(it) => it.clone(),)+
+                }
+            }
+        }
+
+        impl std::fmt::Display for Key {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                self.syntax().fmt(f)
+            }
+        }
+    };
+}
+
 macro_rules! define_nodes {
     {$(
         $name:ident $(. $kinds:ident)+ [$($t:tt)*];
@@ -22,9 +58,11 @@ macro_rules! define_nodes {
         }
     };
     (@enum $name:ident . $kinds:ident) => {
+        #[derive(Debug, Clone, PartialEq, Eq, Hash)]
         pub struct $name(SyntaxNode);
     };
     (@enum $name:ident $(. $kinds:ident)+) => {
+        #[derive(Debug, Clone, PartialEq, Eq, Hash)]
         pub enum $name {
             $($kinds($kinds),)*
         }
@@ -96,19 +134,4 @@ define_nodes! {
     Value.Join.Table.Array.Literal.Call [];
 }
 
-pub enum Key {
-    Ident(SyntaxToken),
-    Number(SyntaxToken),
-}
-
-impl Pair {
-    pub fn key(&self) -> Option<Key> {
-        self.syntax().children_with_tokens()
-            .filter_map(NodeOrToken::into_token)
-            .find_map(|it| match it.kind() {
-                SyntaxKind::IDENT => Some(Key::Ident(it)),
-                SyntaxKind::NUMBER => Some(Key::Number(it)),
-                _ => None,
-            })
-    }
-}
+impl_ast_token_for_enum!(Key.IDENT.NUMBER for Pair.key);

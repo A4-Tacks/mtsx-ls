@@ -6,3 +6,4 @@ edition = "2024"
 [dependencies]
 parser.workspace = true
 line-column.workspace = true
+expect-test.workspace = true
