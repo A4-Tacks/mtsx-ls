@@ -87,11 +87,16 @@ impl<'input> Parser<'input> {
 
     #[expect(unused)]
     fn bump_expect(&mut self, kind: SyntaxKind) -> bool {
-        if self.current() == kind {
+        let current = self.current();
+        if current == kind {
             self.bump(kind);
             true
         } else {
-            self.bump_error(format_args!("expected {}", kind.human_readable()));
+            self.bump_error(format_args!(
+                    "unexpected {}, expected {}",
+                    current.human_readable(),
+                    kind.human_readable(),
+            ));
             false
         }
     }
@@ -102,7 +107,11 @@ impl<'input> Parser<'input> {
             self.bump(kind);
             true
         } else {
-            self.report_error(format_args!("expected {}", kind.human_readable()));
+            self.report_error(format_args!(
+                    "unexpected {}, expected {}",
+                    current.human_readable(),
+                    kind.human_readable(),
+            ));
             false
         }
     }
@@ -160,7 +169,7 @@ impl<'input> Parser<'input> {
         let mark = self.mark();
         self.bump(L_CURLY);
 
-        while matches!(self.current(), IDENT | STRING | NUMBER) {
+        while matches!(self.current(), IDENT | NUMBER | T![:]) {
             self.pair();
         }
 
@@ -170,7 +179,13 @@ impl<'input> Parser<'input> {
 
     fn pair(&mut self) {
         let mark = self.mark();
-        self.bump_any();
+
+        if matches!(self.current(), IDENT | NUMBER) {
+            self.bump_any();
+        } else {
+            self.report_error("expected a ident or number");
+        }
+
         if self.bump_or_expect(T![:]) {
             self.value();
         }

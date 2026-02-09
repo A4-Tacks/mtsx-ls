@@ -192,11 +192,10 @@ fn parse_table() {
         r#"{
             match: {}
             0: {},
-            "string": {}
         }"#,
         expect![[r#"
-            SOURCE_FILE@0..77
-              TABLE@0..77
+            SOURCE_FILE@0..52
+              TABLE@0..52
                 L_CURLY@0..1 "{"
                 WHITESPACE@1..14 "\n            "
                 PAIR@14..23
@@ -215,16 +214,8 @@ fn parse_table() {
                     L_CURLY@39..40 "{"
                     R_CURLY@40..41 "}"
                   COMMA@41..42 ","
-                WHITESPACE@42..55 "\n            "
-                PAIR@55..67
-                  STRING@55..63 "\"string\""
-                  COLON@63..64 ":"
-                  WHITESPACE@64..65 " "
-                  TABLE@65..67
-                    L_CURLY@65..66 "{"
-                    R_CURLY@66..67 "}"
-                WHITESPACE@67..76 "\n        "
-                R_CURLY@76..77 "}"
+                WHITESPACE@42..51 "\n        "
+                R_CURLY@51..52 "}"
         "#]],
     );
     check(
@@ -497,7 +488,7 @@ fn some_incomplete_state() {
         {
             com
         }
-     // ^ expected colon
+     // ^ unexpected `}`, expected colon
         "#,
         expect![[r#"
             SOURCE_FILE@0..45
@@ -531,6 +522,36 @@ fn some_incomplete_state() {
                 WHITESPACE@31..40 "\n        "
                 R_CURLY@40..41 "}"
               WHITESPACE@41..50 "\n        "
+        "#]],
+    );
+    check(
+        r#"
+        {
+            comment:
+            foo: []
+            // ^ expected a ident or number
+        }
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..70
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..61
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                PAIR@23..47
+                  IDENT@23..30 "comment"
+                  COLON@30..31 ":"
+                  WHITESPACE@31..44 "\n            "
+                  LITERAL@44..47
+                    IDENT@44..47 "foo"
+                PAIR@47..51
+                  COLON@47..48 ":"
+                  WHITESPACE@48..49 " "
+                  L_BRACK@49..50 "["
+                  R_BRACK@50..51 "]"
+                WHITESPACE@51..60 "\n        "
+                R_CURLY@60..61 "}"
+              WHITESPACE@61..70 "\n        "
         "#]],
     );
 }
