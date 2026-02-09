@@ -20,6 +20,18 @@ macro_rules! impl_ast_token_for_enum {
             $($variant(SyntaxToken),)+
         }
 
+        paste::paste! {
+            impl $name {
+                $(pub fn [<into_ $variant:lower>](self) -> Option<SyntaxToken> {
+                    #[allow(unused)]
+                    match self {
+                        Self::$variant(it) => Some(it),
+                        _ => None,
+                    }
+                })*
+            }
+        }
+
         impl crate::AstToken for $name {
             fn syntax(&self) -> SyntaxToken {
                 match self {

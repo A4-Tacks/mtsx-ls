@@ -1,8 +1,38 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, time::SystemTime};
 
 use line_column::span::Span;
 use lsp_types::{DiagnosticSeverity, InsertTextFormat};
-use syntax::{AstNode, AstToken, SyntaxNode, TextRange, TextSize, ast};
+use syntax::{AstNode, AstToken, SyntaxNode, TextRange, TextSize, ast::{self, Or}};
+
+pub struct Tracer {
+    pub trace: bool,
+    start_at: SystemTime,
+    name: &'static str,
+}
+
+impl Tracer {
+    pub fn new(name: &'static str) -> Self {
+        Tracer { trace: false, start_at: SystemTime::now(), name }
+    }
+
+    pub fn trace(&self, s: impl std::fmt::Display) {
+        if !self.trace {
+            return;
+        }
+        let now = SystemTime::now()
+            .duration_since(self.start_at)
+            .unwrap_or_else(|_| std::time::Duration::from_secs(0));
+        let now = now.as_secs_f64();
+        let args = format_args!("{now:010.5} {s}\n");
+        eprint!("{args}");
+        let mut log = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(format!("{}.log", self.name))
+            .expect("cannot open log file");
+        let _ = std::io::Write::write_fmt(&mut log, args);
+    }
+}
 
 fn lsp_pos(span: &Span) -> lsp_types::Position {
     let (line, column) = span.line_column();
@@ -24,20 +54,20 @@ pub fn diagnostics(file: &str) -> Vec<lsp_types::Diagnostic> {
     analysis.diagnostics()
 }
 
-pub fn completions(file: &str, at: lsp_types::Position) -> Vec<lsp_types::CompletionItem> {
+pub fn completions(file: &str, at: lsp_types::Position, tracer: &Tracer) -> Vec<lsp_types::CompletionItem> {
     let index = srv_index(file, at);
     let for_complete = [&file[..index], COMPLETE_MARKER, &file[index..]].concat();
     let span = Span::new_full(for_complete);
     let analysis = Analysis::new(span);
     let cover_range = TextRange::at(TextSize::from(index as u32), TextSize::of(COMPLETE_MARKER));
-    analysis.completions(cover_range)
+    analysis.completions(cover_range, tracer)
 }
 
 const COMPLETE_MARKER: &str = "abcdef"; // 考虑到颜色, 不要超出f字母
 const MANIFEST_ATTRS: &[(&str, &str)] = &[
     ("name",                    r#"name: ["$1", "$2"]"#),
-    ("hide",                    r#"hide: ${1:false}"#),
-    ("ignoreCase",              r#"ignoreCase: ${1:false}"#),
+    ("hide",                    r#"hide: ${0:false}"#),
+    ("ignoreCase",              r#"ignoreCase: ${0:false}"#),
     ("styles",                  r#"styles: [$0]"#),
     ("comment",                 r#"comment: {startsWith: "$1"$2}"#),
     ("bracketPairs",            r#"bracketPairs: [$1]"#),
@@ -101,6 +131,34 @@ const BUILTIN_SHINKERS: &[&str] = &[
     "BUILT_IN_HTML_SHRINKER",
     "BUILT_IN_JSON_SHRINKER",
 ];
+const MATCHER_SCHEMA: &[((&str, &str), &[(&str, &str)])] = &[
+    (("match", "match: $0"), &[
+        ("recordAllGroups", "recordAllGroups: ${0:false}"),
+    ]),
+    (("start", "start: $0"), &[
+        ("end", "end: $0"),
+        ("style", "style: \"$1\""),
+        ("childrenStyle", "childrenStyle: \"$1\""),
+        ("matchEndFirst", "matchEndFirst: ${0:false}"),
+        ("endPriority", "endPriority: ${0:0}"),
+        ("mustMatchEnd", "mustMatchEnd: ${0:false}"),
+        ("contains", "contains: [$0]"),
+    ]),
+    (("group", "group: $0"), &[
+        ("style", "style: \"$1\""),
+        ("contains", "contains: [$0]"),
+    ]),
+    (("number", "number: \"$1\""), &[
+        ("iSuffixes", "iSuffixes: \"$1\""),
+        ("style", "style: \"$1\""),
+    ]),
+    (("builtin", "builtin: #$1#"), &[]),
+    (("include", "include: \"$1\""), &[]),
+];
+const PATTERNS: &[(&str, &str)] = &[
+    ("include",                 r#"include("$1")"#),
+    ("keywordsToRegex",         r#"keywordsToRegex("$1")"#),
+];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 enum Location {
@@ -116,6 +174,8 @@ enum Location {
     BuiltinMatcher,
     BuiltinFormatter,
     BuiltinShinker,
+    Boolean,
+    Pattern,
     Disabled,
 }
 
@@ -141,40 +201,56 @@ impl Analysis {
     }
 
     fn location(&self, node: &SyntaxNode) -> Location {
-        if let Some(call) = ast::Call::cast(node.clone())
-            && let Some(name) = call.name()
-        {
-            return match name.syntax().text() {
-                "include" => Location::IncludeRegex,
-                _ => Location::Disabled,
-            }
-        }
         node.ancestors()
-            .filter_map(ast::Pair::cast)
-            .find_map(|p| Some(match p.key()? {
-                ast::Key::NUMBER(_) => match p.value() {
-                    Some(ast::Value::Table(_)) => Location::Value,
-                    _ => Location::Color,
+            .filter_map(Or::<Or<ast::Pair, ast::Item>, Or<ast::Call, ast::Table>>::cast)
+            .find_map(|it| Some(match it {
+                Or::A(Or::A(p)) => match p.key()? {
+                    ast::Key::NUMBER(_) => match p.value() {
+                        Some(ast::Value::Table(_)) => Location::Value,
+                        _ => Location::Color,
+                    },
+                    ast::Key::IDENT(name) => match name.text() {
+                        "contains" => Location::Value,
+                        "comment" => Location::CommentDef,
+                        "styles" => Location::Styles,
+                        "colors" => Location::Styles,
+                        "style" => Location::Color,
+                        "color" => Location::Color,
+                        "name" => Location::Disabled,
+                        "defines" => Location::Defines,
+                        "match" => Location::Pattern,
+                        "start" | "end" => Location::Value,
+                        "include" => Location::IncludeMatcher,
+                        "group" => Location::Group,
+                        "builtin" => Location::BuiltinMatcher,
+                        "codeFormatter" => Location::BuiltinFormatter,
+                        "codeShinker" => Location::BuiltinShinker,
+                        "hide" | "recordAllGroups" | "matchEndFirst" |
+                        "mustMatchEnd" | "ignoreCase" | "insertSpace" |
+                        "addToContains" => Location::Boolean,
+                        _ => return None,
+                    },
                 },
-                ast::Key::IDENT(name) => match name.text() {
-                    "contains" => Location::Value,
-                    "comment" => Location::CommentDef,
-                    "styles" => Location::Styles,
-                    "colors" => Location::Styles,
-                    "style" => Location::Color,
-                    "color" => Location::Color,
-                    "name" => Location::Disabled,
-                    "defines" => Location::Defines,
-                    "match" | "start" | "end" => Location::Value,
-                    "include" => Location::IncludeMatcher,
-                    "group" => Location::Group,
-                    "builtin" => Location::BuiltinMatcher,
-                    "codeFormatter" => Location::BuiltinFormatter,
-                    "codeShinker" => Location::BuiltinShinker,
-                    _ => return None,
+                Or::A(Or::B(_item)) => Location::Value,
+                Or::B(Or::A(call)) => {
+                    if let Some(name) = call.name() {
+                        match name.syntax().text() {
+                            "include" => Location::IncludeRegex,
+                            _ => Location::Disabled,
+                        }
+                    } else {
+                        Location::Disabled
+                    }
+                },
+                Or::B(Or::B(table)) => {
+                    if table.syntax().parent().and_then(ast::SourceFile::cast).is_some() {
+                        Location::Manifest
+                    } else {
+                        Location::Value
+                    }
                 },
             }))
-            .unwrap_or(Location::Manifest)
+            .unwrap_or(Location::Disabled)
     }
 
     fn diagnostics(&self) -> Vec<lsp_types::Diagnostic> {
@@ -190,12 +266,13 @@ impl Analysis {
             .collect()
     }
 
-    fn completions(&self, at: TextRange) -> Vec<lsp_types::CompletionItem> {
+    fn completions(&self, at: TextRange, tracer: &Tracer) -> Vec<lsp_types::CompletionItem> {
         let elem = self.root.syntax().covering_element(at);
         let loc = match &elem {
             ast::NodeOrToken::Node(node) => self.location(node),
             ast::NodeOrToken::Token(t) => self.location(&t.parent().unwrap()),
         };
+        tracer.trace(format_args!("complete location: {loc:?}"));
         let make_item = |label: &str, mut snip: &str, detail: &str| {
             if let Some(tok) = elem.as_token() {
                 let text = tok.text();
@@ -240,13 +317,41 @@ impl Analysis {
                     make_item(*name, &format!(r#""{name}""#), &detail)
                 }).collect()
             },
+            Location::Value => {
+                let Some(table) = elem.ancestors().find_map(ast::Table::cast) else {
+                    return vec![];
+                };
+                if let Some((_, schema)) = table.pairs()
+                    .filter_map(|pair| pair.key()?.into_ident())
+                    .find_map(|name| {
+                        MATCHER_SCHEMA.iter().find(|((title, _), _)| *title == name.text())
+                    })
+                {
+                    schema.iter().map(|(label, snip)| {
+                        make_item(*label, *snip, "")
+                    }).collect()
+                } else {
+                    MATCHER_SCHEMA.iter().map(|((label, snip), _)| {
+                        make_item(*label, *snip, "")
+                    }).collect()
+                }
+            },
             Location::Styles => vec![],
             Location::CommentDef => vec![],
             Location::Defines => vec![],
             Location::IncludeRegex => vec![],
             Location::IncludeMatcher => vec![],
-            Location::Value => vec![],
-            Location::Group => vec![],
+            Location::Group => {
+                ["link", "linkAll", "select"].iter().map(|name| make_item(*name, *name, "")).collect()
+            },
+            Location::Boolean => {
+                ["true", "false"].iter().map(|name| make_item(*name, *name, "")).collect()
+            },
+            Location::Pattern => {
+                PATTERNS.iter().map(|(label, snip)| {
+                    make_item(*label, *snip, "")
+                }).collect()
+            },
             Location::Disabled => vec![],
         }
     }
@@ -290,7 +395,7 @@ mod tests {
         let src = Span::new_full(src);
         let mut analysis = Analysis::new(src);
         analysis.collect_diagnostics();
-        assert!(analysis.diagnostics.is_empty());
+        let extra = if analysis.diagnostics.is_empty() { "" } else { &format!(" !{}", analysis.diagnostics.len()) };
         let element = analysis
             .root
             .syntax()
@@ -300,22 +405,68 @@ mod tests {
             ast::NodeOrToken::Token(t) => t.parent().unwrap(),
         };
         let loc = analysis.location(&node);
-        expect.assert_eq(&format!("{loc:?}"));
+        expect.assert_eq(&format!("{loc:?}{extra}"));
+    }
+
+    #[track_caller]
+    fn check(src: &str, expect: Expect) {
+        let index = src.find("$0").expect("must a `$0`");
+        let src = src.replacen("$0", "", 1);
+        let src = Span::new_full(src);
+        let pos = lsp_pos(&src.create(TextRange::empty(TextSize::new(index.try_into().unwrap()))));
+        let completions = completions(src.source(), pos, &Tracer::new("test"));
+        let completions = completions.iter().map(|item| format!("{}\n", item.label)).collect::<String>();
+        expect.assert_eq(&completions);
     }
 
     #[test]
     fn test_location() {
         check_loc(r#"{$0}"#, expect!["Manifest"]);
+        check_loc(r#"{x$0}"#, expect!["Manifest !1"]);
         check_loc(r#"{name: [$0]}"#, expect!["Disabled"]);
         check_loc(r#"{styles: [$0]}"#, expect!["Styles"]);
         check_loc(r#"{contains: [$0]}"#, expect!["Value"]);
         check_loc(r#"{contains: [{$0}]}"#, expect!["Value"]);
-        check_loc(r#"{contains: [{match: /foo/$0}]}"#, expect!["Value"]);
+        check_loc(r#"{contains: [{start: /foo/$0}]}"#, expect!["Value"]);
+        check_loc(r#"{contains: [{match: /foo/$0}]}"#, expect!["Pattern"]);
+        check_loc(r#"{contains: [{match: /foo/+$0}]}"#, expect!["Pattern !1"]);
+        check_loc(r#"{contains: [{match: $0+/foo/}]}"#, expect!["Pattern !1"]);
         check_loc(r#"{contains: [{match: /foo/, 0:""$0}]}"#, expect!["Color"]);
         check_loc(r#"{contains: [{builtin: #$0}]}"#, expect!["BuiltinMatcher"]);
         check_loc(r#"{codeFormatter: place$0}"#, expect!["BuiltinFormatter"]);
         check_loc(r#"{contains: [{match: include($0)}]}"#, expect!["IncludeRegex"]);
         check_loc(r#"{contains: [{match: include("$0")}]}"#, expect!["IncludeRegex"]);
         check_loc(r#"{contains: [{match: keywordsToRegex("$0")}]}"#, expect!["Disabled"]);
+        check_loc(r#"{defines: [$0]}"#, expect!["Defines"]);
+        check_loc(r#"{defines: ["x": x$0]}"#, expect!["Value"]);
+        check_loc(r#"{defines: ["x": {x$0}]}"#, expect!["Value !1"]);
+        check_loc(r#"{defines: ["x": {x:$0}]}"#, expect!["Value !1"]);
+    }
+
+    #[test]
+    fn test_completions() {
+        check(r#"{$0}"#, expect![[r#"
+            name
+            hide
+            ignoreCase
+            styles
+            comment
+            bracketPairs
+            lineBackground
+            defines
+            contains
+            codeFormatter
+            codeShrinker
+        "#]]);
+        check(r#"$0"#, expect![""]);
+        check(r#"{name: $0}"#, expect![]);
+        check(r#"{name: [$0]}"#, expect![[r#"
+            match
+            start
+            group
+            number
+            builtin
+            include
+        "#]]);
     }
 }

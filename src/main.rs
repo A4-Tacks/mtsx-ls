@@ -1,5 +1,6 @@
 #![allow(unused)]
 use getopts_macro::getopts_options;
+use mtsx_ls::Tracer;
 use syntax::ast;
 use std::{collections::HashMap, time::SystemTime};
 
@@ -67,7 +68,7 @@ fn main_loop(_matches: &getopts_macro::getopts::Matches) -> Result<()> {
     } = serde_json::from_value::<InitializeParams>(init_params)?;
     let _workspace_folders = workspace_folders.ok_or(anyhow!("Cannot find workspace folder"))?;
     let mut ctx = Ctx::new(connect.sender, connect.receiver);
-    ctx.trace = !matches!(trace, None | Some(TraceValue::Off));
+    ctx.tracer.trace = !matches!(trace, None | Some(TraceValue::Off));
     ctx.run().map_err(|e| { ctx.trace(&e); e })
 }
 
@@ -101,8 +102,7 @@ struct Ctx {
     open_files: HashMap<Uri, String>,
     sender: Sender<Message>,
     recver: Receiver<Message>,
-    trace: bool,
-    start_at: SystemTime,
+    tracer: Tracer,
 }
 
 impl Ctx {
@@ -111,8 +111,7 @@ impl Ctx {
             open_files: Default::default(),
             sender,
             recver,
-            trace: false,
-            start_at: SystemTime::now(),
+            tracer: Tracer::new(env!("CARGO_BIN_NAME")),
         }
     }
 
@@ -226,21 +225,7 @@ impl Ctx {
     }
 
     fn trace(&self, s: impl std::fmt::Display) {
-        if !self.trace {
-            return;
-        }
-        let now = SystemTime::now()
-            .duration_since(self.start_at)
-            .unwrap_or_else(|_| std::time::Duration::from_secs(0));
-        let now = now.as_secs_f64();
-        let args = format_args!("{now:010.5} {s}\n");
-        eprint!("{args}");
-        let mut log = std::fs::OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(concat!(env!("CARGO_BIN_NAME"), ".log"))
-            .expect("cannot open log file");
-        let _ = std::io::Write::write_fmt(&mut log, args);
+        self.tracer.trace(s);
     }
 }
 
@@ -251,7 +236,7 @@ impl RequestHandler for request::Completion {
     fn handle(ctx: &mut Ctx, param: Self::Params) -> Result<Self::Result> {
         let file = ctx.read_file(&param.text_document_position.text_document.uri);
         let at = param.text_document_position.position;
-        Ok(Some(lsp_types::CompletionResponse::Array(mtsx_ls::completions(file, at))))
+        Ok(Some(lsp_types::CompletionResponse::Array(mtsx_ls::completions(file, at, &ctx.tracer))))
     }
 }
 impl RequestHandler for request::HoverRequest {
