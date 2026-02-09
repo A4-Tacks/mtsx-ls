@@ -77,6 +77,10 @@ impl SyntaxKind {
         matches!(self, Self::COMMENT | Self::WHITESPACE)
     }
 
+    pub fn is_close_delim(self) -> bool {
+        matches!(self, Self::R_CURLY | Self::R_BRACK | Self::R_PAREN)
+    }
+
     pub fn human_readable(self) -> &'static str {
         match self {
             SyntaxKind::SOURCE_FILE => "source file",

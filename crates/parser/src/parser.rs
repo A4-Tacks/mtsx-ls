@@ -143,15 +143,15 @@ impl<'input> Parser<'input> {
             match kind {
                 L_CURLY => self.table(),
                 L_BRACK => self.array(),
-                R_CURLY | R_BRACK | R_PAREN => {
-                    self.report_error(format_args!("unexpected {}, expected value", kind.human_readable()));
-                }
                 IDENT => self.ident_or_call(),
                 BUILTIN | STRING | NUMBER | REGEX | MARK | COLOR => {
                     let mark = self.mark();
                     self.bump(kind);
                     self.node(LITERAL, mark);
                 },
+                _ if kind.is_close_delim() => {
+                    self.report_error(format_args!("unexpected {}, expected value", kind.human_readable()));
+                }
                 _ => {
                     self.bump_error(format_args!("unexpected {}, expected value", kind.human_readable()));
                 }
@@ -195,7 +195,7 @@ impl<'input> Parser<'input> {
 
     fn array(&mut self) {
         self.bump(L_BRACK);
-        while self.current() != R_BRACK {
+        while !self.current().is_close_delim() && !self.is_eof() {
             self.item();
         }
         self.bump_or_expect(R_BRACK);

@@ -554,6 +554,29 @@ fn some_incomplete_state() {
               WHITESPACE@61..70 "\n        "
         "#]],
     );
+    check(
+        r#"
+        {
+            foo: [
+        }
+     // ^ unexpected `}`, expected `]`
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..48
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..39
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                PAIR@23..29
+                  IDENT@23..26 "foo"
+                  COLON@26..27 ":"
+                  WHITESPACE@27..28 " "
+                  L_BRACK@28..29 "["
+                WHITESPACE@29..38 "\n        "
+                R_CURLY@38..39 "}"
+              WHITESPACE@39..48 "\n        "
+        "#]],
+    );
 }
 
 #[test]
