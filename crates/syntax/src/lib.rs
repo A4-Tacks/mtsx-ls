@@ -3,16 +3,16 @@ pub use parser::{AstNode, SyntaxKind, SyntaxNode, SyntaxToken, T, TextSize, Text
 
 pub mod ast;
 
-pub fn parse_file(src: &str) -> (ast::SourceFile, Vec<(Span, String)>) {
-    let mut parser = parser::parser::Parser::new(src);
-    let full_span = Span::new_full(src);
+pub fn parse_file(src: Span) -> (ast::SourceFile, Vec<(Span, String)>) {
+    let mut parser = parser::parser::Parser::new(src.source());
+    assert_eq!(src.range().start(), TextSize::new(0));
 
     parser.source_file();
     let (syntax_node, errors) = parser.finish();
 
     let errors = errors
         .into_iter()
-        .map(|(range, lint)| (full_span.create(range), lint))
+        .map(|(range, lint)| (src.create(range), lint))
         .collect();
 
     let source_file = ast::SourceFile::cast(syntax_node).unwrap();
@@ -37,7 +37,7 @@ mod tests {
             1: "red"
         }
         "#;
-        let (root, errors) = parse_file(src);
+        let (root, errors) = parse_file(Span::new_full(src));
         assert!(errors.is_empty());
 
         let table = root.table().unwrap();
