@@ -468,6 +468,71 @@ fn unexpected_top_input() {
               WHITESPACE@43..52 "\n        "
         "#]],
     );
+    check(
+        r#"
+        foo
+     // ^^^ unexpected ident, expected `{`
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..21
+              WHITESPACE@0..9 "\n        "
+              ERROR@9..12
+                IDENT@9..12 "foo"
+              WHITESPACE@12..21 "\n        "
+        "#]],
+    );
+}
+
+#[test]
+fn some_incomplete_state() {
+    check(
+        r#" "#,
+        expect![[r#"
+            SOURCE_FILE@0..1
+              WHITESPACE@0..1 " "
+        "#]],
+    );
+    check(
+        r#"
+        {
+            com
+        }
+     // ^ expected colon
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..45
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..36
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                PAIR@23..26
+                  IDENT@23..26 "com"
+                WHITESPACE@26..35 "\n        "
+                R_CURLY@35..36 "}"
+              WHITESPACE@36..45 "\n        "
+        "#]],
+    );
+    check(
+        r#"
+        {
+            comment:
+        }
+     // ^ unexpected `}`, expected value
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..50
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..41
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                PAIR@23..31
+                  IDENT@23..30 "comment"
+                  COLON@30..31 ":"
+                WHITESPACE@31..40 "\n        "
+                R_CURLY@40..41 "}"
+              WHITESPACE@41..50 "\n        "
+        "#]],
+    );
 }
 
 #[test]

@@ -115,6 +115,7 @@ impl<'input> Parser<'input> {
         self.errors.push((range, msg.to_string()));
     }
 
+    #[track_caller]
     fn bump_error(&mut self, msg: impl ToString) {
         let mark = self.mark();
         let kind = self.current();
@@ -216,15 +217,13 @@ impl<'input> Parser<'input> {
     pub fn source_file(&mut self) {
         let mark = self.builder.checkpoint();
 
-        while self.current() != L_CURLY {
+        while self.current() != L_CURLY && !self.is_eof() {
             let tok = self.current().human_readable();
             self.bump_error(format_args!("unexpected {tok}, expected `{{`"));
         }
 
         if self.current() == L_CURLY {
             self.table();
-        } else {
-            self.report_error("expected `{`");
         }
 
         while !self.is_eof() {
