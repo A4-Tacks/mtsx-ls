@@ -173,6 +173,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "crossbeam-channel",
+ "expect-test",
  "getopts-macro",
  "line-column",
  "lsp-server",

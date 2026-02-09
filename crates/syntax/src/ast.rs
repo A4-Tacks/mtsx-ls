@@ -16,7 +16,7 @@ macro_rules! impl_ast_token_for_enum {
         }
 
         #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-        pub enum Key {
+        pub enum $name {
             $($variant(SyntaxToken),)+
         }
 
@@ -28,7 +28,7 @@ macro_rules! impl_ast_token_for_enum {
             }
         }
 
-        impl std::fmt::Display for Key {
+        impl std::fmt::Display for $name {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 self.syntax().fmt(f)
             }
@@ -135,3 +135,38 @@ define_nodes! {
 }
 
 impl_ast_token_for_enum!(Key.IDENT.NUMBER for Pair.key);
+impl_ast_token_for_enum!(CallName.IDENT for Call.name);
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Or<A, B> {
+    A(A),
+    B(B),
+}
+impl<A, B> AstNode for Or<A, B>
+where
+    A: AstNode<Language = parser::Language>,
+    B: AstNode<Language = parser::Language>,
+{
+    type Language = parser::Language;
+
+    fn cast(node: SyntaxNode) -> Option<Self> {
+        if A::can_cast(node.kind()) {
+            Some(Self::A(A::cast(node)?))
+        } else if B::can_cast(node.kind()) {
+            Some(Self::B(B::cast(node)?))
+        } else {
+            None
+        }
+    }
+
+    fn can_cast(kind: SyntaxKind) -> bool {
+        A::can_cast(kind) || B::can_cast(kind)
+    }
+
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            Or::A(a) => a.syntax(),
+            Or::B(b) => b.syntax(),
+        }
+    }
+}
