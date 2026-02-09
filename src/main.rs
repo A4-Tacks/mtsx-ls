@@ -168,6 +168,7 @@ impl Ctx {
     fn try_handle_req<T: RequestHandler>(&mut self, request: &mut Option<lsp_server::Request>) -> Result<()> {
         let Some(lsp_server::Request { id, params, .. })
             = request.take_if(|req| req.method == T::METHOD) else { return Ok(()) };
+        self.trace(format_args!("received request {} : {params:#?}", T::METHOD));
         let params = match serde_json::from_value(params) {
             Ok(it) => it,
             Err(err) => return Err(err.into()),
@@ -190,6 +191,7 @@ impl Ctx {
                 }),
             },
         };
+        self.trace(format_args!("send response {} : {response:#?}", T::METHOD));
         let err = response.error.clone();
         self.sender.send(Message::Response(response))?;
         if let Some(err) = err {
@@ -198,12 +200,11 @@ impl Ctx {
         Ok(())
     }
 
-    fn parse_file(&self, uri: &Uri) -> (ast::SourceFile, Vec<(Span, String)>) {
-        let file = self.open_files.get(uri).unwrap_or_else(|| {
+    fn read_file(&self, uri: &Uri) -> &str {
+        self.open_files.get(uri).unwrap_or_else(|| {
             self.trace(format_args!("cannot read unknown uri: {uri:?}"));
             const { &String::new() }
-        });
-        syntax::parse_file(Span::new_full(file))
+        })
     }
 
     fn send_window_notif(&self, typ: MessageType, msg: impl std::fmt::Display) -> Result<()> {
@@ -248,9 +249,9 @@ trait RequestHandler: Request {
 }
 impl RequestHandler for request::Completion {
     fn handle(ctx: &mut Ctx, param: Self::Params) -> Result<Self::Result> {
-        Ok(Some(lsp_types::CompletionResponse::Array([
-            CompletionItem::new_simple("label".to_owned(), "detail".to_owned()),
-        ].to_vec())))
+        let file = ctx.read_file(&param.text_document_position.text_document.uri);
+        let at = param.text_document_position.position;
+        Ok(Some(lsp_types::CompletionResponse::Array(mtsx_ls::completions(file, at))))
     }
 }
 impl RequestHandler for request::HoverRequest {
@@ -291,7 +292,6 @@ impl NotificationHandler for notification::DidChangeTextDocument {
             ctx.open_files.insert(uri.clone(), String::new());
         }
         ctx.trace(format_args!("change file {}", uri.as_str()));
-        ctx.trace(format_args!("errors: {:#?}", ctx.parse_file(&uri).1)); // TODO remove
         let file = ctx.open_files.get_mut(&uri).unwrap();
 
         for change in param.content_changes {
