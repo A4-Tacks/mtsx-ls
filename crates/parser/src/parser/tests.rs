@@ -307,32 +307,34 @@ fn parse_array() {
                   IDENT@14..21 "defines"
                   COLON@21..22 ":"
                   WHITESPACE@22..23 " "
-                  L_BRACK@23..24 "["
-                  ITEM@24..32
-                    LITERAL@24..27
-                      STRING@24..27 "\"x\""
-                    COLON@27..28 ":"
-                    WHITESPACE@28..29 " "
-                    LITERAL@29..32
-                      REGEX@29..32 "/a/"
-                  R_BRACK@32..33 "]"
+                  ARRAY@23..33
+                    L_BRACK@23..24 "["
+                    ITEM@24..32
+                      LITERAL@24..27
+                        STRING@24..27 "\"x\""
+                      COLON@27..28 ":"
+                      WHITESPACE@28..29 " "
+                      LITERAL@29..32
+                        REGEX@29..32 "/a/"
+                    R_BRACK@32..33 "]"
                 WHITESPACE@33..46 "\n            "
                 PAIR@46..64
                   IDENT@46..54 "contains"
                   COLON@54..55 ":"
                   WHITESPACE@55..56 " "
-                  L_BRACK@56..57 "["
-                  ITEM@57..63
-                    TABLE@57..63
-                      L_CURLY@57..58 "{"
-                      PAIR@58..62
-                        IDENT@58..59 "x"
-                        COLON@59..60 ":"
-                        WHITESPACE@60..61 " "
-                        LITERAL@61..62
-                          NUMBER@61..62 "2"
-                      R_CURLY@62..63 "}"
-                  R_BRACK@63..64 "]"
+                  ARRAY@56..64
+                    L_BRACK@56..57 "["
+                    ITEM@57..63
+                      TABLE@57..63
+                        L_CURLY@57..58 "{"
+                        PAIR@58..62
+                          IDENT@58..59 "x"
+                          COLON@59..60 ":"
+                          WHITESPACE@60..61 " "
+                          LITERAL@61..62
+                            NUMBER@61..62 "2"
+                        R_CURLY@62..63 "}"
+                    R_BRACK@63..64 "]"
                 WHITESPACE@64..73 "\n        "
                 R_CURLY@73..74 "}"
         "#]],
@@ -399,19 +401,20 @@ fn parse_values() {
                   IDENT@126..131 "color"
                   COLON@131..132 ":"
                   WHITESPACE@132..133 " "
-                  L_BRACK@133..134 "["
-                  WHITESPACE@134..151 "\n                "
-                  ITEM@151..160
-                    LITERAL@151..158
-                      COLOR@151..158 "#ff0000"
-                    WHITESPACE@158..159 " "
-                    R_ANGLE@159..160 ">"
-                  WHITESPACE@160..161 " "
-                  ITEM@161..168
-                    LITERAL@161..168
-                      STRING@161..168 "\"color\""
-                  WHITESPACE@168..181 "\n            "
-                  R_BRACK@181..182 "]"
+                  ARRAY@133..182
+                    L_BRACK@133..134 "["
+                    WHITESPACE@134..151 "\n                "
+                    ITEM@151..160
+                      LITERAL@151..158
+                        COLOR@151..158 "#ff0000"
+                      WHITESPACE@158..159 " "
+                      R_ANGLE@159..160 ">"
+                    WHITESPACE@160..161 " "
+                    ITEM@161..168
+                      LITERAL@161..168
+                        STRING@161..168 "\"color\""
+                    WHITESPACE@168..181 "\n            "
+                    R_BRACK@181..182 "]"
                 WHITESPACE@182..191 "\n        "
                 R_CURLY@191..192 "}"
         "##]],
@@ -547,8 +550,9 @@ fn some_incomplete_state() {
                 PAIR@47..51
                   COLON@47..48 ":"
                   WHITESPACE@48..49 " "
-                  L_BRACK@49..50 "["
-                  R_BRACK@50..51 "]"
+                  ARRAY@49..51
+                    L_BRACK@49..50 "["
+                    R_BRACK@50..51 "]"
                 WHITESPACE@51..60 "\n        "
                 R_CURLY@60..61 "}"
               WHITESPACE@61..70 "\n        "
@@ -567,12 +571,13 @@ fn some_incomplete_state() {
               TABLE@9..39
                 L_CURLY@9..10 "{"
                 WHITESPACE@10..23 "\n            "
-                PAIR@23..29
+                PAIR@23..38
                   IDENT@23..26 "foo"
                   COLON@26..27 ":"
                   WHITESPACE@27..28 " "
-                  L_BRACK@28..29 "["
-                WHITESPACE@29..38 "\n        "
+                  ARRAY@28..29
+                    L_BRACK@28..29 "["
+                  WHITESPACE@29..38 "\n        "
                 R_CURLY@38..39 "}"
               WHITESPACE@39..48 "\n        "
         "#]],

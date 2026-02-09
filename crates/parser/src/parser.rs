@@ -194,11 +194,13 @@ impl<'input> Parser<'input> {
     }
 
     fn array(&mut self) {
+        let mark = self.mark();
         self.bump(L_BRACK);
         while !self.current().is_close_delim() && !self.is_eof() {
             self.item();
         }
         self.bump_or_expect(R_BRACK);
+        self.node(ARRAY, mark);
     }
 
     fn ident_or_call(&mut self) {
