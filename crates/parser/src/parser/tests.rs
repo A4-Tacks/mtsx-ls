@@ -514,6 +514,61 @@ fn some_incomplete_state() {
 }
 
 #[test]
+fn full_incomplete_state_fuzz() {
+    let mut tokens = b"i/2#ag@,:{}[]+/<>~\n ".repeat(300);
+    let mut randoms: [usize; 64] = [
+        27888, 12846, 43407, 18871, 48402, 48763, 16047, 6652, 44121, 43293, 35057, 32662, 45616,
+        6746, 13655, 51167, 4811, 39039, 48057, 13451, 39180, 18097, 10770, 22717, 41917, 36809,
+        35166, 64691, 44689, 56057, 2665, 63445, 33740, 26928, 21503, 54775, 53518, 61781, 2620,
+        15538, 39713, 108, 47141, 24899, 45101, 62987, 15925, 89, 2673, 39546, 29404, 295, 26896,
+        34453, 35342, 46255, 9271, 13694, 25843, 35455, 6217, 61899, 57806, 15416,
+    ];
+    fn fake_shuf<T>(tokens: &mut [T], randoms: &[usize]) {
+        for (i, &r) in (0..tokens.len()).zip(randoms.iter().cycle()) {
+            let b = r % tokens.len();
+            tokens.swap(i, b);
+        }
+    }
+    for _ in 0..30 {
+        fake_shuf(&mut tokens, &randoms);
+        let (a, b) = randoms.split_at_mut(32);
+        if a[0] & 1 == 0 {
+            fake_shuf(a, b);
+        } else {
+            fake_shuf(b, a);
+        }
+    }
+
+    let expect = expect_file!["./test_datas/full_incomplete_state.rast"];
+    let mut at = 0;
+    #[allow(unused)]
+    let mut nodes_dump = String::new();
+
+    for _ in 0..100 {
+        if at >= tokens.len() {
+            break;
+        }
+        println!("parse start at {at} in {}", tokens.len());
+        let src = &format!("{{contains: [[[[{}]]]]}}", str::from_utf8(&tokens[at..]).unwrap());
+
+        let mut parser = Parser::new(src);
+        parser.source_file();
+        let (node, _) = parser.finish();
+        //std::fmt::Write::write_fmt(&mut nodes_dump, format_args!("{node:#?}")).unwrap();
+        println!("parse finish");
+        if let Some(err) = node.children().find(|it| it.kind() == ERROR) {
+            let end = err.text_range().end();
+            at += usize::from(end);
+        } else {
+            break;
+        }
+    }
+    assert_ne!(at, 0);
+    assert!(at >= tokens.len() / 3);
+    expect.assert_eq(&nodes_dump);
+}
+
+#[test]
 fn full_work() {
     let src = include_str!("./test_datas/rust-syntax.mtsx");
     let expect = expect_file!["./test_datas/rust-syntax.rast"];
