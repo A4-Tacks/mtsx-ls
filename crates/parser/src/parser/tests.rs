@@ -582,6 +582,58 @@ fn some_incomplete_state() {
               WHITESPACE@39..48 "\n        "
         "#]],
     );
+    check(
+        r#"
+        {
+            match: /a/+
+        }
+     // ^ unexpected `}`, expected value
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..53
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..44
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                PAIR@23..43
+                  IDENT@23..28 "match"
+                  COLON@28..29 ":"
+                  WHITESPACE@29..30 " "
+                  JOIN@30..34
+                    LITERAL@30..33
+                      REGEX@30..33 "/a/"
+                    PLUS@33..34 "+"
+                  WHITESPACE@34..43 "\n        "
+                R_CURLY@43..44 "}"
+              WHITESPACE@44..53 "\n        "
+        "#]],
+    );
+    check(
+        r#"
+        {
+            match: +/a/
+                // ^ expected value
+        }
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..53
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..44
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                PAIR@23..34
+                  IDENT@23..28 "match"
+                  COLON@28..29 ":"
+                  WHITESPACE@29..30 " "
+                  JOIN@30..34
+                    PLUS@30..31 "+"
+                    LITERAL@31..34
+                      REGEX@31..34 "/a/"
+                WHITESPACE@34..43 "\n        "
+                R_CURLY@43..44 "}"
+              WHITESPACE@44..53 "\n        "
+        "#]],
+    );
 }
 
 #[test]

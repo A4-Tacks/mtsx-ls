@@ -149,6 +149,7 @@ impl<'input> Parser<'input> {
                     self.bump(kind);
                     self.node(LITERAL, mark);
                 },
+                T![+] => self.report_error("expected value"),
                 _ if kind.is_close_delim() => {
                     self.report_error(format_args!("unexpected {}, expected value", kind.human_readable()));
                 }
