@@ -43,6 +43,7 @@ fn main_loop(_matches: &getopts_macro::getopts::Matches) -> Result<()> {
             code_action_kinds: Some([CodeActionKind::EMPTY].into()),
             ..Default::default()
         })),
+        definition_provider: Some(lsp_types::OneOf::Left(true)),
         ..Default::default()
     };
     let init_params = {
@@ -147,6 +148,7 @@ impl Ctx {
         self.try_handle_req::<request::Completion>(request)?;
         self.try_handle_req::<request::HoverRequest>(request)?;
         self.try_handle_req::<request::CodeActionRequest>(request)?;
+        self.try_handle_req::<request::GotoDefinition>(request)?;
 
         if let Some(request) = request {
             bail!("unknown request {request:#?}")
@@ -251,6 +253,19 @@ impl RequestHandler for request::HoverRequest {
                 })),
                 range: Some(range),
             }
+        }))
+    }
+}
+impl RequestHandler for request::GotoDefinition {
+    fn handle(ctx: &mut Ctx, param: Self::Params) -> Result<Self::Result> {
+        let uri = param.text_document_position_params.text_document.uri;
+        let file = ctx.read_file(&uri);
+        let at = param.text_document_position_params.position;
+
+        Ok(mtsx_ls::goto_define(file, at).map(|range| {
+            lsp_types::GotoDefinitionResponse::Scalar(
+                lsp_types::Location { uri, range },
+            )
         }))
     }
 }

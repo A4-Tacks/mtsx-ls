@@ -74,6 +74,14 @@ pub fn hover_doc(file: &str, at: lsp_types::Position) -> Option<(String, lsp_typ
     analysis.hover_doc(cover_range)
 }
 
+pub fn goto_define(file: &str, at: lsp_types::Position) -> Option<lsp_types::Range> {
+    let index = srv_index(file, at);
+    let span = Span::new_full(file);
+    let analysis = Analysis::new(span);
+    let cover_range = TextRange::empty(TextSize::from(index as u32));
+    analysis.goto_define(cover_range)
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 enum Location {
     Manifest,
@@ -352,6 +360,41 @@ impl Analysis {
         Some((doc, lsp_range(&self.source.slice(tok.text_range()))))
     }
 
+    fn goto_define(&self, at: TextRange) -> Option<lsp_types::Range> {
+        let elem = self.root.syntax().covering_element(at);
+        let NodeOrToken::Token(tok) = &elem else { return None };
+
+        if tok.kind() != SyntaxKind::STRING {
+            return None;
+        }
+
+        let loc = self.location(&tok.parent()?);
+
+        let range = match loc {
+            Location::Manifest | Location::Styles | Location::CommentDef
+            | Location::Defines | Location::Value | Location::Group
+            | Location::BuiltinMatcher | Location::BuiltinFormatter
+            | Location::BuiltinShinker | Location::Boolean | Location::Pattern
+            | Location::Disabled => return None,
+            Location::IncludeRegex => {
+                self.defines().find(|(name, value)| {
+                    tok.text() == name.text() && !is_matcher(value)
+                })?.0.text_range()
+            },
+            Location::IncludeMatcher => {
+                self.defines().find(|(name, value)| {
+                    tok.text() == name.text() && is_matcher(value)
+                })?.0.text_range()
+            },
+            Location::Color => {
+                self.styles()
+                    .find(|(name, _)| tok.text() == name.text())?
+                    .0.text_range()
+            },
+        };
+        Some(lsp_range(&self.source.slice(range)))
+    }
+
     fn get_manifest(&self, name: &str) -> Option<ast::Value> {
         self.root.table()?.pairs().find_map(|pair| {
             (pair.key()?.into_ident()?.text() == name)
@@ -571,6 +614,18 @@ mod tests {
             format!("{:20}{text:?}\n", item.label)
         }).collect::<String>();
         expect.assert_eq(&completions);
+    }
+
+    #[track_caller]
+    fn check_goto_define(src: &str, expect: Expect) {
+        let index = src.find("$0").expect("must a `$0`");
+        let src = src.replacen("$0", "", 1);
+        let src = Span::new_full(src);
+        let pos = lsp_pos(&src.create(TextRange::empty(TextSize::new(index.try_into().unwrap()))));
+        let lsp_types::Range { start: lsp_types::Position { mut line, mut character }, .. } = goto_define(src.source(), pos).expect("hover is none");
+        line += 1;
+        character += 1;
+        expect.assert_eq(&format!("{line}:{character}"));
     }
 
     #[test]
@@ -1066,6 +1121,45 @@ mod tests {
             expect![[r#"
                 "string"       #067D17     #6A8759
             "#]],
+        );
+    }
+
+    #[test]
+    fn test_goto_define() {
+        check_goto_define(
+            r#"{
+                defines: [
+                    "a": /x/
+                    "a": {match: /x/}
+                ]
+                contains: [
+                    {include: "a$0"}
+                ]
+            }"#,
+            expect!["4:21"],
+        );
+        check_goto_define(
+            r#"{
+                defines: [
+                    "a": /x/
+                    "a": {match: /x/}
+                ]
+                contains: [
+                    {match: include("a$0")}
+                ]
+            }"#,
+            expect!["3:21"],
+        );
+        check_goto_define(
+            r#"{
+                styles: [
+                    "a" > "red"
+                ]
+                contains: [
+                    {match: /x/ 0: "a$0"}
+                ]
+            }"#,
+            expect!["3:21"],
         );
     }
 }
