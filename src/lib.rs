@@ -232,7 +232,7 @@ impl Analysis {
                         _ => return None,
                     },
                 },
-                Or::A(Or::B(_item)) => Location::Value,
+                Or::A(Or::B(_item)) => return None,
                 Or::B(Or::A(call)) => {
                     if let Some(name) = call.name() {
                         match name.syntax().text() {
@@ -246,6 +246,13 @@ impl Analysis {
                 Or::B(Or::B(table)) => {
                     if table.syntax().parent().and_then(ast::SourceFile::cast).is_some() {
                         Location::Manifest
+                    } else if let Some(pair) = table.syntax().parent().and_then(ast::Pair::cast)
+                        && let Some(key) = pair.key().and_then(ast::Key::into_ident)
+                    {
+                        match key.text() {
+                            "comment" => Location::CommentDef,
+                            _ => Location::Value,
+                        }
                     } else {
                         Location::Value
                     }
@@ -428,6 +435,9 @@ mod tests {
         check_loc(r#"{x$0}"#, expect!["Manifest !1"]);
         check_loc(r#"{name: [$0]}"#, expect!["Disabled"]);
         check_loc(r#"{styles: [$0]}"#, expect!["Styles"]);
+        check_loc(r#"{styles: [x$0]}"#, expect!["Styles"]);
+        check_loc(r#"{comment: {$0}}"#, expect!["CommentDef"]);
+        check_loc(r#"{comment: {x$0}}"#, expect!["CommentDef !1"]);
         check_loc(r#"{contains: [$0]}"#, expect!["Value"]);
         check_loc(r#"{contains: [{$0}]}"#, expect!["Value"]);
         check_loc(r#"{contains: [{start: /foo/$0}]}"#, expect!["Value"]);
@@ -441,9 +451,9 @@ mod tests {
         check_loc(r#"{contains: [{match: include("$0")}]}"#, expect!["IncludeRegex"]);
         check_loc(r#"{contains: [{match: keywordsToRegex("$0")}]}"#, expect!["Disabled"]);
         check_loc(r#"{defines: [$0]}"#, expect!["Defines"]);
-        check_loc(r#"{defines: ["x": x$0]}"#, expect!["Value"]);
         check_loc(r#"{defines: ["x": {x$0}]}"#, expect!["Value !1"]);
         check_loc(r#"{defines: ["x": {x:$0}]}"#, expect!["Value !1"]);
+        check_loc(r#"{defines: ["x": x$0]}"#, expect!["Defines"]);
     }
 
     #[test]
@@ -463,13 +473,6 @@ mod tests {
         "#]]);
         check(r#"$0"#, expect![""]);
         check(r#"{name: $0}"#, expect![]);
-        check(r#"{name: [$0]}"#, expect![[r#"
-            match
-            start
-            group
-            number
-            builtin
-            include
-        "#]]);
+        check(r#"{name: [$0]}"#, expect![""]);
     }
 }
