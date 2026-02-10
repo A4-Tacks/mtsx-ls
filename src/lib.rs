@@ -300,6 +300,9 @@ impl Analysis {
                 ..Default::default()
             }
         };
+        fn is_matcher(value: &ast::Value) -> bool {
+            matches!(value, ast::Value::Table(_) | ast::Value::Array(_))
+        }
         match loc {
             Location::Manifest => {
                 MANIFEST_ATTRS.iter().map(|(name, snip)| make_item(*name, *snip, "")).collect()
@@ -349,14 +352,22 @@ impl Analysis {
             Location::Defines => vec![],
             Location::IncludeRegex => {
                 self.defines()
-                    .filter(|(_, value)| !matches!(value, ast::Value::Table(_)))
+                    .filter(|(_, value)| !is_matcher(value))
                     .map(|(name, value)| {
                         let detail = format!("{}{name}: {value}", docs(&name));
                         make_item(name.text(), &format!("\"{name}\""), &detail)
                     })
                     .collect()
             },
-            Location::IncludeMatcher => vec![],
+            Location::IncludeMatcher => {
+                self.defines()
+                    .filter(|(_, value)| is_matcher(value))
+                    .map(|(name, value)| {
+                        let detail = format!("{}{name}: {value}", docs(&name));
+                        make_item(name.text(), &format!("\"{name}\""), &detail)
+                    })
+                    .collect()
+            },
             Location::Group => {
                 ["link", "linkAll", "select"].iter().map(|name| make_item(*name, *name, "")).collect()
             },
@@ -607,6 +618,9 @@ mod tests {
                     // ...
                     "y": /b/
                     "matcher": {match: /x/}
+                    // xxx
+                    "matcher1": {match: /x/}
+                    "matcher2": [{match: /x/}]
                 ]
                 contains: [
                     {match: include("$0")}
@@ -615,6 +629,29 @@ mod tests {
             expect![[r#"
                 "x"                 "\"x\": /a/"
                 "y"                 "// docs\n//\n// ...\n\"y\": /b/"
+            "#]],
+        );
+        check(
+            r#"{
+                defines: [
+                    "x": /a/
+                    // docs
+                    //
+                    // ...
+                    "y": /b/
+                    "matcher": {match: /x/}
+                    // xxx
+                    "matcher1": {match: /x/}
+                    "matcher2": [{match: /x/}]
+                ]
+                contains: [
+                    {include: "$0"}
+                ]
+            }"#,
+            expect![[r#"
+                "matcher"           "\"matcher\": {match: /x/}"
+                "matcher1"          "// xxx\n\"matcher1\": {match: /x/}"
+                "matcher2"          "\"matcher2\": [{match: /x/}]"
             "#]],
         );
     }
