@@ -1,0 +1,1 @@
+This is VSCode Language Support for mtsyntax (.mtsx)

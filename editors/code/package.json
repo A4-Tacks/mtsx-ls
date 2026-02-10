@@ -1,0 +1,46 @@
+{
+    "name": "mtsyntax",
+    "displayName": "MT syntax",
+    "description": "MT syntax language supports",
+    "version": "1.0.0",
+    "license": "MIT",
+    "publisher": "A4-Tacks",
+    "engines": {
+        "vscode": "^1.80.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "activationEvents": ["onLanguage:mtsyntax"],
+    "main": "./out/extension",
+    "contributes": {
+        "languages": [
+            {
+                "id": "mtsyntax",
+                "aliases": [
+                    "MT-Manager syntax",
+                    "mtsx"
+                ],
+                "extensions": [
+                    ".mtsx"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "mtsyntax",
+                "scopeName": "source.mtsyntax",
+                "path": "./syntaxes/mtsyntax.tmLanguage.json"
+            }
+        ]
+    },
+    "dependencies": {
+        "vscode-languageclient": "^6.1.3"
+    },
+    "devDependencies": {
+        "@types/node": "^22",
+        "@types/vscode": "^1.80.0"
+    },
+    "repository": "https://github.com/A4-Tacks/mtsx-ls"
+}
