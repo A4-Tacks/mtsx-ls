@@ -78,9 +78,12 @@ fn lex<'input>(source: &mut &'input str) -> Option<(SyntaxKind, &'input str)> {
         (STYLE, source.take_skip(1, any!("a-zA-Z0-9_")))
     } else if any!("0-9", ch) {
         (NUMBER, source.take(any!("0-9")))
-    } else if ch == '#' && source.chars().skip(1).find(any!(!"0-9a-zA-Z_")) == Some('#') {
+    } else if ch == '#'
+        && source.chars().skip(1).find(any!(!"0-9a-zA-Z_")) == Some('#')
+        && source.chars().skip(1).skip_while(any!("0-9a-zA-Z_")).nth(1).is_none_or(any!(!"0-9a-fA-F"))
+    {
         (BUILTIN, source.take_skip(1, |ch| once(any!("0-9a-zA-Z_", ch), ch == '#')))
-    } else if ch == '#' {
+    } else if any!("#$", ch) {
         (COLOR, source.take_skip(1, any!("0-9a-fA-F")))
     } else if ch == '<' {
         (MARK, source.take(|ch| once(any!("0-9a-zA-Z_<", ch), ch == '>')))
@@ -190,6 +193,18 @@ mod tests {
             WHITESPACE "\n    "
             NUMBER     "3"
         "#]]);
+    }
+
+    #[test]
+    fn jointed_color() {
+        check("#ffff1b#ffff2c", expect![[r##"
+            COLOR      "#ffff1b"
+            COLOR      "#ffff2c"
+        "##]]);
+        check("#ffff1b$ffff2c", expect![[r##"
+            COLOR      "#ffff1b"
+            COLOR      "$ffff2c"
+        "##]]);
     }
 
     #[test]
