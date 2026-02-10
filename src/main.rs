@@ -241,7 +241,17 @@ impl RequestHandler for request::Completion {
 }
 impl RequestHandler for request::HoverRequest {
     fn handle(ctx: &mut Ctx, param: Self::Params) -> Result<Self::Result> {
-        Ok(Some(lsp_types::Hover { contents: lsp_types::HoverContents::Scalar(lsp_types::MarkedString::String("scalar".to_owned())), range: None }))
+        let file = ctx.read_file(&param.text_document_position_params.text_document.uri);
+        let at = param.text_document_position_params.position;
+        Ok(mtsx_ls::hover_doc(file, at).map(|(docs, range)| {
+            lsp_types::Hover {
+                contents: lsp_types::HoverContents::Scalar(lsp_types::MarkedString::LanguageString(lsp_types::LanguageString {
+                    language: "mtsyntax".to_owned(),
+                    value: docs,
+                })),
+                range: Some(range),
+            }
+        }))
     }
 }
 impl RequestHandler for request::CodeActionRequest {
