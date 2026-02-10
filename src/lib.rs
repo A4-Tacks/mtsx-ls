@@ -2,7 +2,7 @@ use std::{collections::HashSet, time::SystemTime};
 
 use line_column::span::Span;
 use lsp_types::{DiagnosticSeverity, InsertTextFormat};
-use syntax::{AstNode, AstToken, Direction, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken, TextRange, TextSize, ast::{self, Or}};
+use syntax::{AstNode, AstToken, Direction, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken, T, TextRange, TextSize, ast::{self, Or}};
 
 pub struct Tracer {
     pub trace: bool,
@@ -78,25 +78,25 @@ const MANIFEST_ATTRS: &[(&str, &str)] = &[
     ("codeShrinker",            r#"codeShrinker: #$1#"#),
 ];
 const BUILTIN_COLORS: &[(&str, &str, &str)] = &[
-    ("default",      "000000",     "A9B7C6",),
-    ("string",       "067D17",     "6A8759",),
-    ("strEscape",    "0037A6",     "CC7832",),
-    ("comment",      "8C8C8C",     "808080",),
-    ("meta",         "9E880D",     "BBB529",),
-    ("number",       "1750EB",     "6897BB",),
-    ("keyword",      "0033B3",     "CC7832",),
-    ("keyword2",     "800000",     "AE8ABE",),
-    ("constant",     "871094",     "9876AA",),
-    ("type",         "808000",     "808000",),
-    ("label",        "7050E0",     "6080B0",),
-    ("variable",     "1750EB",     "58908A",),
-    ("operator",     "205060",     "508090",),
-    ("propKey",      "083080",     "CC7832",),
-    ("propVal",      "067D17",     "6A8759",),
-    ("tagName",      "0030B3",     "E8BF6A",),
-    ("attrName",     "174AD4",     "BABABA",),
-    ("namespace",    "871094",     "9876AA",),
-    ("error",        "F50000",     "BC3F3C",),
+    ("default",      "#000000",     "#A9B7C6"),
+    ("string",       "#067D17",     "#6A8759"),
+    ("strEscape",    "#0037A6",     "#CC7832"),
+    ("comment",      "#8C8C8C",     "#808080"),
+    ("meta",         "#9E880D",     "#BBB529"),
+    ("number",       "#1750EB",     "#6897BB"),
+    ("keyword",      "#0033B3",     "#CC7832"),
+    ("keyword2",     "#800000",     "#AE8ABE"),
+    ("constant",     "#871094",     "#9876AA"),
+    ("type",         "#808000",     "#808000"),
+    ("label",        "#7050E0",     "#6080B0"),
+    ("variable",     "#1750EB",     "#58908A"),
+    ("operator",     "#205060",     "#508090"),
+    ("propKey",      "#083080",     "#CC7832"),
+    ("propVal",      "#067D17",     "#6A8759"),
+    ("tagName",      "#0030B3",     "#E8BF6A"),
+    ("attrName",     "#174AD4",     "#BABABA"),
+    ("namespace",    "#871094",     "#9876AA"),
+    ("error",        "#F50000",     "#BC3F3C"),
 ];
 const BUILTIN_MATCHERS: &[(&str, &str)] = &[
     ("ESCAPED_CHAR",                 r#"匹配转义符号，仅包含\x"#,),
@@ -323,10 +323,20 @@ impl Analysis {
                 }).collect()
             },
             Location::Color => {
-                BUILTIN_COLORS.iter().map(|(name, lg, dk)| {
-                    let detail = format!("light: #{lg}, dark: #{dk}");
+                let user_colors = self.styles().map(|(name, qualifiers)| {
+                    let mut range = name.text_range();
+                    if let Some(last) = qualifiers.last() {
+                        range = range.cover(last.syntax().text_range())
+                    }
+                    let def = &self.source.text()[range];
+                    make_item(name.text().trim_matches('"'), name.text(), def)
+                });
+                let builtins = BUILTIN_COLORS.iter().map(|(name, lg, dk)| {
+                    let dname = format!("{name:?}");
+                    let detail = format!("{dname:<16}{lg}     {dk}");
                     make_item(*name, &format!(r#""{name}""#), &detail)
-                }).collect()
+                });
+                user_colors.chain(builtins).collect()
             },
             Location::Value => {
                 let Some(table) = elem.ancestors().find_map(ast::Table::cast) else {
@@ -389,6 +399,30 @@ impl Analysis {
                 .then(|| pair.value())
                 .flatten()
         })
+    }
+
+    fn styles(&self) -> impl Iterator<Item = (SyntaxToken, impl Iterator<Item = ast::Lit>)> {
+        self.get_manifest("styles")
+            .or_else(|| self.get_manifest("colors"))
+            .and_then(ast::Value::into_array)
+            .into_iter()
+            .flat_map(|arr| arr.items())
+            .filter_map(|it| Some((it.value()?.into_literal()?.lit()?.into_string()?, it)))
+            .map(|(name, it)| {
+                let members_qualifiers = it.syntax()
+                    .siblings(Direction::Next)
+                    .skip(1)
+                    .filter_map(ast::Item::cast)
+                    .take_while(|it| it.assoc().is_none())
+                    .map_while(|it| it.value()?.into_literal()?.lit())
+                    .take_while(|it| !matches!(it, ast::Lit::STRING(_)));
+                let values = it.sep()
+                    .filter(|it| it.kind() == T![>])
+                    .into_iter()
+                    .flat_map(move |_| it.assoc().into_iter().filter_map(|it| it.into_literal()?.lit()))
+                    .chain(members_qualifiers);
+                (name, values)
+            })
     }
 
     fn defines(&self) -> impl Iterator<Item = (SyntaxToken, ast::Value)> {
@@ -852,6 +886,81 @@ mod tests {
             expect![[r#"
                 "x"                 "\"x\": /a/"
                 "y"                 "// docs\n//\n// ...\n\"y\": /b/"
+            "#]],
+        );
+        check(
+            r#"{
+                defines: [
+                    "x": /a/
+                    // docs
+                    //
+                    // ...
+                    "y": /b/
+                    "matcher": {match: /x/}
+                    // xxx
+                    "matcher1": {match: /x/}
+                    "matcher2": [{match: /x/}]
+                ]
+                contains: [
+                    {include: "$0"}
+                ]
+            }"#,
+            expect![[r#"
+                "matcher"           "\"matcher\": {match: /x/}"
+                "matcher1"          "// xxx\n\"matcher1\": {match: /x/}"
+                "matcher2"          "\"matcher2\": [{match: /x/}]"
+            "#]],
+        );
+        check(
+            r#"{
+                defines: [
+                    // xxx
+                    "x": {match: /a/} // foo
+                ]
+                contains: [
+                    {include: "$0"}
+                ]
+            }"#,
+            expect![[r#"
+                "x"                 "// foo\n// xxx\n\"x\": {match: /a/}"
+            "#]],
+        );
+    }
+
+    #[test]
+    fn test_style_completion() {
+        check(
+            r#"{
+                styles: [
+                    "red", #ff0000#303030, #dd0000
+                    "custom" > "red", @BI
+                ]
+                contains: [
+                    {match: /x/, 0: $0}
+                ]
+            }"#,
+            expect![[r#"
+                red                 "\"red\", #ff0000#303030, #dd0000"
+                custom              "\"custom\" > \"red\", @BI"
+                default             "\"default\"       #000000     #A9B7C6"
+                string              "\"string\"        #067D17     #6A8759"
+                strEscape           "\"strEscape\"     #0037A6     #CC7832"
+                comment             "\"comment\"       #8C8C8C     #808080"
+                meta                "\"meta\"          #9E880D     #BBB529"
+                number              "\"number\"        #1750EB     #6897BB"
+                keyword             "\"keyword\"       #0033B3     #CC7832"
+                keyword2            "\"keyword2\"      #800000     #AE8ABE"
+                constant            "\"constant\"      #871094     #9876AA"
+                type                "\"type\"          #808000     #808000"
+                label               "\"label\"         #7050E0     #6080B0"
+                variable            "\"variable\"      #1750EB     #58908A"
+                operator            "\"operator\"      #205060     #508090"
+                propKey             "\"propKey\"       #083080     #CC7832"
+                propVal             "\"propVal\"       #067D17     #6A8759"
+                tagName             "\"tagName\"       #0030B3     #E8BF6A"
+                attrName            "\"attrName\"      #174AD4     #BABABA"
+                namespace           "\"namespace\"     #871094     #9876AA"
+                error               "\"error\"         #F50000     #BC3F3C"
             "#]],
         );
         check(
