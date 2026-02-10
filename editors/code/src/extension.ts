@@ -6,8 +6,8 @@ let client: LanguageClient;
 
 export function activate(_ctx: any) {
   client = new LanguageClient(
-    'bangls',
-    'Bang Language Server',
+    'mtsx-ls',
+    'MT-Syntax Language Server',
     { command: 'mtsx-ls', args: [] },
     { documentSelector: [{scheme: 'file', language: 'mtsyntax'}] }
   );
