@@ -355,7 +355,7 @@ impl Analysis {
                     .filter(|(_, value)| !is_matcher(value))
                     .map(|(name, value)| {
                         let detail = format!("{}{name}: {value}", docs(&name));
-                        make_item(name.text(), &format!("\"{name}\""), &detail)
+                        make_item(name.text(), name.text(), &detail)
                     })
                     .collect()
             },
@@ -364,7 +364,7 @@ impl Analysis {
                     .filter(|(_, value)| is_matcher(value))
                     .map(|(name, value)| {
                         let detail = format!("{}{name}: {value}", docs(&name));
-                        make_item(name.text(), &format!("\"{name}\""), &detail)
+                        make_item(name.text(), name.text(), &detail)
                     })
                     .collect()
             },
@@ -499,6 +499,20 @@ mod tests {
         expect.assert_eq(&completions);
     }
 
+    #[track_caller]
+    fn check_complete(src: &str, expect: Expect) {
+        let index = src.find("$0").expect("must a `$0`");
+        let src = src.replacen("$0", "", 1);
+        let src = Span::new_full(src);
+        let pos = lsp_pos(&src.create(TextRange::empty(TextSize::new(index.try_into().unwrap()))));
+        let completions = completions(src.source(), pos, &Tracer::new("test"));
+        let completions = completions.iter().map(|item| {
+            let text = item.insert_text.as_deref().unwrap_or(&item.label);
+            format!("{:20}{text:?}\n", item.label)
+        }).collect::<String>();
+        expect.assert_eq(&completions);
+    }
+
     #[test]
     fn test_location() {
         check_loc(
@@ -605,6 +619,163 @@ mod tests {
         check(r#"$0"#, expect![""]);
         check(r#"{name: $0}"#, expect![]);
         check(r#"{name: [$0]}"#, expect![""]);
+    }
+
+    #[test]
+    fn test_trim_complete_sides() {
+        check_complete(
+            r#"{
+                contains: [
+                    {0: $0}
+                ]
+            }"#,
+            expect![[r#"
+                default             "\"default\""
+                string              "\"string\""
+                strEscape           "\"strEscape\""
+                comment             "\"comment\""
+                meta                "\"meta\""
+                number              "\"number\""
+                keyword             "\"keyword\""
+                keyword2            "\"keyword2\""
+                constant            "\"constant\""
+                type                "\"type\""
+                label               "\"label\""
+                variable            "\"variable\""
+                operator            "\"operator\""
+                propKey             "\"propKey\""
+                propVal             "\"propVal\""
+                tagName             "\"tagName\""
+                attrName            "\"attrName\""
+                namespace           "\"namespace\""
+                error               "\"error\""
+            "#]],
+        );
+        check_complete(
+            r#"{
+                contains: [
+                    {0: "$0"}
+                ]
+            }"#,
+            expect![[r#"
+                default             "default"
+                string              "string"
+                strEscape           "strEscape"
+                comment             "comment"
+                meta                "meta"
+                number              "number"
+                keyword             "keyword"
+                keyword2            "keyword2"
+                constant            "constant"
+                type                "type"
+                label               "label"
+                variable            "variable"
+                operator            "operator"
+                propKey             "propKey"
+                propVal             "propVal"
+                tagName             "tagName"
+                attrName            "attrName"
+                namespace           "namespace"
+                error               "error"
+            "#]],
+        );
+        check_complete(
+            r#"{
+                contains: [
+                    {0: "def$0"}
+                ]
+            }"#,
+            expect![[r#"
+                default             "default"
+                string              "string"
+                strEscape           "strEscape"
+                comment             "comment"
+                meta                "meta"
+                number              "number"
+                keyword             "keyword"
+                keyword2            "keyword2"
+                constant            "constant"
+                type                "type"
+                label               "label"
+                variable            "variable"
+                operator            "operator"
+                propKey             "propKey"
+                propVal             "propVal"
+                tagName             "tagName"
+                attrName            "attrName"
+                namespace           "namespace"
+                error               "error"
+            "#]],
+        );
+        check_complete(
+            r#"{
+                defines: [
+                    "x": /foo/
+                ]
+                contains: [
+                    {0: include($0)}
+                ]
+            }"#,
+            expect![[r#"
+                "x"                 "\"x\""
+            "#]],
+        );
+        check_complete(
+            r#"{
+                defines: [
+                    "x": /foo/
+                ]
+                contains: [
+                    {0: include("$0")}
+                ]
+            }"#,
+            expect![[r#"
+                "x"                 "x"
+            "#]],
+        );
+        check_complete(
+            r#"{
+                defines: [
+                    "x": {match: /foo/}
+                ]
+                contains: [
+                    {include: "$0"}
+                ]
+            }"#,
+            expect![[r#"
+                "x"                 "x"
+            "#]],
+        );
+        check_complete(
+            r#"{
+                codeShinker: $0
+            }"#,
+            expect![[r##"
+                BUILT_IN_CSS_SHRINKER"#BUILT_IN_CSS_SHRINKER#"
+                BUILT_IN_HTML_SHRINKER"#BUILT_IN_HTML_SHRINKER#"
+                BUILT_IN_JSON_SHRINKER"#BUILT_IN_JSON_SHRINKER#"
+            "##]],
+        );
+        check_complete(
+            r#"{
+                codeShinker: #$0
+            }"#,
+            expect![[r#"
+                BUILT_IN_CSS_SHRINKER"BUILT_IN_CSS_SHRINKER#"
+                BUILT_IN_HTML_SHRINKER"BUILT_IN_HTML_SHRINKER#"
+                BUILT_IN_JSON_SHRINKER"BUILT_IN_JSON_SHRINKER#"
+            "#]],
+        );
+        check_complete(
+            r#"{
+                codeShinker: #$0#
+            }"#,
+            expect![[r#"
+                BUILT_IN_CSS_SHRINKER"BUILT_IN_CSS_SHRINKER"
+                BUILT_IN_HTML_SHRINKER"BUILT_IN_HTML_SHRINKER"
+                BUILT_IN_JSON_SHRINKER"BUILT_IN_JSON_SHRINKER"
+            "#]],
+        );
     }
 
     #[test]
