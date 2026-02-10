@@ -1,14 +1,11 @@
-#![allow(unused)]
 use getopts_macro::getopts_options;
 use mtsx_ls::Tracer;
-use syntax::ast;
-use std::{collections::HashMap, time::SystemTime};
+use std::collections::HashMap;
 
 use anyhow::{Result, anyhow, bail};
 use crossbeam_channel::{Receiver, Sender};
-use line_column::span::Span;
 use lsp_server::{IoThreads, Message};
-use lsp_types::{CodeActionKind, CodeActionOptions, CompletionItem, CompletionOptions, InitializeParams, InitializeResult, MessageType, PublishDiagnosticsParams, ServerCapabilities, ShowMessageParams, TextDocumentSyncCapability, TextDocumentSyncKind, TraceValue, Uri, notification::{self, Notification}, request::{self, Request}};
+use lsp_types::{CodeActionKind, CodeActionOptions, CompletionOptions, InitializeParams, InitializeResult, MessageType, PublishDiagnosticsParams, ServerCapabilities, ShowMessageParams, TextDocumentSyncCapability, TextDocumentSyncKind, TraceValue, Uri, notification::{self, Notification}, request::{self, Request}};
 
 fn main() {
     let options = getopts_options! {
@@ -270,7 +267,7 @@ impl RequestHandler for request::GotoDefinition {
     }
 }
 impl RequestHandler for request::CodeActionRequest {
-    fn handle(ctx: &mut Ctx, param: Self::Params) -> Result<Self::Result> {
+    fn handle(_ctx: &mut Ctx, _param: Self::Params) -> Result<Self::Result> {
         Ok(Some(vec![]))
     }
 }
