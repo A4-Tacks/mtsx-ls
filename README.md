@@ -15,6 +15,8 @@
 - [ ] 跳转用户定义的匹配器、正则、颜色的定义和引用
 
 # 编辑器
+可执行文件与扩展可以在 Releases 中找到
+
 - VIM : 使用 [mtsyntax.vim](https://github.com/A4-Tacks/mtsyntax.vim) 获取语法高亮,
         配置将 mtsx-ls 的可执行文件和文件类型关联即可
-- VSCode : 使用提供的扩展, 并将 mtsx-ls 放入 PATH 环境变量所包含的文件夹中即可
+- VSCode : 使用提供的扩展 (.vsix), 并将 mtsx-ls 放入 PATH 环境变量所包含的文件夹中即可
