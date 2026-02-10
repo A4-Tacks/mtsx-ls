@@ -1,0 +1,9 @@
+[package]
+name = "test-utils"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+text-size.workspace = true
+dissimilar.workspace = true
+expect-test.workspace = true

@@ -193,10 +193,10 @@ name = "parser"
 version = "0.1.0"
 dependencies = [
  "char-classes",
- "dissimilar",
  "either",
  "expect-test",
  "rowan",
+ "test-utils",
  "text-size",
 ]
 
@@ -315,6 +315,15 @@ dependencies = [
  "line-column",
  "parser",
  "paste",
+]
+
+[[package]]
+name = "test-utils"
+version = "0.1.0"
+dependencies = [
+ "dissimilar",
+ "expect-test",
+ "text-size",
 ]
 
 [[package]]

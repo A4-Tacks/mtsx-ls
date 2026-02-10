@@ -8,5 +8,5 @@ rowan.workspace = true
 char-classes.workspace = true
 expect-test.workspace = true
 text-size.workspace = true
-dissimilar.workspace = true
+test-utils.workspace = true
 either.workspace = true

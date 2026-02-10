@@ -6,7 +6,7 @@ edition = "2024"
 license = "MIT"
 
 [workspace]
-members = ["crates/parser", "crates/syntax"]
+members = ["crates/parser", "crates/syntax", "crates/test-utils"]
 
 [workspace.dependencies]
 rowan = "0.16.1"
@@ -19,6 +19,7 @@ line-column = { version = "0.3.1", features = ["span"] }
 paste = "1.0.15"
 parser = { version = "*", path = "crates/parser" }
 syntax = { version = "*", path = "crates/syntax" }
+test-utils = { version = "*", path = "crates/test-utils" }
 
 [profile.dev.package]
 dissimilar.opt-level = 3
