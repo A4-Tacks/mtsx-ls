@@ -159,6 +159,7 @@ const PATTERNS: &[(&str, &str)] = &[
     ("include",                 r#"include("$1")"#),
     ("keywordsToRegex",         r#"keywordsToRegex("$1")"#),
 ];
+const ALLOW_DUP_KEYS: &[&str] = &["comment", "lineBackground"];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 enum Location {
@@ -358,12 +359,12 @@ impl Analysis {
 
     fn collect_diagnostics(&mut self) -> Option<()> {
         self.root.syntax().descendants().for_each(|node| {
-            self.check_missing_keys(&node);
+            self.check_duplicate_keys(&node);
         });
         Some(())
     }
 
-    fn check_missing_keys(&mut self, node: &SyntaxNode) -> Option<()> {
+    fn check_duplicate_keys(&mut self, node: &SyntaxNode) -> Option<()> {
         let table = ast::Table::cast(node.clone())?;
         let mut defined = HashSet::new();
         table.pairs()
@@ -372,7 +373,9 @@ impl Analysis {
                 ast::Key::NUMBER(_) => None,
             })
             .for_each(|name| {
-                if !defined.insert(name.to_string()) {
+                if !defined.insert(name.to_string())
+                    && !ALLOW_DUP_KEYS.contains(&name.text())
+                {
                     self.error(name.text_range(), format_args!(
                             "duplicate key: `{name}`"));
                 }
