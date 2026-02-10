@@ -2,7 +2,7 @@
     "name": "mtsyntax",
     "displayName": "MT syntax",
     "description": "MT syntax language supports",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "license": "MIT",
     "publisher": "A4-Tacks",
     "engines": {
