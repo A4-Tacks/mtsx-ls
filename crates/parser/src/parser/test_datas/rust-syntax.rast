@@ -34,57 +34,52 @@ SOURCE_FILE@0..16686
       ARRAY@209..418
         L_BRACK@209..210 "["
         WHITESPACE@210..219 "\n        "
-        ITEM@219..240
+        ITEM@219..249
           LITERAL@219..228
             STRING@219..228 "\"preproc\""
           WHITESPACE@228..239 "           "
           R_ANGLE@239..240 ">"
-        WHITESPACE@240..241 " "
-        ITEM@241..249
+          WHITESPACE@240..241 " "
           LITERAL@241..248
             STRING@241..248 "\"label\""
           COMMA@248..249 ","
         WHITESPACE@249..258 "\n        "
-        ITEM@258..279
+        ITEM@258..290
           LITERAL@258..268
             STRING@258..268 "\"funcname\""
           WHITESPACE@268..278 "          "
           R_ANGLE@278..279 ">"
-        WHITESPACE@279..280 " "
-        ITEM@280..290
+          WHITESPACE@279..280 " "
           LITERAL@280..289
             STRING@280..289 "\"tagName\""
           COMMA@289..290 ","
         WHITESPACE@290..299 "\n        "
-        ITEM@299..320
+        ITEM@299..328
           LITERAL@299..309
             STRING@299..309 "\"typename\""
           WHITESPACE@309..319 "          "
           R_ANGLE@319..320 ">"
-        WHITESPACE@320..321 " "
-        ITEM@321..328
+          WHITESPACE@320..321 " "
           LITERAL@321..327
             STRING@321..327 "\"type\""
           COMMA@327..328 ","
         WHITESPACE@328..337 "\n        "
-        ITEM@337..358
+        ITEM@337..370
           LITERAL@337..349
             STRING@337..349 "\"path-delim\""
           WHITESPACE@349..357 "        "
           R_ANGLE@357..358 ">"
-        WHITESPACE@358..359 " "
-        ITEM@359..370
+          WHITESPACE@358..359 " "
           LITERAL@359..369
             STRING@359..369 "\"operator\""
           COMMA@369..370 ","
         WHITESPACE@370..379 "\n        "
-        ITEM@379..400
+        ITEM@379..412
           LITERAL@379..392
             STRING@379..392 "\"doc-comment\""
           WHITESPACE@392..399 "       "
           R_ANGLE@399..400 ">"
-        WHITESPACE@400..401 " "
-        ITEM@401..412
+          WHITESPACE@400..401 " "
           LITERAL@401..412
             STRING@401..412 "\"namespace\""
         WHITESPACE@412..417 "\n    "

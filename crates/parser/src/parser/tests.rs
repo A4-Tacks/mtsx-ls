@@ -253,13 +253,12 @@ fn parse_values() {
                   ARRAY@133..182
                     L_BRACK@133..134 "["
                     WHITESPACE@134..151 "\n                "
-                    ITEM@151..160
+                    ITEM@151..168
                       LITERAL@151..158
                         COLOR@151..158 "#ff0000"
                       WHITESPACE@158..159 " "
                       R_ANGLE@159..160 ">"
-                    WHITESPACE@160..161 " "
-                    ITEM@161..168
+                      WHITESPACE@160..161 " "
                       LITERAL@161..168
                         STRING@161..168 "\"color\""
                     WHITESPACE@168..181 "\n            "

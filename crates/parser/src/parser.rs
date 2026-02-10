@@ -12,7 +12,7 @@ use SyntaxKind::*;
 // LITERAL      = BUILTIN | STRING | NUMBER | REGEX | MARK | COLOR | IDENT
 // JOIN         = value "+" value
 // ARRAY        = "{" ITEM "}"
-// ITEM         = value [">"] [":" value] [","]
+// ITEM         = value [":" value | ">" value] [","]
 // CALL         = IDENT "(" *(STRING [","]) ")"
 pub struct Parser<'input> {
     lexer: Lexer<'input>,
@@ -223,9 +223,8 @@ impl<'input> Parser<'input> {
     fn item(&mut self) {
         let mark = self.mark();
         self.value();
-        self.eat(T![>]);
 
-        if self.eat(T![:]) {
+        if self.eat(T![:]) || self.eat(T![>]) {
             self.value();
         }
 
