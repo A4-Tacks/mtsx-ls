@@ -354,7 +354,7 @@ impl Analysis {
                 self.defines()
                     .filter(|(_, value)| !is_matcher(value))
                     .map(|(name, value)| {
-                        let detail = format!("{}{name}: {value}", docs(&name));
+                        let detail = detail(&name, &value);
                         make_item(name.text(), name.text(), &detail)
                     })
                     .collect()
@@ -363,7 +363,7 @@ impl Analysis {
                 self.defines()
                     .filter(|(_, value)| is_matcher(value))
                     .map(|(name, value)| {
-                        let detail = format!("{}{name}: {value}", docs(&name));
+                        let detail = detail(&name, &value);
                         make_item(name.text(), name.text(), &detail)
                     })
                     .collect()
@@ -429,6 +429,10 @@ impl Analysis {
     }
 }
 
+fn detail(name: &SyntaxToken, value: &ast::Value) -> String {
+    format!("{}{name}: {}", docs(&name), dedent(&value.to_string(), indent_spaces(value.syntax().clone())))
+}
+
 fn docs(name: &SyntaxToken) -> String {
     (|| {
         let def = name.parent_ancestors().find_map(Or::<ast::Pair, ast::Item>::cast)?;
@@ -457,6 +461,35 @@ fn docs(name: &SyntaxToken) -> String {
             .collect::<Vec<_>>();
         Some(String::from_iter(docs.into_iter().rev()))
     })().unwrap_or(String::new()).to_owned()
+}
+
+fn indent_spaces(node: impl Into<NodeOrToken<SyntaxNode, SyntaxToken>>) -> usize {
+    let first = match node.into() {
+        NodeOrToken::Node(n) => n.first_token(),
+        NodeOrToken::Token(t) => Some(t),
+    };
+    fn get_indent(text: &str) -> usize {
+        let (_, indent) = text.rsplit_once('\n').unwrap();
+        indent.len()
+    }
+    std::iter::successors(first, |it| it.prev_token())
+        .filter(|it| it.kind() == SyntaxKind::WHITESPACE)
+        .find(|it| it.text().contains('\n'))
+        .map_or(0, |tok| get_indent(tok.text()))
+}
+
+fn dedent(s: &str, spaces: usize) -> String {
+    s.split_inclusive('\n')
+        .map(|line| {
+            let pure = line.trim_ascii_start();
+            let indent = line.len() - pure.len();
+            if indent < spaces {
+                pure
+            } else {
+                &line[spaces..]
+            }
+        })
+        .collect()
 }
 
 #[cfg(test)]
@@ -593,6 +626,10 @@ mod tests {
         check_loc(
             r#"{contains: [{match: include("$0")}]}"#,
             expect!["IncludeRegex, IncludeRegex"],
+        );
+        check_loc(
+            r#"{contains: [{include: $0}]}"#,
+            expect!["Value !1, IncludeMatcher"],
         );
         check_loc(
             r#"{contains: [{match: keywordsToRegex("$0")}]}"#,
@@ -852,6 +889,28 @@ mod tests {
             }"#,
             expect![[r#"
                 "x"                 "// foo\n// xxx\n\"x\": {match: /a/}"
+            "#]],
+        );
+    }
+
+    #[test]
+    fn test_docs_indent() {
+        check(
+            r#"{
+                defines: [
+                    // docs
+                    //   * docs
+                    "y": {
+                        match: /x/
+                        0: "red"
+                    }
+                ]
+                contains: [
+                    {include: $0}
+                ]
+            }"#,
+            expect![[r#"
+                "y"                 "// docs\n//   * docs\n\"y\": {\n    match: /x/\n    0: \"red\"\n}"
             "#]],
         );
     }
