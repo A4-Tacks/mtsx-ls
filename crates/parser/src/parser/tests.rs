@@ -510,6 +510,129 @@ fn some_incomplete_state() {
               WHITESPACE@52..61 "\n        "
         "#]],
     );
+    check(
+        r#"
+        {
+            {a b c}
+         // ^ expected a ident or number
+            // ^ unexpected ident, expected colon
+              // ^ unexpected ident, expected colon
+               // ^ unexpected `}`, expected colon
+            match: /x/
+        }
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..72
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..63
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                PAIR@23..30
+                  TABLE@23..30
+                    L_CURLY@23..24 "{"
+                    PAIR@24..25
+                      IDENT@24..25 "a"
+                    WHITESPACE@25..26 " "
+                    PAIR@26..27
+                      IDENT@26..27 "b"
+                    WHITESPACE@27..28 " "
+                    PAIR@28..29
+                      IDENT@28..29 "c"
+                    R_CURLY@29..30 "}"
+                WHITESPACE@30..43 "\n            "
+                PAIR@43..53
+                  IDENT@43..48 "match"
+                  COLON@48..49 ":"
+                  WHITESPACE@49..50 " "
+                  LITERAL@50..53
+                    REGEX@50..53 "/x/"
+                WHITESPACE@53..62 "\n        "
+                R_CURLY@62..63 "}"
+              WHITESPACE@63..72 "\n        "
+        "#]],
+    );
+    check(
+        r#"
+        {
+            [a b c]
+         // ^ expected a ident or number
+            match: /x/
+        }
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..72
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..63
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                PAIR@23..30
+                  ARRAY@23..30
+                    L_BRACK@23..24 "["
+                    ITEM@24..26
+                      LITERAL@24..25
+                        IDENT@24..25 "a"
+                      WHITESPACE@25..26 " "
+                    ITEM@26..28
+                      LITERAL@26..27
+                        IDENT@26..27 "b"
+                      WHITESPACE@27..28 " "
+                    ITEM@28..29
+                      LITERAL@28..29
+                        IDENT@28..29 "c"
+                    R_BRACK@29..30 "]"
+                WHITESPACE@30..43 "\n            "
+                PAIR@43..53
+                  IDENT@43..48 "match"
+                  COLON@48..49 ":"
+                  WHITESPACE@49..50 " "
+                  LITERAL@50..53
+                    REGEX@50..53 "/x/"
+                WHITESPACE@53..62 "\n        "
+                R_CURLY@62..63 "}"
+              WHITESPACE@63..72 "\n        "
+        "#]],
+    );
+    check(
+        r#"
+        {
+            (a b c)
+         // ^ expected a ident or number
+          // ^ unexpected ident, expected string
+            // ^ unexpected ident, expected string
+              // ^ unexpected ident, expected string
+            match: /x/
+        }
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..72
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..63
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                PAIR@23..30
+                  CALL@23..30
+                    L_PAREN@23..24 "("
+                    ERROR@24..25
+                      IDENT@24..25 "a"
+                    WHITESPACE@25..26 " "
+                    ERROR@26..27
+                      IDENT@26..27 "b"
+                    WHITESPACE@27..28 " "
+                    ERROR@28..29
+                      IDENT@28..29 "c"
+                    R_PAREN@29..30 ")"
+                WHITESPACE@30..43 "\n            "
+                PAIR@43..53
+                  IDENT@43..48 "match"
+                  COLON@48..49 ":"
+                  WHITESPACE@49..50 " "
+                  LITERAL@50..53
+                    REGEX@50..53 "/x/"
+                WHITESPACE@53..62 "\n        "
+                R_CURLY@62..63 "}"
+              WHITESPACE@63..72 "\n        "
+        "#]],
+    );
 }
 
 #[test]

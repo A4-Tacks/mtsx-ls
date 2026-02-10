@@ -169,7 +169,7 @@ impl<'input> Parser<'input> {
         let mark = self.mark();
         self.bump(L_CURLY);
 
-        while matches!(self.current(), IDENT | NUMBER | T![:]) {
+        while matches!(self.current(), IDENT | NUMBER | T![:] | L_CURLY | L_BRACK | L_PAREN) {
             self.pair();
         }
 
@@ -186,7 +186,12 @@ impl<'input> Parser<'input> {
             self.report_error("expected a ident or number");
         }
 
-        if self.bump_or_expect(T![:]) {
+        if matches!(self.current(), L_CURLY | L_BRACK) {
+            // 防止将开括号解析成错误, 而在关括号一路炸到源文件
+            self.value();
+        } else if self.current() == L_PAREN {
+            self.ident_or_call();
+        } else if self.bump_or_expect(T![:]) {
             self.value();
         }
         self.eat(T![,]);
@@ -205,7 +210,7 @@ impl<'input> Parser<'input> {
 
     fn ident_or_call(&mut self) {
         let mark = self.mark();
-        self.bump(IDENT);
+        self.eat(IDENT);
 
         if self.eat(L_PAREN) {
             while self.current() != R_PAREN && !self.is_eof() {
