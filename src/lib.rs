@@ -432,11 +432,26 @@ impl Analysis {
 fn docs(name: &SyntaxToken) -> String {
     (|| {
         let def = name.parent_ancestors().find_map(Or::<ast::Pair, ast::Item>::cast)?;
+
+        let suf_docs = def.syntax()
+            .siblings_with_tokens(Direction::Next)
+            .skip(1)
+            .map_while(NodeOrToken::into_token)
+            .take_while(|it| it.kind() == SyntaxKind::WHITESPACE)
+            .take_while(|it| !it.text().contains('\n'))
+            .last()
+            .into_iter()
+            .flat_map(|it| it.siblings_with_tokens(Direction::Next).skip(1))
+            .map_while(NodeOrToken::into_token)
+            .take_while(|it| it.kind().is_trivia())
+            ;
+
         let docs = def.syntax()
             .siblings_with_tokens(Direction::Prev)
             .skip(1)
             .map_while(NodeOrToken::into_token)
             .take_while(|it| it.kind().is_trivia())
+            .chain(suf_docs)
             .filter(|it| it.kind() == SyntaxKind::COMMENT)
             .map(|it| format!("{it}\n"))
             .collect::<Vec<_>>();
@@ -823,6 +838,20 @@ mod tests {
                 "matcher"           "\"matcher\": {match: /x/}"
                 "matcher1"          "// xxx\n\"matcher1\": {match: /x/}"
                 "matcher2"          "\"matcher2\": [{match: /x/}]"
+            "#]],
+        );
+        check(
+            r#"{
+                defines: [
+                    // xxx
+                    "x": {match: /a/} // foo
+                ]
+                contains: [
+                    {include: "$0"}
+                ]
+            }"#,
+            expect![[r#"
+                "x"                 "// foo\n// xxx\n\"x\": {match: /a/}"
             "#]],
         );
     }
