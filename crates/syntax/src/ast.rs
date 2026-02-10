@@ -167,7 +167,7 @@ define_nodes! {
 
 impl_ast_token_for_enum!(Key.IDENT.NUMBER for Pair.key);
 impl_ast_token_for_enum!(CallName.IDENT for Call.name);
-impl_ast_token_for_enum!(Lit.BUILTIN.STRING.NUMBER.REGEX.MARK.COLOR.IDENT for Literal.lit);
+impl_ast_token_for_enum!(Lit.BUILTIN.STRING.NUMBER.REGEX.MARK.COLOR.STYLE.IDENT for Literal.lit);
 
 impl Item {
     fn value_pair(&self) -> (Option<Value>, Option<SyntaxToken>, Option<Value>) {

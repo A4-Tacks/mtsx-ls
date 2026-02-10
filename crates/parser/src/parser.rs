@@ -9,7 +9,7 @@ use SyntaxKind::*;
 // PAIR         = key ":" value [","]
 // key          = IDENT | NUMBER
 // value        = JOIN | TABLE | ARRAY | LITERAL | CALL
-// LITERAL      = BUILTIN | STRING | NUMBER | REGEX | MARK | COLOR | IDENT
+// LITERAL      = BUILTIN | STRING | NUMBER | REGEX | MARK | COLOR | STYLE | IDENT
 // JOIN         = value "+" value
 // ARRAY        = "{" ITEM "}"
 // ITEM         = value [":" value | ">" value] [","]
@@ -143,7 +143,7 @@ impl<'input> Parser<'input> {
                 L_CURLY => self.table(),
                 L_BRACK => self.array(),
                 IDENT => self.ident_or_call(),
-                BUILTIN | STRING | NUMBER | REGEX | MARK | COLOR => {
+                BUILTIN | STRING | NUMBER | REGEX | MARK | COLOR | STYLE => {
                     let mark = self.mark();
                     self.bump(kind);
                     self.node(LITERAL, mark);
