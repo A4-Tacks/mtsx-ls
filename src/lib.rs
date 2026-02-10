@@ -401,21 +401,32 @@ mod tests {
     #[track_caller]
     fn check_loc(src: &str, expect: Expect) {
         let index = src.find("$0").expect("must a `$0`");
-        let src = src.replacen("$0", "", 1);
-        let src = Span::new_full(src);
-        let mut analysis = Analysis::new(src);
-        analysis.collect_diagnostics();
-        let extra = if analysis.diagnostics.is_empty() { "" } else { &format!(" !{}", analysis.diagnostics.len()) };
-        let element = analysis
-            .root
-            .syntax()
-            .covering_element(TextRange::empty(TextSize::new(index.try_into().unwrap())));
-        let node = match element {
-            ast::NodeOrToken::Node(n) => n,
-            ast::NodeOrToken::Token(t) => t.parent().unwrap(),
-        };
-        let loc = analysis.location(&node);
-        expect.assert_eq(&format!("{loc:?}{extra}"));
+        let mut actual = String::new();
+
+        for src in [
+            src.replacen("$0", "", 1),
+            src.replacen("$0", COMPLETE_MARKER, 1),
+        ] {
+            let src = Span::new_full(src);
+            let mut analysis = Analysis::new(src);
+            analysis.collect_diagnostics();
+            let extra = if analysis.diagnostics.is_empty() { "" } else { &format!(" !{}", analysis.diagnostics.len()) };
+            let element = analysis
+                .root
+                .syntax()
+                .covering_element(TextRange::empty(TextSize::new(index.try_into().unwrap())));
+            let node = match element {
+                ast::NodeOrToken::Node(n) => n,
+                ast::NodeOrToken::Token(t) => t.parent().unwrap(),
+            };
+            let loc = analysis.location(&node);
+
+            if !actual.is_empty() {
+                actual += ", ";
+            }
+            actual += &format!("{loc:?}{extra}");
+        }
+        expect.assert_eq(&actual);
     }
 
     #[track_caller]
@@ -431,29 +442,90 @@ mod tests {
 
     #[test]
     fn test_location() {
-        check_loc(r#"{$0}"#, expect!["Manifest"]);
-        check_loc(r#"{x$0}"#, expect!["Manifest !1"]);
-        check_loc(r#"{name: [$0]}"#, expect!["Disabled"]);
-        check_loc(r#"{styles: [$0]}"#, expect!["Styles"]);
-        check_loc(r#"{styles: [x$0]}"#, expect!["Styles"]);
-        check_loc(r#"{comment: {$0}}"#, expect!["CommentDef"]);
-        check_loc(r#"{comment: {x$0}}"#, expect!["CommentDef !1"]);
-        check_loc(r#"{contains: [$0]}"#, expect!["Value"]);
-        check_loc(r#"{contains: [{$0}]}"#, expect!["Value"]);
-        check_loc(r#"{contains: [{start: /foo/$0}]}"#, expect!["Value"]);
-        check_loc(r#"{contains: [{match: /foo/$0}]}"#, expect!["Pattern"]);
-        check_loc(r#"{contains: [{match: /foo/+$0}]}"#, expect!["Pattern !1"]);
-        check_loc(r#"{contains: [{match: $0+/foo/}]}"#, expect!["Pattern !1"]);
-        check_loc(r#"{contains: [{match: /foo/, 0:""$0}]}"#, expect!["Color"]);
-        check_loc(r#"{contains: [{builtin: #$0}]}"#, expect!["BuiltinMatcher"]);
-        check_loc(r#"{codeFormatter: place$0}"#, expect!["BuiltinFormatter"]);
-        check_loc(r#"{contains: [{match: include($0)}]}"#, expect!["IncludeRegex"]);
-        check_loc(r#"{contains: [{match: include("$0")}]}"#, expect!["IncludeRegex"]);
-        check_loc(r#"{contains: [{match: keywordsToRegex("$0")}]}"#, expect!["Disabled"]);
-        check_loc(r#"{defines: [$0]}"#, expect!["Defines"]);
-        check_loc(r#"{defines: ["x": {x$0}]}"#, expect!["Value !1"]);
-        check_loc(r#"{defines: ["x": {x:$0}]}"#, expect!["Value !1"]);
-        check_loc(r#"{defines: ["x": x$0]}"#, expect!["Defines"]);
+        check_loc(
+            r#"{$0}"#,
+            expect!["Manifest, Manifest !1"],
+        );
+        check_loc(
+            r#"{name: [$0]}"#,
+            expect!["Disabled, Disabled"],
+        );
+        check_loc(
+            r#"{styles: [$0]}"#,
+            expect!["Styles, Styles"],
+        );
+        check_loc(
+            r#"{comment: {$0}}"#,
+            expect!["CommentDef, CommentDef !1"],
+        );
+        check_loc(
+            r#"{contains: [$0]}"#,
+            expect!["Value, Value"],
+        );
+        check_loc(
+            r#"{contains: [{$0}]}"#,
+            expect!["Value, Value !1"],
+        );
+        check_loc(
+            r#"{contains: [{start: /foo/$0}]}"#,
+            expect!["Value, Value !1"],
+        );
+        check_loc(
+            r#"{contains: [{match: /foo/$0}]}"#,
+            expect!["Pattern, Pattern !1"],
+        );
+        check_loc(
+            r#"{contains: [{match: /foo/+$0}]}"#,
+            expect!["Pattern !1, Pattern"],
+        );
+        check_loc(
+            r#"{contains: [{match: $0+/foo/}]}"#,
+            expect!["Pattern !1, Pattern"],
+        );
+        check_loc(
+            r#"{contains: [{match: /foo/, 0:""$0}]}"#,
+            expect!["Color, Color !1"],
+        );
+        check_loc(
+            r#"{contains: [{builtin: $0}]}"#,
+            expect!["Value !1, BuiltinMatcher"],
+        );
+        check_loc(
+            r#"{contains: [{builtin: #$0}]}"#,
+            expect!["BuiltinMatcher, BuiltinMatcher"],
+        );
+        check_loc(
+            r#"{codeFormatter: $0}"#,
+            expect!["Manifest !1, BuiltinFormatter"],
+        );
+        check_loc(
+            r#"{contains: [{match: include($0)}]}"#,
+            expect!["IncludeRegex, IncludeRegex !9"],
+        );
+        check_loc(
+            r#"{contains: [{match: include("$0")}]}"#,
+            expect!["IncludeRegex, IncludeRegex"],
+        );
+        check_loc(
+            r#"{contains: [{match: keywordsToRegex("$0")}]}"#,
+            expect!["Disabled, Disabled"],
+        );
+        check_loc(
+            r#"{defines: [$0]}"#,
+            expect!["Defines, Defines"],
+        );
+        check_loc(
+            r#"{defines: ["x": {$0}]}"#,
+            expect!["Value, Value !1"],
+        );
+        check_loc(
+            r#"{defines: ["x": {x:$0}]}"#,
+            expect!["Value !1, Value"],
+        );
+        check_loc(
+            r#"{defines: ["x": $0]}"#,
+            expect!["Defines !1, Defines"],
+        );
     }
 
     #[test]
