@@ -500,7 +500,7 @@ mod tests {
         );
         check_loc(
             r#"{contains: [{match: include($0)}]}"#,
-            expect!["IncludeRegex, IncludeRegex !9"],
+            expect!["IncludeRegex, IncludeRegex !1"],
         );
         check_loc(
             r#"{contains: [{match: include("$0")}]}"#,

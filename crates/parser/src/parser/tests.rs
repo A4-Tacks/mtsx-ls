@@ -483,6 +483,34 @@ fn some_incomplete_state() {
               WHITESPACE@44..53 "\n        "
         "#]],
     );
+    check(
+        r#"
+        {
+            match: include(foo)
+                        // ^^^ unexpected ident, expected string
+        }
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..61
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..52
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                PAIR@23..42
+                  IDENT@23..28 "match"
+                  COLON@28..29 ":"
+                  WHITESPACE@29..30 " "
+                  CALL@30..42
+                    IDENT@30..37 "include"
+                    L_PAREN@37..38 "("
+                    ERROR@38..41
+                      IDENT@38..41 "foo"
+                    R_PAREN@41..42 ")"
+                WHITESPACE@42..51 "\n        "
+                R_CURLY@51..52 "}"
+              WHITESPACE@52..61 "\n        "
+        "#]],
+    );
 }
 
 #[test]

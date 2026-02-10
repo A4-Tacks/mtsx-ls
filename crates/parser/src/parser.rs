@@ -85,7 +85,6 @@ impl<'input> Parser<'input> {
         }
     }
 
-    #[expect(unused)]
     fn bump_expect(&mut self, kind: SyntaxKind) -> bool {
         let current = self.current();
         if current == kind {
@@ -209,8 +208,10 @@ impl<'input> Parser<'input> {
         self.bump(IDENT);
 
         if self.eat(L_PAREN) {
-            while self.eat(STRING) {
-                self.eat(T![,]);
+            while self.current() != R_PAREN && !self.is_eof() {
+                if self.bump_expect(STRING) {
+                    self.eat(T![,]);
+                }
             }
             self.bump_or_expect(R_PAREN);
             self.node(CALL, mark);
