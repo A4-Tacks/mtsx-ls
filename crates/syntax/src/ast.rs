@@ -1,4 +1,5 @@
-pub use parser::{AstNode, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken};
+use parser::{T, support};
+use parser::{AstNode, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken};
 
 use crate::AstToken;
 
@@ -64,6 +65,12 @@ macro_rules! define_nodes {
         define_nodes!(@enum $name $(. $kinds)+);
         define_nodes!(@AstNode $name $(. $kinds)+);
 
+        impl std::fmt::Display for $name {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                self.syntax().fmt(f)
+            }
+        }
+
         impl $name {
             $(define_nodes!(@impl $name $method $child);)*
             $(define_nodes!(@impl*$name $rmethod $rchild);)*
@@ -78,15 +85,27 @@ macro_rules! define_nodes {
         pub enum $name {
             $($kinds($kinds),)*
         }
+
+        paste::paste! {
+            impl $name {
+                $(pub fn [<into_ $kinds:lower>](self) -> Option<$kinds> {
+                    #[allow(unused)]
+                    match self {
+                        Self::$kinds(it) => Some(it),
+                        _ => None,
+                    }
+                })*
+            }
+        }
     };
     (@impl $name:ident $method:ident $child:ident) => {
         pub fn $method(&self) -> Option<$child> {
-            parser::support::child(&self.0)
+            support::child(&self.0)
         }
     };
     (@impl*$name:ident $method:ident $child:ident) => {
         pub fn $method(&self) -> parser::ast::AstChildren<$child> {
-            parser::support::children(&self.0)
+            support::children(&self.0)
         }
     };
     (@AstNode $name:ident . $kinds:ident) => {
@@ -148,6 +167,37 @@ define_nodes! {
 
 impl_ast_token_for_enum!(Key.IDENT.NUMBER for Pair.key);
 impl_ast_token_for_enum!(CallName.IDENT for Call.name);
+impl_ast_token_for_enum!(Lit.BUILTIN.STRING.NUMBER.REGEX.MARK.COLOR.IDENT for Literal.lit);
+
+impl Item {
+    fn value_pair(&self) -> (Option<Value>, Option<SyntaxToken>, Option<Value>) {
+        let node = self.syntax();
+        let sep
+            = support::token(node, T![:]).or_else(|| {
+                support::token(node, T![>])
+            });
+        let mut children = support::children(node).peekable();
+        let value = children.next_if(|it: &Value| {
+            sep.as_ref().is_none_or(|sep| {
+                it.syntax().text_range().start() < sep.text_range().start()
+            })
+        });
+        let assoc = children.next();
+        (value, sep, assoc)
+    }
+
+    pub fn value(&self) -> Option<Value> {
+        self.value_pair().0
+    }
+
+    pub fn assoc(&self) -> Option<Value> {
+        self.value_pair().2
+    }
+
+    pub fn sep(&self) -> Option<SyntaxToken> {
+        self.value_pair().1
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Or<A, B> {

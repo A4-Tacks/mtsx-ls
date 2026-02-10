@@ -2,7 +2,7 @@ use std::{collections::HashSet, time::SystemTime};
 
 use line_column::span::Span;
 use lsp_types::{DiagnosticSeverity, InsertTextFormat};
-use syntax::{AstNode, AstToken, SyntaxNode, TextRange, TextSize, ast::{self, Or}};
+use syntax::{AstNode, AstToken, Direction, NodeOrToken, SyntaxKind, SyntaxNode, SyntaxToken, TextRange, TextSize, ast::{self, Or}};
 
 pub struct Tracer {
     pub trace: bool,
@@ -277,8 +277,8 @@ impl Analysis {
     fn completions(&self, at: TextRange, tracer: &Tracer) -> Vec<lsp_types::CompletionItem> {
         let elem = self.root.syntax().covering_element(at);
         let loc = match &elem {
-            ast::NodeOrToken::Node(node) => self.location(node),
-            ast::NodeOrToken::Token(t) => self.location(&t.parent().unwrap()),
+            NodeOrToken::Node(node) => self.location(node),
+            NodeOrToken::Token(t) => self.location(&t.parent().unwrap()),
         };
         tracer.trace(format_args!("complete location: {loc:?}"));
         let make_item = |label: &str, mut snip: &str, detail: &str| {
@@ -347,7 +347,15 @@ impl Analysis {
             Location::Styles => vec![],
             Location::CommentDef => vec![],
             Location::Defines => vec![],
-            Location::IncludeRegex => vec![],
+            Location::IncludeRegex => {
+                self.defines()
+                    .filter(|(_, value)| !matches!(value, ast::Value::Table(_)))
+                    .map(|(name, value)| {
+                        let detail = format!("{}{name}: {value}", docs(&name));
+                        make_item(name.text(), &format!("\"{name}\""), &detail)
+                    })
+                    .collect()
+            },
             Location::IncludeMatcher => vec![],
             Location::Group => {
                 ["link", "linkAll", "select"].iter().map(|name| make_item(*name, *name, "")).collect()
@@ -362,6 +370,25 @@ impl Analysis {
             },
             Location::Disabled => vec![],
         }
+    }
+
+    fn get_manifest(&self, name: &str) -> Option<ast::Value> {
+        self.root.table()?.pairs().find_map(|pair| {
+            (pair.key()?.into_ident()?.text() == name)
+                .then(|| pair.value())
+                .flatten()
+        })
+    }
+
+    fn defines(&self) -> impl Iterator<Item = (SyntaxToken, ast::Value)> {
+        (|| {
+            let ast::Value::Array(defines) = self.get_manifest("defines")? else { return None };
+            Some(defines.items()
+                .filter_map(|item| {
+                    let key = item.value()?.into_literal()?.lit()?.into_string()?;
+                    Some((key, item.assoc()?))
+                }))
+        })().into_iter().flatten()
     }
 
     fn collect_diagnostics(&mut self) -> Option<()> {
@@ -391,6 +418,21 @@ impl Analysis {
     }
 }
 
+fn docs(name: &SyntaxToken) -> String {
+    (|| {
+        let def = name.parent_ancestors().find_map(Or::<ast::Pair, ast::Item>::cast)?;
+        let docs = def.syntax()
+            .siblings_with_tokens(Direction::Prev)
+            .skip(1)
+            .map_while(NodeOrToken::into_token)
+            .take_while(|it| it.kind().is_trivia())
+            .filter(|it| it.kind() == SyntaxKind::COMMENT)
+            .map(|it| format!("{it}\n"))
+            .collect::<Vec<_>>();
+        Some(String::from_iter(docs.into_iter().rev()))
+    })().unwrap_or(String::new()).to_owned()
+}
+
 #[cfg(test)]
 mod tests {
     use expect_test::{Expect, expect};
@@ -416,8 +458,8 @@ mod tests {
                 .syntax()
                 .covering_element(TextRange::empty(TextSize::new(index.try_into().unwrap())));
             let node = match element {
-                ast::NodeOrToken::Node(n) => n,
-                ast::NodeOrToken::Token(t) => t.parent().unwrap(),
+                NodeOrToken::Node(n) => n,
+                NodeOrToken::Token(t) => t.parent().unwrap(),
             };
             let loc = analysis.location(&node);
 
@@ -436,7 +478,13 @@ mod tests {
         let src = Span::new_full(src);
         let pos = lsp_pos(&src.create(TextRange::empty(TextSize::new(index.try_into().unwrap()))));
         let completions = completions(src.source(), pos, &Tracer::new("test"));
-        let completions = completions.iter().map(|item| format!("{}\n", item.label)).collect::<String>();
+        let completions = completions.iter().map(|item| {
+            if let Some(detail) = &item.detail && !detail.is_empty() {
+                format!("{:20}{detail:?}\n", item.label)
+            } else {
+                format!("{}\n", item.label)
+            }
+        }).collect::<String>();
         expect.assert_eq(&completions);
     }
 
@@ -546,5 +594,28 @@ mod tests {
         check(r#"$0"#, expect![""]);
         check(r#"{name: $0}"#, expect![]);
         check(r#"{name: [$0]}"#, expect![""]);
+    }
+
+    #[test]
+    fn test_define_completion() {
+        check(
+            r#"{
+                defines: [
+                    "x": /a/
+                    // docs
+                    //
+                    // ...
+                    "y": /b/
+                    "matcher": {match: /x/}
+                ]
+                contains: [
+                    {match: include("$0")}
+                ]
+            }"#,
+            expect![[r#"
+                "x"                 "\"x\": /a/"
+                "y"                 "// docs\n//\n// ...\n\"y\": /b/"
+            "#]],
+        );
     }
 }

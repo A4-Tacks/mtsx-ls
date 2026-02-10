@@ -1,5 +1,6 @@
 use line_column::span::Span;
-pub use parser::{AstNode, SyntaxKind, SyntaxNode, SyntaxToken, T, TextSize, TextRange};
+pub use parser::{AstNode, SyntaxKind, SyntaxNode, SyntaxToken, T, TextSize, TextRange, NodeOrToken, Direction};
+pub use ast::Or;
 
 pub mod ast;
 

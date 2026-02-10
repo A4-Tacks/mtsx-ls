@@ -1,6 +1,6 @@
 pub use text_size::{TextRange, TextSize};
 pub use rowan::ast::{self, AstNode, support};
-pub use rowan::NodeOrToken;
+pub use rowan::{NodeOrToken, Direction};
 
 mod lexer;
 pub mod parser;
