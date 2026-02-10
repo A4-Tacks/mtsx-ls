@@ -13,3 +13,6 @@
 - [ ] 查看字段文档
 - [ ] 查看用户定义的匹配器、正则、颜色与文档
 - [ ] 跳转用户定义的匹配器、正则、颜色的定义和引用
+
+# 编辑器
+- vim: 使用 [mtsyntax.vim](https://github.com/A4-Tacks/mtsyntax.vim) 获取语法高亮
