@@ -12,7 +12,7 @@ use SyntaxKind::*;
 // LITERAL      = BUILTIN | STRING | NUMBER | REGEX | MARK | COLOR | STYLE | IDENT
 // JOIN         = value "+" value
 // ARRAY        = "{" ITEM "}"
-// ITEM         = value [":" value | ">" value] [","]
+// ITEM         = value [":" value | ">" value | "=>" IDENT] [","]
 // CALL         = IDENT "(" *(STRING [","]) ")"
 pub struct Parser<'input> {
     lexer: Lexer<'input>,
@@ -231,6 +231,8 @@ impl<'input> Parser<'input> {
 
         if self.eat(T![:]) || self.eat(T![>]) {
             self.value();
+        } else if self.eat(T![=>]) {
+            self.ident_or_call();
         }
 
         self.eat(T![,]);

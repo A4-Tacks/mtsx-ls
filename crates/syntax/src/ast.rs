@@ -172,10 +172,9 @@ impl_ast_token_for_enum!(Lit.BUILTIN.STRING.NUMBER.REGEX.MARK.COLOR.STYLE.IDENT 
 impl Item {
     fn value_pair(&self) -> (Option<Value>, Option<SyntaxToken>, Option<Value>) {
         let node = self.syntax();
-        let sep
-            = support::token(node, T![:]).or_else(|| {
-                support::token(node, T![>])
-            });
+        let sep = support::token(node, T![:])
+            .or_else(|| support::token(node, T![>]))
+            .or_else(|| support::token(node, T![=>]));
         let mut children = support::children(node).peekable();
         let value = children.next_if(|it: &Value| {
             sep.as_ref().is_none_or(|sep| {

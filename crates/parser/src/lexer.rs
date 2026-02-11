@@ -91,6 +91,8 @@ fn lex<'input>(source: &mut &'input str) -> Option<(SyntaxKind, &'input str)> {
         (STRING, source.split_off(string_escape(source)))
     } else if ch == '/' {
         (REGEX, source.split_off(regex_escape(source)))
+    } else if ch == '=' && source.starts_with("=>") {
+        (FAT_ARROW, source.split_off(2))
     } else {
         let syntax_kind = match ch {
             ':' => T![:],
@@ -251,7 +253,7 @@ mod tests {
     fn full() {
         check(r#"
             ident"string"/regex/234#ff1b1B<mark>#builtin#@style
-            ,:[]{}()+// comment
+            ,:[]{}()+=>// comment
         "#, expect![[r##"
             WHITESPACE "\n            "
             IDENT      "ident"
@@ -272,6 +274,7 @@ mod tests {
             L_PAREN    "("
             R_PAREN    ")"
             PLUS       "+"
+            FAT_ARROW  "=>"
             COMMENT    "// comment"
             WHITESPACE "\n        "
         "##]]);

@@ -47,6 +47,7 @@ pub enum SyntaxKind {
     COMMA,
     COLON,
     PLUS,
+    FAT_ARROW,
     L_CURLY,
     R_CURLY,
     L_BRACK,
@@ -106,6 +107,7 @@ impl SyntaxKind {
             SyntaxKind::COMMA => "comma",
             SyntaxKind::COLON => "colon",
             SyntaxKind::PLUS => "`+`",
+            SyntaxKind::FAT_ARROW => "`=>`",
             SyntaxKind::L_CURLY => "`{`",
             SyntaxKind::R_CURLY => "`}`",
             SyntaxKind::L_BRACK => "`[`",
@@ -127,6 +129,7 @@ macro_rules! T {
     (:)   => { $crate::SyntaxKind::COLON };
     (+)   => { $crate::SyntaxKind::PLUS };
     (>)   => { $crate::SyntaxKind::R_ANGLE };
+    (=>)   => { $crate::SyntaxKind::FAT_ARROW };
     ('{') => { $crate::SyntaxKind::L_CURLY };
     ('}') => { $crate::SyntaxKind::R_CURLY };
     ('[') => { $crate::SyntaxKind::L_BRACK };

@@ -188,6 +188,58 @@ fn parse_array() {
                 R_CURLY@73..74 "}"
         "#]],
     );
+    check(
+        r#"{
+            styles: ["red" > "string"]
+            contains: [{x: 2} => Fail]
+        }"#,
+        expect![[r#"
+            SOURCE_FILE@0..89
+              TABLE@0..89
+                L_CURLY@0..1 "{"
+                WHITESPACE@1..14 "\n            "
+                PAIR@14..40
+                  IDENT@14..20 "styles"
+                  COLON@20..21 ":"
+                  WHITESPACE@21..22 " "
+                  ARRAY@22..40
+                    L_BRACK@22..23 "["
+                    ITEM@23..39
+                      LITERAL@23..28
+                        STRING@23..28 "\"red\""
+                      WHITESPACE@28..29 " "
+                      R_ANGLE@29..30 ">"
+                      WHITESPACE@30..31 " "
+                      LITERAL@31..39
+                        STRING@31..39 "\"string\""
+                    R_BRACK@39..40 "]"
+                WHITESPACE@40..53 "\n            "
+                PAIR@53..79
+                  IDENT@53..61 "contains"
+                  COLON@61..62 ":"
+                  WHITESPACE@62..63 " "
+                  ARRAY@63..79
+                    L_BRACK@63..64 "["
+                    ITEM@64..78
+                      TABLE@64..70
+                        L_CURLY@64..65 "{"
+                        PAIR@65..69
+                          IDENT@65..66 "x"
+                          COLON@66..67 ":"
+                          WHITESPACE@67..68 " "
+                          LITERAL@68..69
+                            NUMBER@68..69 "2"
+                        R_CURLY@69..70 "}"
+                      WHITESPACE@70..71 " "
+                      FAT_ARROW@71..73 "=>"
+                      WHITESPACE@73..74 " "
+                      LITERAL@74..78
+                        IDENT@74..78 "Fail"
+                    R_BRACK@78..79 "]"
+                WHITESPACE@79..88 "\n        "
+                R_CURLY@88..89 "}"
+        "#]],
+    );
 }
 
 #[test]
