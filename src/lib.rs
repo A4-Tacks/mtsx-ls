@@ -122,6 +122,21 @@ impl Analysis {
         self.diagnostics.push((self.source.create(range), msg.to_string()));
     }
 
+    fn element(&self, at: TextRange) -> NodeOrToken<SyntaxNode, SyntaxToken> {
+        let elem = self.root.syntax().covering_element(at);
+        if let NodeOrToken::Token(t) = &elem
+            && t.kind().is_trivia()
+            && t.text_range().end() == at.start()
+            && at.is_empty()
+            && at.end() < self.root.syntax().text_range().end()
+            && let Some(next_token) = t.next_token()
+        {
+            next_token.into()
+        } else {
+            elem
+        }
+    }
+
     fn location(&self, node: &SyntaxNode) -> Location {
         node.ancestors()
             .filter_map(Or::<Or<ast::Pair, ast::Item>, Or<ast::Call, ast::Table>>::cast)
@@ -196,7 +211,7 @@ impl Analysis {
     }
 
     fn completions(&self, at: TextRange, tracer: &Tracer) -> Vec<lsp_types::CompletionItem> {
-        let elem = self.root.syntax().covering_element(at);
+        let elem = self.element(at);
         let loc = match &elem {
             NodeOrToken::Node(node) => self.location(node),
             NodeOrToken::Token(t) => self.location(&t.parent().unwrap()),
@@ -311,7 +326,7 @@ impl Analysis {
     }
 
     fn hover_doc(&self, at: TextRange) -> Option<(String, lsp_types::Range)> {
-        let elem = self.root.syntax().covering_element(at);
+        let elem = self.element(at);
         let NodeOrToken::Token(tok) = &elem else { return None };
 
         if tok.kind() != SyntaxKind::STRING {
@@ -361,7 +376,7 @@ impl Analysis {
     }
 
     fn goto_define(&self, at: TextRange) -> Option<lsp_types::Range> {
-        let elem = self.root.syntax().covering_element(at);
+        let elem = self.element(at);
         let NodeOrToken::Token(tok) = &elem else { return None };
 
         if tok.kind() != SyntaxKind::STRING {
@@ -557,10 +572,7 @@ mod tests {
             let mut analysis = Analysis::new(src);
             analysis.collect_diagnostics();
             let extra = if analysis.diagnostics.is_empty() { "" } else { &format!(" !{}", analysis.diagnostics.len()) };
-            let element = analysis
-                .root
-                .syntax()
-                .covering_element(TextRange::empty(TextSize::new(index.try_into().unwrap())));
+            let element = analysis.element(TextRange::empty(TextSize::new(index.try_into().unwrap())));
             let node = match element {
                 NodeOrToken::Node(n) => n,
                 NodeOrToken::Token(t) => t.parent().unwrap(),
