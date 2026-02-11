@@ -97,6 +97,20 @@ pub fn references(file: &str, at: lsp_types::Position) -> Option<Vec<lsp_types::
     })
 }
 
+pub fn rename(file: &str, at: lsp_types::Position, new_name: String) -> Option<Vec<lsp_types::TextEdit>> {
+    let index = srv_index(file, at);
+    let span = Span::new_full(file);
+    let analysis = Analysis::new(span);
+    let cover_range = TextRange::empty(TextSize::from(index as u32));
+    let ranges = analysis
+        .references(cover_range)?;
+    let new_text = format!(r#""{}""#, new_name.trim_matches('"'));
+    Some(ranges.into_iter().map(|range| {
+        let range = lsp_range(&analysis.source.slice(range));
+        lsp_types::TextEdit { range, new_text: new_text.clone() }
+    }).collect())
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 enum Location {
     Manifest,

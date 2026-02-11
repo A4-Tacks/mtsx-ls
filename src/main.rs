@@ -42,6 +42,7 @@ fn main_loop(_matches: &getopts_macro::getopts::Matches) -> Result<()> {
         })),
         definition_provider: Some(lsp_types::OneOf::Left(true)),
         references_provider: Some(lsp_types::OneOf::Left(true)),
+        rename_provider: Some(lsp_types::OneOf::Left(true)),
         ..Default::default()
     };
     let init_params = {
@@ -148,6 +149,7 @@ impl Ctx {
         self.try_handle_req::<request::CodeActionRequest>(request)?;
         self.try_handle_req::<request::GotoDefinition>(request)?;
         self.try_handle_req::<request::References>(request)?;
+        self.try_handle_req::<request::Rename>(request)?;
 
         if let Some(request) = request {
             bail!("unknown request {request:#?}")
@@ -278,6 +280,21 @@ impl RequestHandler for request::References {
             it.into_iter().map(|range| lsp_types::Location { uri: uri.clone(), range }).collect()
         });
         Ok(references)
+    }
+}
+impl RequestHandler for request::Rename {
+    fn handle(ctx: &mut Ctx, param: Self::Params) -> Result<Self::Result> {
+        let uri = param.text_document_position.text_document.uri;
+        let at = param.text_document_position.position;
+        let file = ctx.read_file(&uri);
+
+        let edits = mtsx_ls::rename(file, at, param.new_name);
+        Ok(edits.map(|edits| {
+            lsp_types::WorkspaceEdit {
+                changes: Some(HashMap::from([(uri, edits)])),
+                ..Default::default()
+            }
+        }))
     }
 }
 impl RequestHandler for request::CodeActionRequest {
