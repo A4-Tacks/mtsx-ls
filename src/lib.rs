@@ -201,13 +201,15 @@ impl Analysis {
                     },
                 },
                 Or::A(Or::B(item)) => {
-                    if !item.assoc()?.syntax().text_range().contains_range(node.text_range()) {
+                    let assoc = item.assoc()?;
+                    if !assoc.syntax().text_range().contains_range(node.text_range()) {
                         return None;
                     }
-                    if item.sep()?.kind() != T![>] {
-                        return None;
+                    match item.sep()?.kind() {
+                        T![:] if !is_matcher(&assoc) => Location::Pattern,
+                        T![>] => Location::Color,
+                        _ => return None,
                     }
-                    Location::Color
                 },
                 Or::B(Or::A(call)) => {
                     if let Some(name) = call.name() {
@@ -998,7 +1000,7 @@ mod tests {
         );
         check_loc(
             r#"{defines: ["x": $0]}"#,
-            expect!["Defines !1, Defines"],
+            expect!["Defines !1, Pattern"],
         );
     }
 
