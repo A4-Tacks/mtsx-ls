@@ -1642,5 +1642,30 @@ mod tests {
                 3:22
             "#]],
         );
+        check_references(
+            r#"{
+                styles: [
+                    $0"a" > "red"
+                    "x" > "a"
+                ]
+                defines: [
+                    "a": /x/
+                    "a": {match: /x/, 0: "a"}
+                    "foo": {start: {match: /x/}, style: "a"}
+                    "bar": {start: {match: /x/}, style: "parseColor(a, a, a, a)"}
+                ]
+                contains: [
+                    {include: "a"}
+                    {match: include("a")}
+                ]
+            }"#,
+            expect![[r#"
+                8:43
+                9:58
+                10:78
+                4:28
+                3:22
+            "#]],
+        );
     }
 }
