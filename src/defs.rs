@@ -139,3 +139,44 @@ pub const HARD_DOCS: &[(&str, &str)] = &[
     ("codeFormatter", "codeFormatter\n指定该语法的代码格式化器，设置后可以在文本编辑器中使用代码格式化功能。"),
     ("codeShrinker", "codeShrinker\n指定该语法的代码压缩器，设置后可以在文本编辑器中使用代码压缩功能。例如将 json 的空白符号去除"),
 ];
+
+pub struct DOC {}
+pub const DOC: DOC = DOC {};
+
+impl DOC {
+    pub(crate) fn parse_color(&self) -> String {
+        trim_indent(r#"
+            该功能用于根据 match 正则捕获组匹配的内容动态设置文本前景色和背景色
+            parseColor 共有 4 个参数，分别是：
+
+                1. 前景色和 2. 背景色
+                    可以是：匹配组序号、_、auto
+                3. 颜色数值格式
+                    可以是：HEX、HEXA、RGB、HSL、HSV、RGBA、HSLA、HSVA、RGBX、XRGB
+                4. 基础风格
+                    填写风格名称
+        "#)
+    }
+}
+
+fn trim_indent(mut s: &str) -> String {
+    if let Some(strip_prefix) = s.strip_prefix('\n') {
+        s = strip_prefix
+    }
+    s = s.trim_end();
+    let ind = s.lines()
+        .filter(|line| !line.trim_ascii().is_empty())
+        .map(|line| {
+            let pure = line.trim_ascii_start();
+            line.len() - pure.len()
+        })
+        .min()
+        .unwrap_or(0);
+    s.split_inclusive('\n')
+        .map(|line| if line.len() < ind {
+            line.trim_ascii_start()
+        } else {
+            &line[ind..]
+        })
+        .collect()
+}

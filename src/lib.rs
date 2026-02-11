@@ -312,7 +312,10 @@ impl Analysis {
                     let detail = style_detail(name, lg, dk);
                     make_item(*name, &format!(r#""{name}""#), &detail)
                 });
-                user_colors.chain(builtins).collect()
+                let snippets = [
+                    make_item("parseColor", "parseColor($1)", &DOC.parse_color())
+                ];
+                user_colors.chain(builtins).chain(snippets).collect()
             },
             Location::Value => {
                 let Some(table) = elem.ancestors().find_map(ast::Table::cast) else {
@@ -1089,6 +1092,7 @@ mod tests {
                 attrName            "\"attrName\""
                 namespace           "\"namespace\""
                 error               "\"error\""
+                parseColor          "parseColor($1)"
             "#]],
         );
         check_complete(
@@ -1117,6 +1121,7 @@ mod tests {
                 attrName            "attrName"
                 namespace           "namespace"
                 error               "error"
+                parseColor          "parseColor($1)"
             "#]],
         );
         check_complete(
@@ -1145,6 +1150,7 @@ mod tests {
                 attrName            "attrName"
                 namespace           "namespace"
                 error               "error"
+                parseColor          "parseColor($1)"
             "#]],
         );
         check_complete(
@@ -1315,6 +1321,7 @@ mod tests {
                 attrName            "\"attrName\"     #174AD4     #BABABA"
                 namespace           "\"namespace\"    #871094     #9876AA"
                 error               "\"error\"        #F50000     #BC3F3C"
+                parseColor          "该功能用于根据 match 正则捕获组匹配的内容动态设置文本前景色和背景色\nparseColor 共有 4 个参数，分别是：\n    1. 前景色和 2. 背景色\n        可以是：匹配组序号、_、auto\n    3. 颜色数值格式\n        可以是：HEX、HEXA、RGB、HSL、HSV、RGBA、HSLA、HSVA、RGBX、XRGB\n    4. 基础风格\n        填写风格名称"
             "#]],
         );
         check(
