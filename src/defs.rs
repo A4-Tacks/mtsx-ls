@@ -95,3 +95,9 @@ pub const PATTERNS: &[(&str, &str)] = &[
     ("keywordsToRegex",         r#"keywordsToRegex("$1")"#),
 ];
 pub const ALLOW_DUP_KEYS: &[&str] = &["comment", "lineBackground"];
+pub const COMMENT_DEFS: &[(&str, &str)] = &[
+    ("startsWith",              r#"startsWith: "$1""#),
+    ("endsWith",                r#"endsWith: "$1""#),
+    ("insertSpace",             r#"insertSpace: ${1:false}"#),
+    ("addToContains",           r#"addToContains: ${1:false}"#),
+];

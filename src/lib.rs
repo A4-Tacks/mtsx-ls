@@ -252,7 +252,11 @@ impl Analysis {
         };
         match loc {
             Location::Manifest => {
-                MANIFEST_ATTRS.iter().map(|(name, snip)| make_item(*name, *snip, "")).collect()
+                let manifest = self.root.table();
+                MANIFEST_ATTRS.iter()
+                    .filter(|(name, _)| retain_attrs(name, manifest.as_ref()))
+                    .map(|(name, snip)| make_item(*name, *snip, ""))
+                    .collect()
             },
             Location::BuiltinMatcher => {
                 BUILTIN_MATCHERS.iter().map(|(name, detail)| {
@@ -294,9 +298,11 @@ impl Analysis {
                         MATCHER_SCHEMA.iter().find(|((title, _), _)| *title == name.text())
                     })
                 {
-                    schema.iter().map(|(label, snip)| {
-                        make_item(*label, *snip, "")
-                    }).collect()
+                    schema.iter()
+                        .filter(|(name, _)| retain_attrs(name, Some(&table)))
+                        .map(|(label, snip)| {
+                            make_item(*label, *snip, "")
+                        }).collect()
                 } else {
                     MATCHER_SCHEMA.iter().map(|((label, snip), _)| {
                         make_item(*label, *snip, "")
@@ -304,7 +310,11 @@ impl Analysis {
                 }
             },
             Location::Styles => vec![],
-            Location::CommentDef => vec![],
+            Location::CommentDef => {
+                COMMENT_DEFS.iter().map(|(name, snip)| {
+                    make_item(*name, *snip, "")
+                }).collect()
+            },
             Location::Defines => vec![],
             Location::IncludeRegex => {
                 self.defines()
@@ -553,6 +563,15 @@ fn is_matcher(value: &ast::Value) -> bool {
 
 fn def_detail(name: &SyntaxToken, value: &ast::Value) -> String {
     format!("{}{name}: {}", docs(&name), dedent(&value.to_string(), indent_spaces(value.syntax().clone())))
+}
+
+fn retain_attrs(name: &str, table: Option<&ast::Table>) -> bool {
+    if ALLOW_DUP_KEYS.contains(&name) {
+        return true;
+    }
+    table.is_none_or(|table| {
+        table.get(|it| it == name).next().is_none()
+    })
 }
 
 fn style_detail(name: &str, lg: &str, dk: &str) -> String {
@@ -830,9 +849,51 @@ mod tests {
             codeFormatter
             codeShrinker
         "#]]);
+        check(r#"{comment: {$0}}"#, expect![[r#"
+            startsWith
+            endsWith
+            insertSpace
+            addToContains
+        "#]]);
         check(r#"$0"#, expect![""]);
         check(r#"{name: $0}"#, expect![]);
         check(r#"{name: [$0]}"#, expect![""]);
+    }
+
+    #[test]
+    fn test_completions_dedup() {
+        check(r#"{
+            name: ["rust", ".rs"]
+            hide: false
+            comment: {startsWith: "//"}
+            $0
+        }"#, expect![[r#"
+            ignoreCase
+            styles
+            comment
+            bracketPairs
+            lineBackground
+            defines
+            contains
+            codeFormatter
+            codeShrinker
+        "#]]);
+        check(r#"{
+            contains: [
+                {
+                    start: {match: /x/}
+                    end: {match: /y/}
+                    matchEndFirst: true
+                    $0
+                }
+            ]
+        }"#, expect![[r#"
+            style
+            childrenStyle
+            endPriority
+            mustMatchEnd
+            contains
+        "#]]);
     }
 
     #[test]
