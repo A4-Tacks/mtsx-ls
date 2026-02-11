@@ -10,11 +10,7 @@
             "patterns": [
                 {
                     "name": "keyword.control.mtsyntax",
-                    "match": "\\b(?:match|name|comment|insertSpace|contains|color|colors|start|end|startsWith|endsWith|builtin|matchEndFirst|mustMatchEnd|codeFormatter|codeShrinker|lineBackground|ignoreCase|hide|addToContains|number|iSuffixes|fSuffixes|recordAllGroups|defines|include|endPriority|style|styles|childrenStyle|bracketPairs)\\b(?!\\()"
-                },
-                {
-                    "name": "keyword.control.mtsyntax",
-                    "match": "\\b(?:match|name|comment|insertSpace|contains|color|colors|start|end|startsWith|endsWith|builtin|matchEndFirst|mustMatchEnd|codeFormatter|codeShrinker|lineBackground|ignoreCase|hide|addToContains|number|iSuffixes|fSuffixes|recordAllGroups|defines|include|endPriority|style|styles|childrenStyle|bracketPairs)\\b(?!\\()"
+                    "match": "\\b(?:match|name|comment|insertSpace|contains|color|colors|start|end|startsWith|endsWith|builtin|matchEndFirst|mustMatchEnd|codeFormatter|codeShrinker|lineBackground|ignoreCase|hide|addToContains|number|iSuffixes|fSuffixes|recordAllGroups|defines|include|endPriority|style|styles|childrenStyle|bracketPairs|FAIL)\\b(?!\\()"
                 },
                 {
                     "name": "keyword.control.mtsyntax",
