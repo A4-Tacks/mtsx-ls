@@ -183,7 +183,15 @@ impl Analysis {
                         _ => return None,
                     },
                 },
-                Or::A(Or::B(_item)) => return None,
+                Or::A(Or::B(item)) => {
+                    if !item.assoc()?.syntax().text_range().contains_range(node.text_range()) {
+                        return None;
+                    }
+                    if item.sep()?.kind() != T![>] {
+                        return None;
+                    }
+                    Location::Color
+                },
                 Or::B(Or::A(call)) => {
                     if let Some(name) = call.name() {
                         match name.syntax().text() {
@@ -772,6 +780,10 @@ mod tests {
             expect!["Styles, Styles"],
         );
         check_loc(
+            r#"{styles: ["red" > $0]}"#,
+            expect!["Styles !1, Color"],
+        );
+        check_loc(
             r#"{comment: {$0}}"#,
             expect!["CommentDef, CommentDef !1"],
         );
@@ -1285,6 +1297,17 @@ mod tests {
         );
         check_hover(
             r#"{
+                styles: [
+                    "red" > "blue" @BI
+                    "hint" > "red$0"
+                ]
+            }"#,
+            expect![[r#"
+                "red" > "blue" @BI
+            "#]],
+        );
+        check_hover(
+            r#"{
                 contains: [
                     {match: /a/, 0: "string$0"}
                 ]
@@ -1378,6 +1401,15 @@ mod tests {
                 ]
                 contains: [
                     {match: /x/ 0: "a$0"}
+                ]
+            }"#,
+            expect!["3:21"],
+        );
+        check_goto_define(
+            r#"{
+                styles: [
+                    "red" > "string"
+                    "a" > "red$0"
                 ]
             }"#,
             expect!["3:21"],
