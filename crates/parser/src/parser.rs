@@ -215,6 +215,7 @@ impl<'input> Parser<'input> {
         if self.eat(L_PAREN) {
             while self.current() != R_PAREN && !self.is_eof() {
                 if self.bump_expect(STRING) {
+                    self.eat(T![+]);
                     self.eat(T![,]);
                 }
             }

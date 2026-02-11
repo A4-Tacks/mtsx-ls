@@ -246,22 +246,22 @@ fn parse_array() {
 fn parse_values() {
     check(
         r#"{
-            match: /a/ + "b" + include("foo") + keywordsToRegex("foo bar" "baz",)
+            match: /a/ + "b" + include("foo") + keywordsToRegex("foo bar" + "baz",)
             format: #BUILTIN#
             color: [
                 #ff0000 > "color"
             ]
         }"#,
         expect![[r##"
-            SOURCE_FILE@0..192
-              TABLE@0..192
+            SOURCE_FILE@0..194
+              TABLE@0..194
                 L_CURLY@0..1 "{"
                 WHITESPACE@1..14 "\n            "
-                PAIR@14..83
+                PAIR@14..85
                   IDENT@14..19 "match"
                   COLON@19..20 ":"
                   WHITESPACE@20..21 " "
-                  JOIN@21..83
+                  JOIN@21..85
                     JOIN@21..47
                       JOIN@21..30
                         LITERAL@21..24
@@ -282,41 +282,43 @@ fn parse_values() {
                     WHITESPACE@47..48 " "
                     PLUS@48..49 "+"
                     WHITESPACE@49..50 " "
-                    CALL@50..83
+                    CALL@50..85
                       IDENT@50..65 "keywordsToRegex"
                       L_PAREN@65..66 "("
                       STRING@66..75 "\"foo bar\""
                       WHITESPACE@75..76 " "
-                      STRING@76..81 "\"baz\""
-                      COMMA@81..82 ","
-                      R_PAREN@82..83 ")"
-                WHITESPACE@83..96 "\n            "
-                PAIR@96..113
-                  IDENT@96..102 "format"
-                  COLON@102..103 ":"
-                  WHITESPACE@103..104 " "
-                  LITERAL@104..113
-                    BUILTIN@104..113 "#BUILTIN#"
-                WHITESPACE@113..126 "\n            "
-                PAIR@126..182
-                  IDENT@126..131 "color"
-                  COLON@131..132 ":"
-                  WHITESPACE@132..133 " "
-                  ARRAY@133..182
-                    L_BRACK@133..134 "["
-                    WHITESPACE@134..151 "\n                "
-                    ITEM@151..168
-                      LITERAL@151..158
-                        COLOR@151..158 "#ff0000"
-                      WHITESPACE@158..159 " "
-                      R_ANGLE@159..160 ">"
+                      PLUS@76..77 "+"
+                      WHITESPACE@77..78 " "
+                      STRING@78..83 "\"baz\""
+                      COMMA@83..84 ","
+                      R_PAREN@84..85 ")"
+                WHITESPACE@85..98 "\n            "
+                PAIR@98..115
+                  IDENT@98..104 "format"
+                  COLON@104..105 ":"
+                  WHITESPACE@105..106 " "
+                  LITERAL@106..115
+                    BUILTIN@106..115 "#BUILTIN#"
+                WHITESPACE@115..128 "\n            "
+                PAIR@128..184
+                  IDENT@128..133 "color"
+                  COLON@133..134 ":"
+                  WHITESPACE@134..135 " "
+                  ARRAY@135..184
+                    L_BRACK@135..136 "["
+                    WHITESPACE@136..153 "\n                "
+                    ITEM@153..170
+                      LITERAL@153..160
+                        COLOR@153..160 "#ff0000"
                       WHITESPACE@160..161 " "
-                      LITERAL@161..168
-                        STRING@161..168 "\"color\""
-                    WHITESPACE@168..181 "\n            "
-                    R_BRACK@181..182 "]"
-                WHITESPACE@182..191 "\n        "
-                R_CURLY@191..192 "}"
+                      R_ANGLE@161..162 ">"
+                      WHITESPACE@162..163 " "
+                      LITERAL@163..170
+                        STRING@163..170 "\"color\""
+                    WHITESPACE@170..183 "\n            "
+                    R_BRACK@183..184 "]"
+                WHITESPACE@184..193 "\n        "
+                R_CURLY@193..194 "}"
         "##]],
     );
 }
