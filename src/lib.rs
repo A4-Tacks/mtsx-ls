@@ -80,8 +80,8 @@ pub fn goto_define(file: &str, at: lsp_types::Position) -> Option<lsp_types::Ran
     let span = Span::new_full(file);
     let analysis = Analysis::new(span);
     let cover_range = TextRange::empty(TextSize::from(index as u32));
-    analysis.goto_define(cover_range).map(|range| {
-        lsp_range(&analysis.source.slice(range))
+    analysis.goto_define(cover_range).map(|sym| {
+        lsp_range(&analysis.source.slice(sym.range))
     })
 }
 
@@ -91,8 +91,8 @@ pub fn references(file: &str, at: lsp_types::Position) -> Option<Vec<lsp_types::
     let analysis = Analysis::new(span);
     let cover_range = TextRange::empty(TextSize::from(index as u32));
     analysis.references(cover_range).map(|ranges| {
-        ranges.into_iter().map(|range| {
-            lsp_range(&analysis.source.slice(range))
+        ranges.into_iter().map(|sym| {
+            lsp_range(&analysis.source.slice(sym.range))
         }).collect()
     })
 }
@@ -104,10 +104,10 @@ pub fn rename(file: &str, at: lsp_types::Position, new_name: String) -> Option<V
     let cover_range = TextRange::empty(TextSize::from(index as u32));
     let ranges = analysis
         .references(cover_range)?;
-    let new_text = format!(r#""{}""#, new_name.trim_matches('"'));
-    Some(ranges.into_iter().map(|range| {
-        let range = lsp_range(&analysis.source.slice(range));
-        lsp_types::TextEdit { range, new_text: new_text.clone() }
+    let new_text = new_name.trim_matches('"');
+    Some(ranges.into_iter().map(|sym| {
+        let range = lsp_range(&analysis.source.slice(sym.range));
+        lsp_types::TextEdit { range, new_text: new_text.to_owned() }
     }).collect())
 }
 
@@ -298,12 +298,12 @@ impl Analysis {
             },
             Location::Color => {
                 let user_colors = self.styles().map(|(name, qualifiers)| {
-                    let mut range = name.text_range();
+                    let mut range = name.token.text_range();
                     if let Some(last) = qualifiers.last() {
                         range = range.cover(last.syntax().text_range())
                     }
                     let def = &self.source.text()[range];
-                    make_item(name.text().trim_matches('"'), name.text(), def)
+                    make_item(name.sym_text(), name.token.text(), def)
                 });
                 let builtins = BUILTIN_COLORS.iter().map(|(name, lg, dk)| {
                     let detail = style_detail(name, lg, dk);
@@ -344,7 +344,7 @@ impl Analysis {
                     .filter(|(_, value)| !is_matcher(value))
                     .map(|(name, value)| {
                         let detail = def_detail(&name, &value);
-                        make_item(name.text(), name.text(), &detail)
+                        make_item(name.sym_text(), name.token.text(), &detail)
                     })
                     .collect()
             },
@@ -353,7 +353,7 @@ impl Analysis {
                     .filter(|(_, value)| is_matcher(value))
                     .map(|(name, value)| {
                         let detail = def_detail(&name, &value);
-                        make_item(name.text(), name.text(), &detail)
+                        make_item(name.sym_text(), name.token.text(), &detail)
                     })
                     .collect()
             },
@@ -380,6 +380,7 @@ impl Analysis {
             return None;
         }
 
+        let id = SymId::new(tok.clone());
         let loc = self.location(&tok.parent()?);
         let doc = match loc {
             Location::Manifest | Location::Styles | Location::CommentDef
@@ -389,21 +390,21 @@ impl Analysis {
             | Location::Disabled => return None,
             Location::IncludeRegex => {
                 let (name, value) = self.defines().find(|(name, value)| {
-                    tok.text() == name.text() && !is_matcher(value)
+                    id == name && !is_matcher(value)
                 })?;
                 def_detail(&name, &value)
             },
             Location::IncludeMatcher => {
                 let (name, value) = self.defines().find(|(name, value)| {
-                    tok.text() == name.text() && is_matcher(value)
+                    id == name && is_matcher(value)
                 })?;
                 def_detail(&name, &value)
             },
             Location::Color => {
                 self.styles()
-                    .find(|(name, _)| tok.text() == name.text())
+                    .find(|(name, _)| id == name)
                     .map(|(name, qualifiers)| {
-                        let mut range = name.text_range();
+                        let mut range = name.token.text_range();
                         if let Some(last) = qualifiers.last() {
                             range = range.cover(last.syntax().text_range())
                         }
@@ -412,7 +413,7 @@ impl Analysis {
                     })
                     .or_else(|| {
                         BUILTIN_COLORS.iter()
-                            .find(|(name, _, _)| *name == tok.text().trim_matches('"'))
+                            .find(|(name, _, _)| *name == id.sym_text())
                             .map(|(name, lg, dk)| {
                                 style_detail(name, lg, dk)
                             })
@@ -436,7 +437,7 @@ impl Analysis {
         Some((doc.to_string(), lsp_range(&self.source.slice(tok.text_range()))))
     }
 
-    fn goto_define(&self, at: TextRange) -> Option<TextRange> {
+    fn goto_define(&self, at: TextRange) -> Option<SymId> {
         let elem = self.element(at);
         let NodeOrToken::Token(tok) = &elem else { return None };
 
@@ -444,40 +445,42 @@ impl Analysis {
             return None;
         }
 
+        let id = SymId::new(tok.clone());
         let loc = self.location(&tok.parent()?);
 
-        Some(match loc {
+        let text_range = match loc {
             Location::Manifest | Location::CommentDef | Location::Value | Location::Group
             | Location::BuiltinMatcher | Location::BuiltinFormatter | Location::BuiltinShinker
             | Location::Boolean | Location::Pattern | Location::Disabled => return None,
             Location::IncludeRegex => {
                 self.defines().find(|(name, value)| {
-                    tok.text() == name.text() && !is_matcher(value)
-                })?.0.text_range()
+                    id == name && !is_matcher(value)
+                })?.0
             },
             Location::IncludeMatcher => {
                 self.defines().find(|(name, value)| {
-                    tok.text() == name.text() && is_matcher(value)
-                })?.0.text_range()
+                    id == name && is_matcher(value)
+                })?.0
             },
             Location::Defines => {
                 let def = tok.parent_ancestors().find_map(ast::Item::cast).and_then(|it| it.assoc());
                 let def_is_matcher = def.as_ref().is_none_or(is_matcher);
                 self.defines().find(|(name, value)| {
-                    tok.text() == name.text() && is_matcher(value) == def_is_matcher
-                })?.0.text_range()
+                    id == name && is_matcher(value) == def_is_matcher
+                })?.0
             },
             Location::Color | Location::Styles => {
                 self.styles()
-                    .find(|(name, _)| tok.text() == name.text())?
-                    .0.text_range()
+                    .find(|(name, _)| id == name)?
+                    .0
             },
-        })
+        };
+        Some(text_range)
     }
 
-    fn references(&self, at: TextRange) -> Option<Vec<TextRange>> {
-        let raw_def = self.goto_define(at)?;
-        let elem = self.element(raw_def);
+    fn references(&self, at: TextRange) -> Option<Vec<SymId>> {
+        let def_id = self.goto_define(at)?;
+        let elem = self.element(def_id.token.text_range());
         let NodeOrToken::Token(def) = &elem else { return None };
 
         if def.kind() != SyntaxKind::STRING {
@@ -489,7 +492,7 @@ impl Analysis {
             .and_then(|it| it.syntax().parent().and_then(ast::Item::cast))
             .and_then(|it| it.assoc());
 
-        let mut text_ranges = match loc {
+        let mut syms = match loc {
             Location::Styles => {
                 self.root.syntax()
                     .descendants()
@@ -501,8 +504,8 @@ impl Analysis {
                     .filter_map(|value| value.into_literal()?.lit())
                     .chain(self.styles().flat_map(|(_, qualifiers)| qualifiers))
                     .filter_map(ast::Lit::into_string)
-                    .filter(|it| it.text() == def.text())
-                    .map(|it| it.text_range())
+                    .map(SymId::new)
+                    .filter(|it| it == def_id)
                     .collect()
             },
             Location::Defines if assoc.as_ref().is_some_and(is_matcher) => {
@@ -511,8 +514,8 @@ impl Analysis {
                     .filter_map(ast::Table::cast)
                     .flat_map(|table| table.get(|k| k == "include"))
                     .filter_map(|value| value.into_literal()?.lit()?.into_string())
-                    .filter(|it| it.text() == def.text())
-                    .map(|it| it.text_range())
+                    .map(SymId::new)
+                    .filter(|it| it == def_id)
                     .collect()
             },
             Location::Defines => {
@@ -525,21 +528,21 @@ impl Analysis {
                     .flat_map(|call| call.syntax().children_with_tokens())
                     .filter_map(NodeOrToken::into_token)
                     .filter(|it| it.kind() == SyntaxKind::STRING)
-                    .filter(|it| it.text() == def.text())
-                    .map(|it| it.text_range())
+                    .map(SymId::new)
+                    .filter(|it| it == def_id)
                     .collect()
             },
             _ => return None,
         };
-        Vec::push(&mut text_ranges, def.text_range());
-        Some(text_ranges)
+        Vec::push(&mut syms, def_id);
+        Some(syms)
     }
 
     fn get_manifest(&self, name: &str) -> Option<ast::Value> {
         self.root.table()?.get(|k| k == name).next()
     }
 
-    fn styles(&self) -> impl Iterator<Item = (SyntaxToken, impl Iterator<Item = ast::Lit>)> {
+    fn styles(&self) -> impl Iterator<Item = (SymId, impl Iterator<Item = ast::Lit>)> {
         self.get_manifest("styles")
             .or_else(|| self.get_manifest("colors"))
             .and_then(ast::Value::into_array)
@@ -559,17 +562,17 @@ impl Analysis {
                     .into_iter()
                     .flat_map(move |_| it.assoc().into_iter().filter_map(|it| it.into_literal()?.lit()))
                     .chain(members_qualifiers);
-                (name, values)
+                (SymId::new(name), values)
             })
     }
 
-    fn defines(&self) -> impl Iterator<Item = (SyntaxToken, ast::Value)> {
+    fn defines(&self) -> impl Iterator<Item = (SymId, ast::Value)> {
         (|| {
             let ast::Value::Array(defines) = self.get_manifest("defines")? else { return None };
             Some(defines.items()
                 .filter_map(|item| {
                     let key = item.value()?.into_literal()?.lit()?.into_string()?;
-                    Some((key, item.assoc()?))
+                    Some((SymId::new(key), item.assoc()?))
                 }))
         })().into_iter().flatten()
     }
@@ -601,12 +604,123 @@ impl Analysis {
     }
 }
 
+struct SymId {
+    token: SyntaxToken,
+    range: TextRange,
+}
+
+impl PartialEq for SymId {
+    fn eq(&self, other: &Self) -> bool {
+        self.sym_text() == other.sym_text()
+    }
+}
+impl PartialEq<&Self> for SymId {
+    fn eq(&self, other: &&Self) -> bool {
+        self == *other
+    }
+}
+impl PartialEq<SymId> for &SymId {
+    fn eq(&self, other: &SymId) -> bool {
+        *self == other
+    }
+}
+
+impl SymId {
+    fn new(token: SyntaxToken) -> Self {
+        let (_, range) = extract_style(&token);
+        Self { token, range }
+    }
+
+    fn sym_text(&self) -> &str {
+        let offset = self.token.text_range().start();
+        &self.token.text()[self.range - offset]
+    }
+}
+
+fn extract_style(tok: &SyntaxToken) -> (&str, TextRange) {
+    let mut range = tok.text_range();
+    let mut text = tok.text();
+
+    if tok.kind() != SyntaxKind::STRING {
+        return (text, range);
+    }
+
+    macro_rules! eat_start {
+        ($prefix:expr) => {
+            if text.starts_with($prefix) {
+                range = TextRange::new(range.start() + TextSize::of($prefix), range.end());
+                text = &text[$prefix.len()..];
+                true
+            } else {
+                false
+            }
+        };
+    }
+    macro_rules! eat_end {
+        ($prefix:expr) => {
+            if text.ends_with($prefix) {
+                range = TextRange::new(range.start(), range.end() - TextSize::of($prefix));
+                text = &text[..text.len()-$prefix.len()];
+                true
+            } else {
+                false
+            }
+        };
+    }
+
+    eat_start!("\"");
+    eat_end!("\"");
+
+    if eat_start!("parseColor(") {
+        while eat_end!(")") || eat_end!(",") || eat_end!(" ") {}
+
+        if let Some((pre, _)) = text.rsplit_once(',') {
+            eat_start!(pre);
+            eat_start!(",");
+            while eat_start!(" ") {}
+        }
+    }
+
+    (text, range)
+}
+
+#[test]
+fn test_extract_style() {
+    let datas = [
+        (r#""foo"#, "foo"),
+        (r#""foo""#, "foo"),
+        (r#""parseColor(2, _, HEX, default)""#, "default"),
+        (r#""parseColor(2, _, HEX, default )""#, "default"),
+        (r#""parseColor(2, _, HEX, default , )""#, "default"),
+    ];
+    for (src, expect) in datas {
+        let source = Span::new_full(format!("it {src}"));
+        let (root, _) = syntax::parse_file(source.clone());
+        let tok = root.syntax()
+            .descendants_with_tokens()
+            .find(|it| it.kind() == SyntaxKind::STRING)
+            .unwrap()
+            .into_token()
+            .unwrap();
+        assert_eq!(tok.text(), src);
+        let extracted = extract_style(&tok);
+        let out = source.slice(extracted.1);
+        assert_eq!(out.text(), extracted.0);
+        assert_eq!(out.text(), expect);
+    }
+}
+
 fn is_matcher(value: &ast::Value) -> bool {
     matches!(value, ast::Value::Table(_) | ast::Value::Array(_))
 }
 
-fn def_detail(name: &SyntaxToken, value: &ast::Value) -> String {
-    format!("{}{name}: {}", docs(&name), dedent(&value.to_string(), indent_spaces(value.syntax().clone())))
+fn def_detail(name: &SymId, value: &ast::Value) -> String {
+    format!(
+        "{}{}: {}",
+        docs(&name),
+        name.token,
+        dedent(&value.to_string(), indent_spaces(value.syntax().clone()))
+    )
 }
 
 fn retain_attrs(name: &str, table: Option<&ast::Table>) -> bool {
@@ -623,9 +737,9 @@ fn style_detail(name: &str, lg: &str, dk: &str) -> String {
     format!("{dname:<15}{lg}     {dk}")
 }
 
-fn docs(name: &SyntaxToken) -> String {
+fn docs(name: &SymId) -> String {
     (|| {
-        let def = name.parent_ancestors().find_map(Or::<ast::Pair, ast::Item>::cast)?;
+        let def = name.token.parent_ancestors().find_map(Or::<ast::Pair, ast::Item>::cast)?;
 
         let suf_docs = def.syntax()
             .siblings_with_tokens(Direction::Next)
@@ -1040,7 +1154,7 @@ mod tests {
                 ]
             }"#,
             expect![[r#"
-                "x"                 "\"x\""
+                x                   "\"x\""
             "#]],
         );
         check_complete(
@@ -1053,7 +1167,7 @@ mod tests {
                 ]
             }"#,
             expect![[r#"
-                "x"                 "x"
+                x                   "x"
             "#]],
         );
         check_complete(
@@ -1066,7 +1180,7 @@ mod tests {
                 ]
             }"#,
             expect![[r#"
-                "x"                 "x"
+                x                   "x"
             "#]],
         );
         check_complete(
@@ -1121,8 +1235,8 @@ mod tests {
                 ]
             }"#,
             expect![[r#"
-                "x"                 "\"x\": /a/"
-                "y"                 "// docs\n//\n// ...\n\"y\": /b/"
+                x                   "\"x\": /a/"
+                y                   "// docs\n//\n// ...\n\"y\": /b/"
             "#]],
         );
         check(
@@ -1143,9 +1257,9 @@ mod tests {
                 ]
             }"#,
             expect![[r#"
-                "matcher"           "\"matcher\": {match: /x/}"
-                "matcher1"          "// xxx\n\"matcher1\": {match: /x/}"
-                "matcher2"          "\"matcher2\": [{match: /x/}]"
+                matcher             "\"matcher\": {match: /x/}"
+                matcher1            "// xxx\n\"matcher1\": {match: /x/}"
+                matcher2            "\"matcher2\": [{match: /x/}]"
             "#]],
         );
         check(
@@ -1159,7 +1273,7 @@ mod tests {
                 ]
             }"#,
             expect![[r#"
-                "x"                 "// foo\n// xxx\n\"x\": {match: /a/}"
+                x                   "// foo\n// xxx\n\"x\": {match: /a/}"
             "#]],
         );
     }
@@ -1218,9 +1332,9 @@ mod tests {
                 ]
             }"#,
             expect![[r#"
-                "matcher"           "\"matcher\": {match: /x/}"
-                "matcher1"          "// xxx\n\"matcher1\": {match: /x/}"
-                "matcher2"          "\"matcher2\": [{match: /x/}]"
+                matcher             "\"matcher\": {match: /x/}"
+                matcher1            "// xxx\n\"matcher1\": {match: /x/}"
+                matcher2            "\"matcher2\": [{match: /x/}]"
             "#]],
         );
         check(
@@ -1234,7 +1348,7 @@ mod tests {
                 ]
             }"#,
             expect![[r#"
-                "x"                 "// foo\n// xxx\n\"x\": {match: /a/}"
+                x                   "// foo\n// xxx\n\"x\": {match: /a/}"
             "#]],
         );
     }
@@ -1256,7 +1370,7 @@ mod tests {
                 ]
             }"#,
             expect![[r#"
-                "y"                 "// docs\n//   * docs\n\"y\": {\n    match: /x/\n    0: \"red\"\n}"
+                y                   "// docs\n//   * docs\n\"y\": {\n    match: /x/\n    0: \"red\"\n}"
             "#]],
         );
     }
@@ -1401,7 +1515,7 @@ mod tests {
                     {include: "a$0"}
                 ]
             }"#,
-            expect!["4:21"],
+            expect!["4:22"],
         );
         check_goto_define(
             r#"{
@@ -1413,7 +1527,7 @@ mod tests {
                     {match: include("a$0")}
                 ]
             }"#,
-            expect!["3:21"],
+            expect!["3:22"],
         );
         check_goto_define(
             r#"{
@@ -1424,7 +1538,7 @@ mod tests {
                     {match: /x/ 0: "a$0"}
                 ]
             }"#,
-            expect!["3:21"],
+            expect!["3:22"],
         );
         check_goto_define(
             r#"{
@@ -1433,7 +1547,7 @@ mod tests {
                     "a" > "red$0"
                 ]
             }"#,
-            expect!["3:21"],
+            expect!["3:22"],
         );
         check_goto_define(
             r#"{
@@ -1441,7 +1555,7 @@ mod tests {
                     "$0red" > "string"
                 ]
             }"#,
-            expect!["3:21"],
+            expect!["3:22"],
         );
         check_goto_define(
             r#"{
@@ -1449,7 +1563,7 @@ mod tests {
                     "$0red": /x/
                 ]
             }"#,
-            expect!["3:21"],
+            expect!["3:22"],
         );
         check_goto_define(
             r#"{
@@ -1457,7 +1571,7 @@ mod tests {
                     "$0red": {match: /x/}
                 ]
             }"#,
-            expect!["3:21"],
+            expect!["3:22"],
         );
     }
 
@@ -1480,8 +1594,8 @@ mod tests {
                 ]
             }"#,
             expect![[r#"
-                12:31
-                8:21
+                12:32
+                8:22
             "#]],
         );
         check_references(
@@ -1501,8 +1615,8 @@ mod tests {
                 ]
             }"#,
             expect![[r#"
-                13:37
-                7:21
+                13:38
+                7:22
             "#]],
         );
         check_references(
@@ -1522,10 +1636,10 @@ mod tests {
                 ]
             }"#,
             expect![[r#"
-                8:42
-                9:57
-                4:27
-                3:21
+                8:43
+                9:58
+                4:28
+                3:22
             "#]],
         );
     }
