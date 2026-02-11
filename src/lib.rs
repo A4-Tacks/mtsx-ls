@@ -72,6 +72,7 @@ pub fn hover_doc(file: &str, at: lsp_types::Position) -> Option<(String, lsp_typ
     let analysis = Analysis::new(span);
     let cover_range = TextRange::empty(TextSize::from(index as u32));
     analysis.hover_doc(cover_range)
+        .or_else(|| analysis.hover_doc_token(cover_range))
 }
 
 pub fn goto_define(file: &str, at: lsp_types::Position) -> Option<lsp_types::Range> {
@@ -139,7 +140,7 @@ impl Analysis {
     fn element(&self, at: TextRange) -> NodeOrToken<SyntaxNode, SyntaxToken> {
         let elem = self.root.syntax().covering_element(at);
         if let NodeOrToken::Token(t) = &elem
-            && t.kind().is_trivia()
+            && (t.kind().is_trivia() || t.kind().is_open_delim())
             && t.text_range().end() == at.start()
             && at.is_empty()
             && at.end() < self.root.syntax().text_range().end()
@@ -397,6 +398,20 @@ impl Analysis {
             },
         };
         Some((doc, lsp_range(&self.source.slice(tok.text_range()))))
+    }
+
+    fn hover_doc_token(&self, at: TextRange) -> Option<(String, lsp_types::Range)> {
+        let elem = self.element(at);
+        let NodeOrToken::Token(tok) = &elem else { return None };
+        let mut query = tok.text();
+
+        if query == "include" && tok.parent().and_then(ast::Call::cast).is_some() {
+            query = "include()"
+        }
+
+        let (_, doc) = HARD_DOCS.iter().find(|(name, _)| *name == query)?;
+
+        Some((doc.to_string(), lsp_range(&self.source.slice(tok.text_range()))))
     }
 
     fn goto_define(&self, at: TextRange) -> Option<TextRange> {
@@ -1276,6 +1291,56 @@ mod tests {
             }"#,
             expect![[r#"
                 "string"       #067D17     #6A8759
+            "#]],
+        );
+    }
+
+    #[test]
+    fn test_hover_hard_docs() {
+        check_hover(
+            r#"{
+                $0contains: []
+            }"#,
+            expect![[r#"
+                用于指定子匹配器
+            "#]],
+        );
+        check_hover(
+            r#"{
+                contains: [{$0start: {match: /x/}}]
+            }"#,
+            expect![[r#"
+                start-end 匹配器
+                匹配头匹配器, 然后让子匹配器和尾匹配器竟争匹配
+            "#]],
+        );
+        check_hover(
+            r#"{
+                contains: [{include$0: "foo"}]
+            }"#,
+            expect![[r#"
+                include 匹配器
+                引用匹配器, 可以互递归
+            "#]],
+        );
+        check_hover(
+            r#"{
+                contains: [{match: $0include("foo")}]
+            }"#,
+            expect![[r#"
+                include 函数
+                将 defines: [] 块中的 "name": /regex/ 内联
+            "#]],
+        );
+        check_hover(
+            r#"{
+                contains: [
+                    {match: include("foo")} => $0FAIL
+                ]
+            }"#,
+            expect![[r#"
+                Fail 标记
+                用于指定 contains 中的某个子匹配器匹配成功会使得整个 start-end 匹配器匹配失败。
             "#]],
         );
     }

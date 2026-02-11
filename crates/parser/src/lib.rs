@@ -77,6 +77,10 @@ impl SyntaxKind {
         matches!(self, Self::COMMENT | Self::WHITESPACE)
     }
 
+    pub fn is_open_delim(self) -> bool {
+        matches!(self, Self::L_CURLY | Self::L_BRACK | Self::L_PAREN)
+    }
+
     pub fn is_close_delim(self) -> bool {
         matches!(self, Self::R_CURLY | Self::R_BRACK | Self::R_PAREN)
     }
