@@ -342,9 +342,12 @@ impl Analysis {
             },
             Location::Styles => vec![],
             Location::CommentDef => {
-                COMMENT_DEFS.iter().map(|(name, snip)| {
-                    make_item(*name, *snip, "")
-                }).collect()
+                let table = elem.ancestors().find_map(ast::Table::cast);
+                COMMENT_DEFS.iter()
+                    .filter(|(name, _)| retain_attrs(name, table.as_ref()))
+                    .map(|(name, snip)| {
+                        make_item(*name, *snip, "")
+                    }).collect()
             },
             Location::Defines => vec![],
             Location::IncludeRegex => {
@@ -1047,6 +1050,14 @@ mod tests {
             contains
             codeFormatter
             codeShrinker
+        "#]]);
+        check(r#"{
+            name: ["rust", ".rs"]
+            hide: false
+            comment: {startsWith: "//", endsWith: "||" $0}
+        }"#, expect![[r#"
+            insertSpace
+            addToContains
         "#]]);
         check(r#"{
             contains: [
