@@ -41,6 +41,7 @@ fn main_loop(_matches: &getopts_macro::getopts::Matches) -> Result<()> {
             ..Default::default()
         })),
         definition_provider: Some(lsp_types::OneOf::Left(true)),
+        references_provider: Some(lsp_types::OneOf::Left(true)),
         ..Default::default()
     };
     let init_params = {
@@ -146,6 +147,7 @@ impl Ctx {
         self.try_handle_req::<request::HoverRequest>(request)?;
         self.try_handle_req::<request::CodeActionRequest>(request)?;
         self.try_handle_req::<request::GotoDefinition>(request)?;
+        self.try_handle_req::<request::References>(request)?;
 
         if let Some(request) = request {
             bail!("unknown request {request:#?}")
@@ -256,14 +258,26 @@ impl RequestHandler for request::HoverRequest {
 impl RequestHandler for request::GotoDefinition {
     fn handle(ctx: &mut Ctx, param: Self::Params) -> Result<Self::Result> {
         let uri = param.text_document_position_params.text_document.uri;
-        let file = ctx.read_file(&uri);
         let at = param.text_document_position_params.position;
+        let file = ctx.read_file(&uri);
 
         Ok(mtsx_ls::goto_define(file, at).map(|range| {
             lsp_types::GotoDefinitionResponse::Scalar(
                 lsp_types::Location { uri, range },
             )
         }))
+    }
+}
+impl RequestHandler for request::References {
+    fn handle(ctx: &mut Ctx, param: Self::Params) -> Result<Self::Result> {
+        let uri = param.text_document_position.text_document.uri;
+        let at = param.text_document_position.position;
+        let file = ctx.read_file(&uri);
+
+        let references = mtsx_ls::references(file, at).map(|it| {
+            it.into_iter().map(|range| lsp_types::Location { uri: uri.clone(), range }).collect()
+        });
+        Ok(references)
     }
 }
 impl RequestHandler for request::CodeActionRequest {

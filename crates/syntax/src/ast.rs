@@ -199,6 +199,14 @@ impl Item {
     }
 }
 
+impl Table {
+    pub fn get<F: FnMut(&str) -> bool>(&self, mut pred: F) -> impl Iterator<Item = Value> + use<F> {
+        self.pairs()
+            .filter(move |it| it.key().is_some_and(|it| pred(it.syntax().text())))
+            .filter_map(|it| it.value())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Or<A, B> {
     A(A),

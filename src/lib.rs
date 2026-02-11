@@ -79,7 +79,21 @@ pub fn goto_define(file: &str, at: lsp_types::Position) -> Option<lsp_types::Ran
     let span = Span::new_full(file);
     let analysis = Analysis::new(span);
     let cover_range = TextRange::empty(TextSize::from(index as u32));
-    analysis.goto_define(cover_range)
+    analysis.goto_define(cover_range).map(|range| {
+        lsp_range(&analysis.source.slice(range))
+    })
+}
+
+pub fn references(file: &str, at: lsp_types::Position) -> Option<Vec<lsp_types::Range>> {
+    let index = srv_index(file, at);
+    let span = Span::new_full(file);
+    let analysis = Analysis::new(span);
+    let cover_range = TextRange::empty(TextSize::from(index as u32));
+    analysis.references(cover_range).map(|ranges| {
+        ranges.into_iter().map(|range| {
+            lsp_range(&analysis.source.slice(range))
+        }).collect()
+    })
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -375,7 +389,7 @@ impl Analysis {
         Some((doc, lsp_range(&self.source.slice(tok.text_range()))))
     }
 
-    fn goto_define(&self, at: TextRange) -> Option<lsp_types::Range> {
+    fn goto_define(&self, at: TextRange) -> Option<TextRange> {
         let elem = self.element(at);
         let NodeOrToken::Token(tok) = &elem else { return None };
 
@@ -385,7 +399,7 @@ impl Analysis {
 
         let loc = self.location(&tok.parent()?);
 
-        let range = match loc {
+        Some(match loc {
             Location::Manifest | Location::Styles | Location::CommentDef
             | Location::Defines | Location::Value | Location::Group
             | Location::BuiltinMatcher | Location::BuiltinFormatter
@@ -406,16 +420,69 @@ impl Analysis {
                     .find(|(name, _)| tok.text() == name.text())?
                     .0.text_range()
             },
-        };
-        Some(lsp_range(&self.source.slice(range)))
+        })
+    }
+
+    fn references(&self, at: TextRange) -> Option<Vec<TextRange>> {
+        let raw_def = self.goto_define(at);
+        let elem = self.element(raw_def.unwrap_or(at));
+        let NodeOrToken::Token(def) = &elem else { return None };
+
+        if def.kind() != SyntaxKind::STRING {
+            return None;
+        }
+        let loc = self.location(&elem.ancestors().next()?);
+        let assoc = def.parent()
+            .and_then(ast::Literal::cast)
+            .and_then(|it| it.syntax().parent().and_then(ast::Item::cast))
+            .and_then(|it| it.assoc());
+
+        Some(match loc {
+            Location::Styles => {
+                self.root.syntax()
+                    .descendants()
+                    .filter_map(ast::Table::cast)
+                    .flat_map(|table| table.get(|k| {
+                        matches!(k, "style" | "color")
+                            || k.chars().all(|ch| ch.is_ascii_digit())
+                    }))
+                    .filter_map(|value| value.into_literal()?.lit())
+                    .chain(self.styles().flat_map(|(_, qualifiers)| qualifiers))
+                    .filter_map(ast::Lit::into_string)
+                    .filter(|it| it.text() == def.text())
+                    .map(|it| it.text_range())
+                    .collect()
+            },
+            Location::Defines if assoc.as_ref().is_some_and(is_matcher) => {
+                self.root.syntax()
+                    .descendants()
+                    .filter_map(ast::Table::cast)
+                    .flat_map(|table| table.get(|k| k == "include"))
+                    .filter_map(|value| value.into_literal()?.lit()?.into_string())
+                    .filter(|it| it.text() == def.text())
+                    .map(|it| it.text_range())
+                    .collect()
+            },
+            Location::Defines => {
+                self.root.syntax()
+                    .descendants()
+                    .filter_map(ast::Call::cast)
+                    .filter_map(|call| {
+                        (call.name()?.into_ident()?.text() == "include").then_some(call)
+                    })
+                    .flat_map(|call| call.syntax().children_with_tokens())
+                    .filter_map(NodeOrToken::into_token)
+                    .filter(|it| it.kind() == SyntaxKind::STRING)
+                    .filter(|it| it.text() == def.text())
+                    .map(|it| it.text_range())
+                    .collect()
+            },
+            _ => return None,
+        })
     }
 
     fn get_manifest(&self, name: &str) -> Option<ast::Value> {
-        self.root.table()?.pairs().find_map(|pair| {
-            (pair.key()?.into_ident()?.text() == name)
-                .then(|| pair.value())
-                .flatten()
-        })
+        self.root.table()?.get(|k| k == name).next()
     }
 
     fn styles(&self) -> impl Iterator<Item = (SyntaxToken, impl Iterator<Item = ast::Lit>)> {
@@ -638,6 +705,22 @@ mod tests {
         line += 1;
         character += 1;
         expect.assert_eq(&format!("{line}:{character}"));
+    }
+
+    #[track_caller]
+    fn check_references(src: &str, expect: Expect) {
+        let index = src.find("$0").expect("must a `$0`");
+        let src = src.replacen("$0", "", 1);
+        let src = Span::new_full(src);
+        let pos = lsp_pos(&src.create(TextRange::empty(TextSize::new(index.try_into().unwrap()))));
+        let refs = references(src.source(), pos).expect("references is none");
+        let refs = refs.into_iter()
+            .map(|lsp_types::Range { start: lsp_types::Position { line, character }, .. }| {
+                (line+1, character+1)
+            })
+            .map(|(line, character)| format!("{line}:{character}\n"))
+            .collect::<String>();
+        expect.assert_eq(&refs);
     }
 
     #[test]
@@ -1172,6 +1255,72 @@ mod tests {
                 ]
             }"#,
             expect!["3:21"],
+        );
+    }
+
+    #[test]
+    fn test_goto_references() {
+        check_references(
+            r#"{
+                styles: [
+                    "a" > "red"
+                    "x" > "a"
+                ]
+                defines: [
+                    "a": /x/
+                    $0"a": {match: /x/, 0: "a"}
+                    "foo": {start: {match: /x/}, style: "a"}
+                ]
+                contains: [
+                    {include: "a"}
+                    {match: include("a")}
+                ]
+            }"#,
+            expect![[r#"
+                12:31
+            "#]],
+        );
+        check_references(
+            r#"{
+                styles: [
+                    "a" > "red"
+                    "x" > "a"
+                ]
+                defines: [
+                    $0"a": /x/
+                    "a": {match: /x/, 0: "a"}
+                    "foo": {start: {match: /x/}, style: "a"}
+                ]
+                contains: [
+                    {include: "a"}
+                    {match: include("a")}
+                ]
+            }"#,
+            expect![[r#"
+                13:37
+            "#]],
+        );
+        check_references(
+            r#"{
+                styles: [
+                    $0"a" > "red"
+                    "x" > "a"
+                ]
+                defines: [
+                    "a": /x/
+                    "a": {match: /x/, 0: "a"}
+                    "foo": {start: {match: /x/}, style: "a"}
+                ]
+                contains: [
+                    {include: "a"}
+                    {match: include("a")}
+                ]
+            }"#,
+            expect![[r#"
+                8:42
+                9:57
+                4:27
+            "#]],
         );
     }
 }
