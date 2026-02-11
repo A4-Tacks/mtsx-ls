@@ -7,6 +7,7 @@ pub mod parser;
 
 pub type SyntaxNode = rowan::SyntaxNode<Language>;
 pub type SyntaxToken = rowan::SyntaxToken<Language>;
+pub type SyntaxElement = NodeOrToken<SyntaxNode, SyntaxToken>;
 
 #[derive(Debug, Hash, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Language {}

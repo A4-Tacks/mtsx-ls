@@ -6,6 +6,7 @@ use syntax::{AstNode, AstToken, Direction, NodeOrToken, SyntaxKind, SyntaxNode, 
 use defs::*;
 
 mod defs;
+mod actions;
 
 pub struct Tracer {
     pub trace: bool,
@@ -117,6 +118,20 @@ pub fn rename(file: &str, at: lsp_types::Position, new_name: String) -> Option<V
         let range = lsp_range(&analysis.source.slice(sym.range));
         lsp_types::TextEdit { range, new_text: new_text.to_owned() }
     }).collect())
+}
+
+pub fn code_action(file: &str, range: lsp_types::Range) -> Option<Vec<ActionResult>> {
+    let start = srv_index(file, range.start);
+    let end = srv_index(file, range.end);
+    let cover_range = TextRange::new(start, end);
+    let span = Span::new_full(file);
+    let analysis = Analysis::new(span);
+    analysis.code_action(cover_range)
+}
+
+pub struct ActionResult {
+    pub title: String,
+    pub edits: Vec<lsp_types::TextEdit>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -552,6 +567,25 @@ impl Analysis {
         };
         Vec::push(&mut syms, def_id);
         Some(syms)
+    }
+
+    fn code_action(&self, at: TextRange) -> Option<Vec<ActionResult>> {
+        let elem = self.element(at);
+        let actions = [
+            ("Extract pattern to defines", actions::extract_pattern(self, elem.clone())),
+            ("Extract matcher to defines", actions::extract_matcher(self, elem.clone())),
+            ("Inline matcher from defines", actions::inline_matcher(self, elem.clone())),
+            ("Inline pattern from defines", actions::inline_pattern(self, elem.clone())),
+            ("Convert matcher to matcher list", actions::convert_matcher_list(self, elem.clone())),
+        ];
+        Some(actions.into_iter().filter_map(|(name, edits)| {
+            ActionResult {
+                title: name.to_owned(),
+                edits: edits?.into_iter().map(|(range, new_text)| {
+                    lsp_types::TextEdit { range: lsp_range(&self.source.slice(range)), new_text }
+                }).collect(),
+            }.into()
+        }).collect())
     }
 
     fn get_manifest(&self, name: &str) -> Option<ast::Value> {

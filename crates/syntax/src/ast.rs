@@ -239,3 +239,11 @@ where
         }
     }
 }
+impl<A: std::fmt::Display, B: std::fmt::Display> std::fmt::Display for Or<A, B> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Or::A(it) => it.fmt(f),
+            Or::B(it) => it.fmt(f),
+        }
+    }
+}

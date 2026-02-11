@@ -298,8 +298,24 @@ impl RequestHandler for request::Rename {
     }
 }
 impl RequestHandler for request::CodeActionRequest {
-    fn handle(_ctx: &mut Ctx, _param: Self::Params) -> Result<Self::Result> {
-        Ok(Some(vec![]))
+    fn handle(ctx: &mut Ctx, param: Self::Params) -> Result<Self::Result> {
+        let uri = param.text_document.uri;
+        let range = param.range;
+        let file = ctx.read_file(&uri);
+        Ok(mtsx_ls::code_action(file, range).map(|actions| {
+            actions.into_iter().map(|mtsx_ls::ActionResult { title, edits }| {
+                lsp_types::CodeAction {
+                    title,
+                    edit: lsp_types::WorkspaceEdit {
+                        changes: Some(HashMap::from([
+                            (uri.clone(), edits)
+                        ])),
+                        ..Default::default()
+                    }.into(),
+                    ..Default::default()
+                }.into()
+            }).collect()
+        }))
     }
 }
 
