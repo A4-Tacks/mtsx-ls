@@ -72,6 +72,9 @@ pub fn hover_doc(file: &str, at: lsp_types::Position) -> Option<(String, lsp_typ
     let analysis = Analysis::new(span);
     let cover_range = TextRange::empty(TextSize::from(index as u32));
     analysis.hover_doc(cover_range)
+        .map(|(doc, sym)| {
+            (doc, lsp_range(&analysis.source.slice(sym.range)))
+        })
         .or_else(|| analysis.hover_doc_token(cover_range))
 }
 
@@ -372,7 +375,7 @@ impl Analysis {
         }
     }
 
-    fn hover_doc(&self, at: TextRange) -> Option<(String, lsp_types::Range)> {
+    fn hover_doc(&self, at: TextRange) -> Option<(String, SymId)> {
         let elem = self.element(at);
         let NodeOrToken::Token(tok) = &elem else { return None };
 
@@ -420,7 +423,7 @@ impl Analysis {
                     })?
             },
         };
-        Some((doc, lsp_range(&self.source.slice(tok.text_range()))))
+        Some((doc, SymId::new(tok.clone())))
     }
 
     fn hover_doc_token(&self, at: TextRange) -> Option<(String, lsp_types::Range)> {
