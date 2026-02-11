@@ -433,11 +433,9 @@ impl Analysis {
         let loc = self.location(&tok.parent()?);
 
         Some(match loc {
-            Location::Manifest | Location::Styles | Location::CommentDef
-            | Location::Defines | Location::Value | Location::Group
-            | Location::BuiltinMatcher | Location::BuiltinFormatter
-            | Location::BuiltinShinker | Location::Boolean | Location::Pattern
-            | Location::Disabled => return None,
+            Location::Manifest | Location::CommentDef | Location::Value | Location::Group
+            | Location::BuiltinMatcher | Location::BuiltinFormatter | Location::BuiltinShinker
+            | Location::Boolean | Location::Pattern | Location::Disabled => return None,
             Location::IncludeRegex => {
                 self.defines().find(|(name, value)| {
                     tok.text() == name.text() && !is_matcher(value)
@@ -448,7 +446,14 @@ impl Analysis {
                     tok.text() == name.text() && is_matcher(value)
                 })?.0.text_range()
             },
-            Location::Color => {
+            Location::Defines => {
+                let def = tok.parent_ancestors().find_map(ast::Item::cast).and_then(|it| it.assoc());
+                let def_is_matcher = def.as_ref().is_none_or(is_matcher);
+                self.defines().find(|(name, value)| {
+                    tok.text() == name.text() && is_matcher(value) == def_is_matcher
+                })?.0.text_range()
+            },
+            Location::Color | Location::Styles => {
                 self.styles()
                     .find(|(name, _)| tok.text() == name.text())?
                     .0.text_range()
@@ -457,8 +462,8 @@ impl Analysis {
     }
 
     fn references(&self, at: TextRange) -> Option<Vec<TextRange>> {
-        let raw_def = self.goto_define(at);
-        let elem = self.element(raw_def.unwrap_or(at));
+        let raw_def = self.goto_define(at)?;
+        let elem = self.element(raw_def);
         let NodeOrToken::Token(def) = &elem else { return None };
 
         if def.kind() != SyntaxKind::STRING {
@@ -470,7 +475,7 @@ impl Analysis {
             .and_then(|it| it.syntax().parent().and_then(ast::Item::cast))
             .and_then(|it| it.assoc());
 
-        Some(match loc {
+        let mut text_ranges = match loc {
             Location::Styles => {
                 self.root.syntax()
                     .descendants()
@@ -511,7 +516,9 @@ impl Analysis {
                     .collect()
             },
             _ => return None,
-        })
+        };
+        Vec::push(&mut text_ranges, def.text_range());
+        Some(text_ranges)
     }
 
     fn get_manifest(&self, name: &str) -> Option<ast::Value> {
@@ -1414,6 +1421,30 @@ mod tests {
             }"#,
             expect!["3:21"],
         );
+        check_goto_define(
+            r#"{
+                styles: [
+                    "$0red" > "string"
+                ]
+            }"#,
+            expect!["3:21"],
+        );
+        check_goto_define(
+            r#"{
+                defines: [
+                    "$0red": /x/
+                ]
+            }"#,
+            expect!["3:21"],
+        );
+        check_goto_define(
+            r#"{
+                defines: [
+                    "$0red": {match: /x/}
+                ]
+            }"#,
+            expect!["3:21"],
+        );
     }
 
     #[test]
@@ -1436,6 +1467,7 @@ mod tests {
             }"#,
             expect![[r#"
                 12:31
+                8:21
             "#]],
         );
         check_references(
@@ -1456,6 +1488,7 @@ mod tests {
             }"#,
             expect![[r#"
                 13:37
+                7:21
             "#]],
         );
         check_references(
@@ -1478,6 +1511,7 @@ mod tests {
                 8:42
                 9:57
                 4:27
+                3:21
             "#]],
         );
     }
