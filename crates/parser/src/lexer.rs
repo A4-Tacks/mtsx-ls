@@ -61,6 +61,14 @@ fn regex_escape(src: &str) -> usize {
     src.len()
 }
 
+fn preproc(src: &str) -> bool {
+    src.starts_with("if")
+        || src.starts_with("elif")
+        || src.starts_with("else")
+        || src.starts_with("endif")
+        || src.starts_with("error")
+}
+
 fn lex<'input>(source: &mut &'input str) -> Option<(SyntaxKind, &'input str)> {
     let Some(ch) = source.chars().next() else { return None };
     let mut once = true;
@@ -72,6 +80,8 @@ fn lex<'input>(source: &mut &'input str) -> Option<(SyntaxKind, &'input str)> {
         (WHITESPACE, source.take(any!(" \t\r\n")))
     } else if source.starts_with("//") {
         (COMMENT, source.take(any!(^"\n")))
+    } else if source.strip_prefix("#").is_some_and(preproc) {
+        (PREPROC, source.take(any!(^"\n")))
     } else if any!("a-zA-Z_", ch) {
         (IDENT, source.take(any!("a-zA-Z0-9_")))
     } else if ch == '@' {
@@ -254,6 +264,9 @@ mod tests {
         check(r#"
             ident"string"/regex/234#ff1b1B<mark>#builtin#@style
             ,:[]{}()+=>// comment
+            #if
+            #else
+            #endif
         "#, expect![[r##"
             WHITESPACE "\n            "
             IDENT      "ident"
@@ -276,6 +289,12 @@ mod tests {
             PLUS       "+"
             FAT_ARROW  "=>"
             COMMENT    "// comment"
+            WHITESPACE "\n            "
+            PREPROC    "#if"
+            WHITESPACE "\n            "
+            PREPROC    "#else"
+            WHITESPACE "\n            "
+            PREPROC    "#endif"
             WHITESPACE "\n        "
         "##]]);
     }

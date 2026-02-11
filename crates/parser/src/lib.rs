@@ -58,6 +58,7 @@ pub enum SyntaxKind {
 
     WHITESPACE,
     COMMENT,
+    PREPROC,
 
     ERROR,
 }
@@ -75,7 +76,7 @@ impl From<rowan::SyntaxKind> for SyntaxKind {
 }
 impl SyntaxKind {
     pub fn is_trivia(self) -> bool {
-        matches!(self, Self::COMMENT | Self::WHITESPACE)
+        matches!(self, Self::COMMENT | Self::WHITESPACE | Self::PREPROC)
     }
 
     pub fn is_open_delim(self) -> bool {
@@ -117,6 +118,7 @@ impl SyntaxKind {
             SyntaxKind::R_ANGLE => "`>`",
             SyntaxKind::WHITESPACE => "whitespace",
             SyntaxKind::COMMENT => "comment",
+            SyntaxKind::PREPROC => "preproc",
             SyntaxKind::ERROR => "error token",
         }
     }

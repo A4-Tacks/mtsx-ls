@@ -690,6 +690,54 @@ fn some_incomplete_state() {
 }
 
 #[test]
+fn some_trivias() {
+    check(
+        r#"
+        // require MT >= 2.16.0
+        {
+            // comment
+            #if xxx
+            name: ["rust", ".rs"]
+            #endif
+        }
+        "#,
+        expect![[r##"
+            SOURCE_FILE@0..157
+              WHITESPACE@0..9 "\n        "
+              COMMENT@9..32 "// require MT >= 2.16.0"
+              WHITESPACE@32..41 "\n        "
+              TABLE@41..148
+                L_CURLY@41..42 "{"
+                WHITESPACE@42..55 "\n            "
+                COMMENT@55..65 "// comment"
+                WHITESPACE@65..78 "\n            "
+                PREPROC@78..85 "#if xxx"
+                WHITESPACE@85..98 "\n            "
+                PAIR@98..119
+                  IDENT@98..102 "name"
+                  COLON@102..103 ":"
+                  WHITESPACE@103..104 " "
+                  ARRAY@104..119
+                    L_BRACK@104..105 "["
+                    ITEM@105..112
+                      LITERAL@105..111
+                        STRING@105..111 "\"rust\""
+                      COMMA@111..112 ","
+                    WHITESPACE@112..113 " "
+                    ITEM@113..118
+                      LITERAL@113..118
+                        STRING@113..118 "\".rs\""
+                    R_BRACK@118..119 "]"
+                WHITESPACE@119..132 "\n            "
+                PREPROC@132..138 "#endif"
+                WHITESPACE@138..147 "\n        "
+                R_CURLY@147..148 "}"
+              WHITESPACE@148..157 "\n        "
+        "##]],
+    );
+}
+
+#[test]
 fn full_incomplete_state_fuzz() {
     let mut tokens = b"i/2#ag@,:{}[]+/<>~\n ".repeat(300);
     let mut randoms: [usize; 64] = [
