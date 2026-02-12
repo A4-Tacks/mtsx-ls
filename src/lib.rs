@@ -783,7 +783,7 @@ fn docs(name: &SymId) -> String {
     })().unwrap_or(String::new()).to_owned()
 }
 
-fn indent_spaces(node: impl Into<NodeOrToken<SyntaxNode, SyntaxToken>>) -> usize {
+fn indent_spaces(node: impl Into<NodeOrToken<SyntaxNode, SyntaxToken>>) -> isize {
     let first = match node.into() {
         NodeOrToken::Node(n) => n.first_token(),
         NodeOrToken::Token(t) => Some(t),
@@ -795,10 +795,20 @@ fn indent_spaces(node: impl Into<NodeOrToken<SyntaxNode, SyntaxToken>>) -> usize
     std::iter::successors(first, |it| it.prev_token())
         .filter(|it| it.kind() == SyntaxKind::WHITESPACE)
         .find(|it| it.text().contains('\n'))
-        .map_or(0, |tok| get_indent(tok.text()))
+        .map_or(0, |tok| get_indent(tok.text()) as isize)
 }
 
-fn dedent(s: &str, spaces: usize) -> String {
+fn dedent(s: &str, spaces: isize) -> String {
+    let Ok(spaces) = usize::try_from(spaces) else {
+        let indent_spaces = usize::try_from(-spaces).unwrap();
+        let indent_char = s.char_indices()
+            .filter(|it| it.1 == '\n')
+            .find_map(|(i, _)| s[i+1..].chars().next().filter(|it| matches!(it, ' ' | '\t')))
+            .unwrap_or(' ');
+        let indent_str = indent_char.encode_utf8(&mut [0])
+            .repeat(indent_spaces);
+        return s.replace('\n', &format!("\n{}", indent_str));
+    };
     s.split_inclusive('\n')
         .map(|line| {
             let pure = line.trim_ascii_start();
@@ -810,6 +820,23 @@ fn dedent(s: &str, spaces: usize) -> String {
             }
         })
         .collect()
+}
+
+#[test]
+fn test_dedent_indent() {
+    let datas = [
+        ("a", 2, "a"),
+        ("  a", 2, "a"),
+        ("    a", 2, "  a"),
+        ("    a\n ", 2, "  a\n"),
+        ("    a\n x", 2, "  a\nx"),
+        ("a\n  b", -2, "a\n    b"),
+        ("a\n\tb", -2, "a\n\t\t\tb"),
+    ];
+
+    for (src, level, expected) in datas {
+        assert_eq!(dedent(src, level), expected, "{level}");
+    }
 }
 
 #[cfg(test)]
