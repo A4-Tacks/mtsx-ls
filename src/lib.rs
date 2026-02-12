@@ -46,8 +46,9 @@ fn lsp_range(span: &Span) -> lsp_types::Range {
     lsp_types::Range { start: lsp_pos(span), end: lsp_pos(&span.end()) }
 }
 
-fn srv_index(src: &str, pos: lsp_types::Position) -> usize {
-    line_column::index(src, pos.line+1, pos.character+1)
+fn srv_index(src: &str, pos: lsp_types::Position) -> TextSize {
+    let index = line_column::index(src, pos.line+1, pos.character+1);
+    TextSize::new(index.try_into().unwrap_or(u32::MAX))
 }
 
 pub fn diagnostics(file: &str) -> Vec<lsp_types::Diagnostic> {
@@ -59,10 +60,14 @@ pub fn diagnostics(file: &str) -> Vec<lsp_types::Diagnostic> {
 
 pub fn completions(file: &str, at: lsp_types::Position, tracer: &Tracer) -> Vec<lsp_types::CompletionItem> {
     let index = srv_index(file, at);
-    let for_complete = [&file[..index], COMPLETE_MARKER, &file[index..]].concat();
+    let for_complete = [
+        &file[TextRange::up_to(index)],
+        COMPLETE_MARKER,
+        &file[TextRange::new(index, TextSize::of(file))],
+    ].concat();
     let span = Span::new_full(for_complete);
     let analysis = Analysis::new(span);
-    let cover_range = TextRange::at(TextSize::from(index as u32), TextSize::of(COMPLETE_MARKER));
+    let cover_range = TextRange::at(index, TextSize::of(COMPLETE_MARKER));
     analysis.completions(cover_range, tracer)
 }
 
@@ -70,7 +75,7 @@ pub fn hover_doc(file: &str, at: lsp_types::Position) -> Option<(String, lsp_typ
     let index = srv_index(file, at);
     let span = Span::new_full(file);
     let analysis = Analysis::new(span);
-    let cover_range = TextRange::empty(TextSize::from(index as u32));
+    let cover_range = TextRange::empty(index);
     analysis.hover_doc(cover_range)
         .map(|(doc, sym)| {
             (doc, lsp_range(&analysis.source.slice(sym.range)))
@@ -82,7 +87,7 @@ pub fn goto_define(file: &str, at: lsp_types::Position) -> Option<lsp_types::Ran
     let index = srv_index(file, at);
     let span = Span::new_full(file);
     let analysis = Analysis::new(span);
-    let cover_range = TextRange::empty(TextSize::from(index as u32));
+    let cover_range = TextRange::empty(index);
     analysis.goto_define(cover_range).map(|sym| {
         lsp_range(&analysis.source.slice(sym.range))
     })
@@ -92,7 +97,7 @@ pub fn references(file: &str, at: lsp_types::Position) -> Option<Vec<lsp_types::
     let index = srv_index(file, at);
     let span = Span::new_full(file);
     let analysis = Analysis::new(span);
-    let cover_range = TextRange::empty(TextSize::from(index as u32));
+    let cover_range = TextRange::empty(index);
     analysis.references(cover_range).map(|ranges| {
         ranges.into_iter().map(|sym| {
             lsp_range(&analysis.source.slice(sym.range))
@@ -104,7 +109,7 @@ pub fn rename(file: &str, at: lsp_types::Position, new_name: String) -> Option<V
     let index = srv_index(file, at);
     let span = Span::new_full(file);
     let analysis = Analysis::new(span);
-    let cover_range = TextRange::empty(TextSize::from(index as u32));
+    let cover_range = TextRange::empty(index);
     let ranges = analysis
         .references(cover_range)?;
     let new_text = new_name.trim_matches('"');
