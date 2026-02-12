@@ -592,7 +592,7 @@ impl Analysis {
         self.root.table()?.get(|k| k == name).next()
     }
 
-    fn styles(&self) -> impl Iterator<Item = (SymId, impl Iterator<Item = ast::Lit>)> {
+    fn styles(&self) -> impl Iterator<Item = (SymId, impl Iterator<Item = ast::Lit> + use<>)> + use<> {
         self.get_manifest("styles")
             .or_else(|| self.get_manifest("colors"))
             .and_then(ast::Value::into_array)
@@ -616,7 +616,7 @@ impl Analysis {
             })
     }
 
-    fn defines(&self) -> impl Iterator<Item = (SymId, ast::Value)> {
+    fn defines(&self) -> impl Iterator<Item = (SymId, ast::Value)> + use<> {
         (|| {
             let ast::Value::Array(defines) = self.get_manifest("defines")? else { return None };
             Some(defines.items()
@@ -628,6 +628,7 @@ impl Analysis {
     }
 
     fn collect_diagnostics(&mut self) -> Option<()> {
+        self.check_duplicate_defs();
         self.root.syntax().descendants().for_each(|node| {
             self.check_duplicate_keys(&node);
         });
@@ -652,13 +653,27 @@ impl Analysis {
             });
         Some(())
     }
+
+    fn check_duplicate_defs(&mut self) {
+        let mut defined = HashSet::new();
+        for (sym, _) in self.defines() {
+            if !defined.insert(sym.sym_text().to_string()) {
+                self.error(sym.range, format_args!("define duplicate name: `{}`", sym.sym_text()));
+            }
+        }
+        defined.clear();
+        for (sym, _) in self.styles() {
+            if !defined.insert(sym.sym_text().to_string()) {
+                self.error(sym.range, format_args!("define duplicate name: `{}`", sym.sym_text()));
+            }
+        }
+    }
 }
 
 struct SymId {
     token: SyntaxToken,
     range: TextRange,
 }
-
 impl PartialEq for SymId {
     fn eq(&self, other: &Self) -> bool {
         self.sym_text() == other.sym_text()
@@ -890,8 +905,7 @@ mod tests {
             src.replacen("$0", COMPLETE_MARKER, 1),
         ] {
             let src = Span::new_full(src);
-            let mut analysis = Analysis::new(src);
-            analysis.collect_diagnostics();
+            let analysis = Analysis::new(src);
             let extra = if analysis.diagnostics.is_empty() { "" } else { &format!(" !{}", analysis.diagnostics.len()) };
             let element = analysis.element(TextRange::empty(TextSize::new(index.try_into().unwrap())));
             let node = match element {
@@ -1756,5 +1770,57 @@ mod tests {
                 3:22
             "#]],
         );
+    }
+
+    #[test]
+    fn test_diagnostics() {
+        let src = dedent(r#"{
+            name: ["Rust", ".rs"]
+            hide: false
+            hide: false
+            comment: {startsWith: "//"}
+            comment: {startsWith: "/*", endsWith: "*/"}
+            styles: [
+                "a" > "string"
+                "a" > "number" @I
+                "b" > "strEscape"
+            ]
+            defines: [
+                "b": /x/
+                "c": {match: /x/}
+                "c": /y/
+                "d": /y/
+                "d": /z/
+            ]
+        }"#, 8);
+        let mut analysis = Analysis::new(Span::new_full(&src));
+        analysis.collect_diagnostics();
+        let linted = test_utils::apply_inline_lints(&src, analysis.diagnostics.into_iter().map(|(span, lint)| {
+            (span.range(), lint)
+        }).collect());
+        expect![[r#"
+            {
+                name: ["Rust", ".rs"]
+                hide: false
+                hide: false
+             // ^^^^ duplicate key: `hide`
+                comment: {startsWith: "//"}
+                comment: {startsWith: "/*", endsWith: "*/"}
+                styles: [
+                    "a" > "string"
+                    "a" > "number" @I
+                  // ^ define duplicate name: `a`
+                    "b" > "strEscape"
+                ]
+                defines: [
+                    "b": /x/
+                    "c": {match: /x/}
+                    "c": /y/
+                  // ^ define duplicate name: `c`
+                    "d": /y/
+                    "d": /z/
+                  // ^ define duplicate name: `d`
+                ]
+            }"#]].assert_eq(&linted);
     }
 }
