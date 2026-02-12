@@ -10,6 +10,9 @@ pub(crate) fn extract_pattern(ctx: &Analysis, elem: Elem) -> Option<Vec<(TextRan
     if !matches!(tok.kind(), SyntaxKind::REGEX | SyntaxKind::IDENT) {
         return None;
     }
+    if tok.text() == "include" {
+        return None;
+    }
 
     let place = tok.parent_ancestors()
         .take_while(|it| {
@@ -41,6 +44,9 @@ pub(crate) fn extract_matcher(ctx: &Analysis, elem: Elem) -> Option<Vec<(TextRan
     let tok = elem.into_token()?;
 
     if tok.kind() != SyntaxKind::IDENT {
+        return None;
+    }
+    if tok.text() == "include" {
         return None;
     }
     let item = tok.parent_ancestors().find_map(ast::Pair::cast)?;
@@ -242,6 +248,23 @@ mod tests {
                 }
             "#]],
         );
+        check(
+            extract_matcher,
+            r#"
+            {
+                name: ["x"]
+                defines: [
+                    "x": {match: /x/}
+                ]
+                contains: [
+                    {
+                        $0include: "x"
+                    }
+                ]
+            }
+            "#,
+            expect!["<not applicable>"],
+        );
     }
 
     #[test]
@@ -315,6 +338,23 @@ mod tests {
                     ]
                 }
             "#]],
+        );
+        check(
+            extract_pattern,
+            r#"
+            {
+                name: ["x"]
+                defines: [
+                    "x": /x/
+                ]
+                contains: [
+                    {
+                        match: $0include("x")
+                    }
+                ]
+            }
+            "#,
+            expect!["<not applicable>"],
         );
     }
 
