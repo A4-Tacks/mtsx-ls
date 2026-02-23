@@ -340,10 +340,11 @@ impl Analysis {
                 user_colors.chain(builtins).chain(snippets).collect()
             },
             Location::Value => {
-                let Some(table) = elem.ancestors().find_map(ast::Table::cast) else {
+                let Some(container) = elem.ancestors().find_map(Or::<ast::Table, ast::Array>::cast) else {
                     return vec![];
                 };
-                if let Some((_, schema)) = table.pairs()
+                if let Or::A(table) = &container
+                && let Some((_, schema)) = table.pairs()
                     .filter_map(|pair| pair.key()?.into_ident())
                     .find_map(|name| {
                         MATCHER_SCHEMA.iter().find(|((title, _), _)| *title == name.text())
@@ -355,8 +356,16 @@ impl Analysis {
                             make_item(*label, *snip, "")
                         }).collect()
                 } else {
-                    MATCHER_SCHEMA.iter().map(|((label, snip), _)| {
-                        make_item(*label, *snip, "")
+                    MATCHER_SCHEMA.iter().map(|((label, snip), schema)| {
+                        let snip = match &container {
+                            Or::A(_) => snip.to_string(),
+                            Or::B(_array) => if schema.is_empty() {
+                                format!("{{{snip}}}")
+                            } else {
+                                format!("{{\n\t{snip}\n}}")
+                            },
+                        };
+                        make_item(*label, &snip, "")
                     }).collect()
                 }
             },
@@ -1313,6 +1322,40 @@ mod tests {
                 BUILT_IN_CSS_SHRINKER"BUILT_IN_CSS_SHRINKER"
                 BUILT_IN_HTML_SHRINKER"BUILT_IN_HTML_SHRINKER"
                 BUILT_IN_JSON_SHRINKER"BUILT_IN_JSON_SHRINKER"
+            "#]],
+        );
+    }
+
+    #[test]
+    fn test_complete_values() {
+        check_complete(
+            r#"{
+                contains: [
+                    $0
+                ]
+            }"#,
+            expect![[r#"
+                match               "{\n\tmatch: $0\n}"
+                start               "{\n\tstart: $0\n}"
+                group               "{\n\tgroup: $0\n}"
+                number              "{\n\tnumber: \"$1\"\n}"
+                builtin             "{builtin: #$1#}"
+                include             "{include: \"$1\"}"
+            "#]],
+        );
+        check_complete(
+            r#"{
+                contains: [
+                    {$0}
+                ]
+            }"#,
+            expect![[r#"
+                match               "match: $0"
+                start               "start: $0"
+                group               "group: $0"
+                number              "number: \"$1\""
+                builtin             "builtin: #$1#"
+                include             "include: \"$1\""
             "#]],
         );
     }
