@@ -227,6 +227,7 @@ impl Analysis {
                     }
                     match item.sep()?.kind() {
                         T![:] if !is_matcher(&assoc) => Location::Pattern,
+                        T![:] => Location::Value,
                         T![>] => Location::Color,
                         _ => return None,
                     }
@@ -1113,6 +1114,10 @@ mod tests {
         check_loc(
             r#"{defines: ["x": {x:$0}]}"#,
             expect!["Value !1, Value"],
+        );
+        check_loc(
+            r#"{defines: ["x": [$0]]}"#,
+            expect!["Value, Value"],
         );
         check_loc(
             r#"{defines: ["x": $0]}"#,
