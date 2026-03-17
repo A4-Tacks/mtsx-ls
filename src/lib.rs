@@ -330,12 +330,22 @@ impl Analysis {
                     let def = &self.source.text()[range];
                     make_item(name.sym_text(), name.token.text(), def)
                 });
+                let ws = {
+                    if let NodeOrToken::Token(tok) = &elem
+                        && let Some(prev_token) = tok.prev_token()
+                        && prev_token.kind() == T![:]
+                    {
+                        " "
+                    } else {
+                        ""
+                    }
+                };
                 let builtins = BUILTIN_COLORS.iter().map(|(name, lg, dk)| {
                     let detail = style_detail(name, lg, dk);
-                    make_item(*name, &format!(r#""{name}""#), &detail)
+                    make_item(*name, &format!(r#"{ws}"{name}""#), &detail)
                 });
                 let snippets = [
-                    make_item("parseColor", "parseColor($1)", &DOC.parse_color())
+                    make_item("parseColor", &format!("{ws}parseColor($1)"), &DOC.parse_color())
                 ];
                 user_colors.chain(builtins).chain(snippets).collect()
             },
@@ -1322,6 +1332,39 @@ mod tests {
                 BUILT_IN_CSS_SHRINKER"BUILT_IN_CSS_SHRINKER"
                 BUILT_IN_HTML_SHRINKER"BUILT_IN_HTML_SHRINKER"
                 BUILT_IN_JSON_SHRINKER"BUILT_IN_JSON_SHRINKER"
+            "#]],
+        );
+    }
+
+    #[test]
+    fn test_fix_complete_whitespaces() {
+        check_complete(
+            r#"{
+                contains: [
+                    {0:$0}
+                ]
+            }"#,
+            expect![[r#"
+                default             " \"default\""
+                string              " \"string\""
+                strEscape           " \"strEscape\""
+                comment             " \"comment\""
+                meta                " \"meta\""
+                number              " \"number\""
+                keyword             " \"keyword\""
+                keyword2            " \"keyword2\""
+                constant            " \"constant\""
+                type                " \"type\""
+                label               " \"label\""
+                variable            " \"variable\""
+                operator            " \"operator\""
+                propKey             " \"propKey\""
+                propVal             " \"propVal\""
+                tagName             " \"tagName\""
+                attrName            " \"attrName\""
+                namespace           " \"namespace\""
+                error               " \"error\""
+                parseColor          " parseColor($1)"
             "#]],
         );
     }
