@@ -323,24 +323,24 @@ impl Analysis {
                 }).collect()
             },
             Location::Color => {
-                let user_colors = self.styles().map(|(name, qualifiers)| {
-                    let mut range = name.token.text_range();
-                    if let Some(last) = qualifiers.last() {
-                        range = range.cover(last.syntax().text_range())
-                    }
-                    let def = &self.source.text()[range];
-                    make_item(name.sym_text(), name.token.text(), def)
-                });
                 let ws = {
                     if let NodeOrToken::Token(tok) = &elem
                         && let Some(prev_token) = tok.prev_token()
-                        && prev_token.kind() == T![:]
+                        && matches!(prev_token.kind(), T![:] | T![>])
                     {
                         " "
                     } else {
                         ""
                     }
                 };
+                let user_colors = self.styles().map(|(name, qualifiers)| {
+                    let mut range = name.token.text_range();
+                    if let Some(last) = qualifiers.last() {
+                        range = range.cover(last.syntax().text_range())
+                    }
+                    let def = &self.source.text()[range];
+                    make_item(name.sym_text(), &format!("{ws}{}", name.token), def)
+                });
                 let builtins = BUILTIN_COLORS.iter().map(|(name, lg, dk)| {
                     let detail = style_detail(name, lg, dk);
                     make_item(*name, &format!(r#"{ws}"{name}""#), &detail)
@@ -1364,6 +1364,36 @@ mod tests {
                 ]
             }"#,
             expect![[r#"
+                default             " \"default\""
+                string              " \"string\""
+                strEscape           " \"strEscape\""
+                comment             " \"comment\""
+                meta                " \"meta\""
+                number              " \"number\""
+                keyword             " \"keyword\""
+                keyword2            " \"keyword2\""
+                constant            " \"constant\""
+                type                " \"type\""
+                label               " \"label\""
+                variable            " \"variable\""
+                operator            " \"operator\""
+                propKey             " \"propKey\""
+                propVal             " \"propVal\""
+                tagName             " \"tagName\""
+                attrName            " \"attrName\""
+                namespace           " \"namespace\""
+                error               " \"error\""
+                parseColor          " parseColor($1)"
+            "#]],
+        );
+        check_complete(
+            r#"{
+                styles: [
+                    "x" >$0
+                ]
+            }"#,
+            expect![[r#"
+                x                   " \"x\""
                 default             " \"default\""
                 string              " \"string\""
                 strEscape           " \"strEscape\""
