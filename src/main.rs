@@ -1,5 +1,6 @@
 use getopts_macro::getopts_options;
 use mtsx_ls::Tracer;
+use syntax::TextRange;
 use std::collections::HashMap;
 
 use anyhow::{Result, anyhow, bail};
@@ -9,6 +10,7 @@ use lsp_types::{CodeActionKind, CodeActionOptions, CompletionOptions, Initialize
 
 fn main() {
     let options = getopts_options! {
+            --lint          "lint file from stdin";
         -h, --help          "show help message";
         -v, --version       "show version";
     };
@@ -21,6 +23,25 @@ fn main() {
     if matches.opt_present("version") {
         println!("{}", env!("CARGO_PKG_VERSION"));
         return;
+    }
+    if matches.opt_present("lint") {
+        let file = std::io::read_to_string(std::io::stdin().lock()).unwrap();
+        let file = line_column::span::Span::new_full(file);
+        let mut exit_code = 0;
+        for lsp_types::Diagnostic {
+            range: lsp_types::Range { start: lsp_types::Position { line, character }, .. },
+            message,
+            ..
+        } in mtsx_ls::diagnostics(file.text())
+        {
+            exit_code = 1;
+            let (line, column) = (line+1, character+1);
+            let offset = line_column::index(file.text(), line, column).try_into().unwrap();
+            let cover_line = file.create(TextRange::empty(offset)).current_line();
+            println!("{line}:{column} {message}");
+            println!("|\t{}", cover_line.text().trim_end());
+        }
+        std::process::exit(exit_code)
     }
 
     main_loop(&matches).unwrap();
