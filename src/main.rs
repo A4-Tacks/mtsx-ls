@@ -31,7 +31,7 @@ fn main_loop(_matches: &getopts_macro::getopts::Matches) -> Result<()> {
     let _io = IoJoiner(Some(io));
     let server_capabilities = ServerCapabilities {
         completion_provider: Some(CompletionOptions {
-            trigger_characters: Some(vec![".".to_owned(), "-".to_owned(), "\"".to_owned()]),
+            trigger_characters: Some(vec![":".to_owned(), ">".to_owned(), "\"".to_owned()]),
             ..Default::default()
         }),
         text_document_sync: Some(TextDocumentSyncCapability::Kind(TextDocumentSyncKind::FULL)),
