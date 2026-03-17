@@ -353,7 +353,17 @@ impl Analysis {
                 let Some(container) = elem.ancestors().find_map(Or::<ast::Table, ast::Array>::cast) else {
                     return vec![];
                 };
+                let is_in_subvalue = {
+                    elem.parent()
+                        .and_then(ast::Literal::cast)
+                        .and_then(|lit| {
+                            let value = ast::Pair::cast(lit.syntax().parent()?)?.value()?;
+                            Some(value.into_literal()? == lit)
+                        })
+                        .unwrap_or(false)
+                };
                 if let Or::A(table) = &container
+                && !is_in_subvalue
                 && let Some((_, schema)) = table.pairs()
                     .filter_map(|pair| pair.key()?.into_ident())
                     .find_map(|name| {
@@ -368,7 +378,11 @@ impl Analysis {
                 } else {
                     MATCHER_SCHEMA.iter().map(|((label, snip), schema)| {
                         let snip = match &container {
-                            Or::A(_) => snip.to_string(),
+                            Or::A(_) => if is_in_subvalue {
+                                format!("{{{snip}}}")
+                            } else {
+                                snip.to_string()
+                            },
                             Or::B(_array) => if schema.is_empty() {
                                 format!("{{{snip}}}")
                             } else {
@@ -1399,6 +1413,21 @@ mod tests {
                 number              "number: \"$1\""
                 builtin             "builtin: #$1#"
                 include             "include: \"$1\""
+            "#]],
+        );
+        check_complete(
+            r#"{
+                contains: [
+                    {start: $0}
+                ]
+            }"#,
+            expect![[r#"
+                match               "{match: $0}"
+                start               "{start: $0}"
+                group               "{group: $0}"
+                number              "{number: \"$1\"}"
+                builtin             "{builtin: #$1#}"
+                include             "{include: \"$1\"}"
             "#]],
         );
     }
