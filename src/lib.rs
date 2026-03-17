@@ -325,6 +325,7 @@ impl Analysis {
             Location::Color => {
                 let ws = {
                     if let NodeOrToken::Token(tok) = &elem
+                        && tok.kind() == SyntaxKind::IDENT
                         && let Some(prev_token) = tok.prev_token()
                         && matches!(prev_token.kind(), T![:] | T![>])
                     {
@@ -1230,6 +1231,35 @@ mod tests {
             r#"{
                 contains: [
                     {0: "$0"}
+                ]
+            }"#,
+            expect![[r#"
+                default             "default"
+                string              "string"
+                strEscape           "strEscape"
+                comment             "comment"
+                meta                "meta"
+                number              "number"
+                keyword             "keyword"
+                keyword2            "keyword2"
+                constant            "constant"
+                type                "type"
+                label               "label"
+                variable            "variable"
+                operator            "operator"
+                propKey             "propKey"
+                propVal             "propVal"
+                tagName             "tagName"
+                attrName            "attrName"
+                namespace           "namespace"
+                error               "error"
+                parseColor          "parseColor($1)"
+            "#]],
+        );
+        check_complete(
+            r#"{
+                contains: [
+                    {0:"$0"}
                 ]
             }"#,
             expect![[r#"
