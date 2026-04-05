@@ -347,7 +347,7 @@ impl Analysis {
                     make_item(*name, &format!(r#""{name}""#), &detail)
                 });
                 let snippets = [
-                    make_item("parseColor", &format!("parseColor($1)"), &DOC.parse_color())
+                    make_item("parseColor", &format!("\"parseColor($1)\""), &DOC.parse_color())
                 ];
                 user_colors.chain(builtins).chain(snippets).collect()
             },
@@ -1224,7 +1224,7 @@ mod tests {
                 attrName            "\"attrName\""
                 namespace           "\"namespace\""
                 error               "\"error\""
-                parseColor          "parseColor($1)"
+                parseColor          "\"parseColor($1)\""
             "#]],
         );
         check_complete(
@@ -1413,7 +1413,7 @@ mod tests {
                 attrName            " \"attrName\""
                 namespace           " \"namespace\""
                 error               " \"error\""
-                parseColor          " parseColor($1)"
+                parseColor          " \"parseColor($1)\""
             "#]],
         );
         check_complete(
@@ -1443,7 +1443,7 @@ mod tests {
                 attrName            " \"attrName\""
                 namespace           " \"namespace\""
                 error               " \"error\""
-                parseColor          " parseColor($1)"
+                parseColor          " \"parseColor($1)\""
             "#]],
         );
         check_complete(
