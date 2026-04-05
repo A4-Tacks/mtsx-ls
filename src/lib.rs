@@ -280,6 +280,17 @@ impl Analysis {
             NodeOrToken::Token(t) => self.location(&t.parent().unwrap()),
         };
         tracer.trace(format_args!("complete location: {loc:?}"));
+        let ws = {
+            if let NodeOrToken::Token(tok) = &elem
+                && tok.kind() == SyntaxKind::IDENT
+                && let Some(prev_token) = tok.prev_token()
+                && matches!(prev_token.kind(), T![:] | T![>])
+            {
+                " "
+            } else {
+                ""
+            }
+        };
         let make_item = |label: &str, mut snip: &str, detail: &str| {
             if let Some(tok) = elem.as_token() {
                 let text = tok.text();
@@ -294,7 +305,7 @@ impl Analysis {
             lsp_types::CompletionItem {
                 label: label.to_owned(),
                 detail: Some(detail.to_owned()),
-                insert_text: Some(snip.to_owned()),
+                insert_text: Some(format!("{ws}{snip}")),
                 insert_text_format: Some(InsertTextFormat::SNIPPET),
                 ..Default::default()
             }
@@ -323,31 +334,20 @@ impl Analysis {
                 }).collect()
             },
             Location::Color => {
-                let ws = {
-                    if let NodeOrToken::Token(tok) = &elem
-                        && tok.kind() == SyntaxKind::IDENT
-                        && let Some(prev_token) = tok.prev_token()
-                        && matches!(prev_token.kind(), T![:] | T![>])
-                    {
-                        " "
-                    } else {
-                        ""
-                    }
-                };
                 let user_colors = self.styles().map(|(name, qualifiers)| {
                     let mut range = name.token.text_range();
                     if let Some(last) = qualifiers.last() {
                         range = range.cover(last.syntax().text_range())
                     }
                     let def = &self.source.text()[range];
-                    make_item(name.sym_text(), &format!("{ws}{}", name.token), def)
+                    make_item(name.sym_text(), &name.token.to_string(), def)
                 });
                 let builtins = BUILTIN_COLORS.iter().map(|(name, lg, dk)| {
                     let detail = style_detail(name, lg, dk);
-                    make_item(*name, &format!(r#"{ws}"{name}""#), &detail)
+                    make_item(*name, &format!(r#""{name}""#), &detail)
                 });
                 let snippets = [
-                    make_item("parseColor", &format!("{ws}parseColor($1)"), &DOC.parse_color())
+                    make_item("parseColor", &format!("parseColor($1)"), &DOC.parse_color())
                 ];
                 user_colors.chain(builtins).chain(snippets).collect()
             },
@@ -1444,6 +1444,24 @@ mod tests {
                 namespace           " \"namespace\""
                 error               " \"error\""
                 parseColor          " parseColor($1)"
+            "#]],
+        );
+        check_complete(
+            r#"{
+                contains: [{match:$0}]
+            }"#,
+            expect![[r#"
+                include             " include(\"$1\")"
+                keywordsToRegex     " keywordsToRegex(\"$1\")"
+            "#]],
+        );
+        check_complete(
+            r#"{
+                defines: ["x":{}]
+                contains: [{include:$0}]
+            }"#,
+            expect![[r#"
+                x                   " \"x\""
             "#]],
         );
     }
