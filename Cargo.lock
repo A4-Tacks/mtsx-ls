@@ -116,9 +116,9 @@ checksum = "92ecc6618181def0457392ccd0ee51198e065e016d1d527a7ac1b6dc7c1f09d2"
 
 [[package]]
 name = "line-column"
-version = "0.3.1"
+version = "0.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "241c42ad6aa731f04ebec52ed701d997140aba19003d402278f382df1782c942"
+checksum = "3d4272f8ed19b69d9c648be0cb0ee2211a32e3ef0a9d8a2ab93a20692b004a04"
 dependencies = [
  "text-size",
 ]
@@ -169,7 +169,7 @@ checksum = "f52b00d39961fc5b2736ea853c9cc86238e165017a493d1d5c8eac6bdc4cc273"
 
 [[package]]
 name = "mtsx-ls"
-version = "0.2.10"
+version = "0.2.11"
 dependencies = [
  "anyhow",
  "crossbeam-channel",

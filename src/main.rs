@@ -29,14 +29,14 @@ fn main() {
         let file = line_column::span::Span::new_full(file);
         let mut exit_code = 0;
         for lsp_types::Diagnostic {
-            range: lsp_types::Range { start: lsp_types::Position { line, character }, .. },
+            range: lsp_types::Range { start, .. },
             message,
             ..
         } in mtsx_ls::diagnostics(file.text())
         {
             exit_code = 1;
-            let (line, column) = (line+1, character+1);
-            let offset = line_column::index(file.text(), line, column).try_into().unwrap();
+            let offset = mtsx_ls::srv_index(file.text(), start);
+            let (line, column) = line_column::line_column(file.text(), offset.into());
             let cover_line = file.create(TextRange::empty(offset)).current_line();
             println!("{line}:{column} {message}");
             println!("|\t{}", cover_line.text().trim_end());

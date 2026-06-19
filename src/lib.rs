@@ -39,7 +39,7 @@ impl Tracer {
 }
 
 fn lsp_pos(span: &Span) -> lsp_types::Position {
-    let (line, column) = span.line_column();
+    let (line, column) = span.line_column_ucs2();
     lsp_types::Position { line: line-1, character: column-1 }
 }
 
@@ -47,8 +47,8 @@ fn lsp_range(span: &Span) -> lsp_types::Range {
     lsp_types::Range { start: lsp_pos(span), end: lsp_pos(&span.end()) }
 }
 
-fn srv_index(src: &str, pos: lsp_types::Position) -> TextSize {
-    let index = line_column::index(src, pos.line+1, pos.character+1);
+pub fn srv_index(src: &str, pos: lsp_types::Position) -> TextSize {
+    let index = line_column::index_ucs2(src, pos.line+1, pos.character+1);
     TextSize::new(index.try_into().unwrap_or(u32::MAX))
 }
 
