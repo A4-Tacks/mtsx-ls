@@ -483,5 +483,21 @@
             0: "comment"
         }
         {include: "top"}
+        { // 2.26.9 works
+            start: {match: /<code\s+lang="([^"]+)">/}
+            end: {match: /<\/code>/}
+            childrenStyle: "default" // 可选
+            childrenSyntax: {
+                capture: 1
+                ignoreCase: true // 可选
+                include: "xxxLanguages"
+                "js" => ".js"
+                "css" => "CSS"
+                "json" => ".json"
+                "default" => ".json"
+                default => ".js" // 可选
+            }
+            missingStyle: "comment" // 可选
+        }
     ],
 }

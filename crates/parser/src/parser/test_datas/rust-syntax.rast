@@ -1,5 +1,5 @@
-SOURCE_FILE@0..16686
-  TABLE@0..16685
+SOURCE_FILE@0..17235
+  TABLE@0..17234
     L_CURLY@0..1 "{"
     WHITESPACE@1..6 "\n    "
     COMMENT@6..26 "// @author: A4-Tacks"
@@ -3668,11 +3668,11 @@ SOURCE_FILE@0..16686
         WHITESPACE@16524..16529 "\n    "
         R_BRACK@16529..16530 "]"
     WHITESPACE@16530..16536 "\n\n    "
-    PAIR@16536..16683
+    PAIR@16536..17232
       IDENT@16536..16544 "contains"
       COLON@16544..16545 ":"
       WHITESPACE@16545..16546 " "
-      ARRAY@16546..16682
+      ARRAY@16546..17231
         L_BRACK@16546..16547 "["
         WHITESPACE@16547..16556 "\n        "
         ITEM@16556..16651
@@ -3708,9 +3708,132 @@ SOURCE_FILE@0..16686
               LITERAL@16670..16675
                 STRING@16670..16675 "\"top\""
             R_CURLY@16675..16676 "}"
-        WHITESPACE@16676..16681 "\n    "
-        R_BRACK@16681..16682 "]"
-      COMMA@16682..16683 ","
-    WHITESPACE@16683..16684 "\n"
-    R_CURLY@16684..16685 "}"
-  WHITESPACE@16685..16686 "\n"
+        WHITESPACE@16676..16685 "\n        "
+        ITEM@16685..17225
+          TABLE@16685..17225
+            L_CURLY@16685..16686 "{"
+            WHITESPACE@16686..16687 " "
+            COMMENT@16687..16702 "// 2.26.9 works"
+            WHITESPACE@16702..16715 "\n            "
+            PAIR@16715..16756
+              IDENT@16715..16720 "start"
+              COLON@16720..16721 ":"
+              WHITESPACE@16721..16722 " "
+              TABLE@16722..16756
+                L_CURLY@16722..16723 "{"
+                PAIR@16723..16755
+                  IDENT@16723..16728 "match"
+                  COLON@16728..16729 ":"
+                  WHITESPACE@16729..16730 " "
+                  LITERAL@16730..16755
+                    REGEX@16730..16755 "/<code\\s+lang=\"([^\"]+ ..."
+                R_CURLY@16755..16756 "}"
+            WHITESPACE@16756..16769 "\n            "
+            PAIR@16769..16793
+              IDENT@16769..16772 "end"
+              COLON@16772..16773 ":"
+              WHITESPACE@16773..16774 " "
+              TABLE@16774..16793
+                L_CURLY@16774..16775 "{"
+                PAIR@16775..16792
+                  IDENT@16775..16780 "match"
+                  COLON@16780..16781 ":"
+                  WHITESPACE@16781..16782 " "
+                  LITERAL@16782..16792
+                    REGEX@16782..16792 "/<\\/code>/"
+                R_CURLY@16792..16793 "}"
+            WHITESPACE@16793..16806 "\n            "
+            PAIR@16806..16830
+              IDENT@16806..16819 "childrenStyle"
+              COLON@16819..16820 ":"
+              WHITESPACE@16820..16821 " "
+              LITERAL@16821..16830
+                STRING@16821..16830 "\"default\""
+            WHITESPACE@16830..16831 " "
+            COMMENT@16831..16840 "// 可选"
+            WHITESPACE@16840..16853 "\n            "
+            PAIR@16853..17169
+              IDENT@16853..16867 "childrenSyntax"
+              COLON@16867..16868 ":"
+              WHITESPACE@16868..16869 " "
+              TABLE@16869..17169
+                L_CURLY@16869..16870 "{"
+                WHITESPACE@16870..16887 "\n                "
+                PAIR@16887..16897
+                  IDENT@16887..16894 "capture"
+                  COLON@16894..16895 ":"
+                  WHITESPACE@16895..16896 " "
+                  LITERAL@16896..16897
+                    NUMBER@16896..16897 "1"
+                WHITESPACE@16897..16914 "\n                "
+                PAIR@16914..16957
+                  IDENT@16914..16924 "ignoreCase"
+                  COLON@16924..16925 ":"
+                  WHITESPACE@16925..16926 " "
+                  LITERAL@16926..16930
+                    IDENT@16926..16930 "true"
+                  WHITESPACE@16930..16931 " "
+                  COMMENT@16931..16940 "// 可选"
+                  WHITESPACE@16940..16957 "\n                "
+                PAIR@16957..16980
+                  IDENT@16957..16964 "include"
+                  COLON@16964..16965 ":"
+                  WHITESPACE@16965..16966 " "
+                  LITERAL@16966..16980
+                    STRING@16966..16980 "\"xxxLanguages\""
+                WHITESPACE@16980..16997 "\n                "
+                MAP@16997..17010
+                  STRING@16997..17001 "\"js\""
+                  WHITESPACE@17001..17002 " "
+                  FAT_ARROW@17002..17004 "=>"
+                  WHITESPACE@17004..17005 " "
+                  STRING@17005..17010 "\".js\""
+                WHITESPACE@17010..17027 "\n                "
+                MAP@17027..17041
+                  STRING@17027..17032 "\"css\""
+                  WHITESPACE@17032..17033 " "
+                  FAT_ARROW@17033..17035 "=>"
+                  WHITESPACE@17035..17036 " "
+                  STRING@17036..17041 "\"CSS\""
+                WHITESPACE@17041..17058 "\n                "
+                MAP@17058..17075
+                  STRING@17058..17064 "\"json\""
+                  WHITESPACE@17064..17065 " "
+                  FAT_ARROW@17065..17067 "=>"
+                  WHITESPACE@17067..17068 " "
+                  STRING@17068..17075 "\".json\""
+                WHITESPACE@17075..17092 "\n                "
+                MAP@17092..17112
+                  STRING@17092..17101 "\"default\""
+                  WHITESPACE@17101..17102 " "
+                  FAT_ARROW@17102..17104 "=>"
+                  WHITESPACE@17104..17105 " "
+                  STRING@17105..17112 "\".json\""
+                WHITESPACE@17112..17129 "\n                "
+                MAP@17129..17145
+                  IDENT@17129..17136 "default"
+                  WHITESPACE@17136..17137 " "
+                  FAT_ARROW@17137..17139 "=>"
+                  WHITESPACE@17139..17140 " "
+                  STRING@17140..17145 "\".js\""
+                WHITESPACE@17145..17146 " "
+                COMMENT@17146..17155 "// 可选"
+                WHITESPACE@17155..17168 "\n            "
+                R_CURLY@17168..17169 "}"
+            WHITESPACE@17169..17182 "\n            "
+            PAIR@17182..17205
+              IDENT@17182..17194 "missingStyle"
+              COLON@17194..17195 ":"
+              WHITESPACE@17195..17196 " "
+              LITERAL@17196..17205
+                STRING@17196..17205 "\"comment\""
+            WHITESPACE@17205..17206 " "
+            COMMENT@17206..17215 "// 可选"
+            WHITESPACE@17215..17224 "\n        "
+            R_CURLY@17224..17225 "}"
+        WHITESPACE@17225..17230 "\n    "
+        R_BRACK@17230..17231 "]"
+      COMMA@17231..17232 ","
+    WHITESPACE@17232..17233 "\n"
+    R_CURLY@17233..17234 "}"
+  WHITESPACE@17234..17235 "\n"

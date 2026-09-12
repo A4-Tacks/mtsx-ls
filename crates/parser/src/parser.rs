@@ -5,15 +5,17 @@ use crate::{SyntaxKind, SyntaxNode, T, lexer::Lexer};
 use SyntaxKind::*;
 
 // SOURCE_FILE  = TABLE
-// TABLE        = "{" PAIR* "}"
+// TABLE        = "{" (PAIR | MAP)* "}"
 // PAIR         = key ":" value [","]
 // key          = IDENT | NUMBER
 // value        = JOIN | TABLE | ARRAY | LITERAL | CALL
 // LITERAL      = BUILTIN | STRING | NUMBER | REGEX | MARK | COLOR | STYLE | IDENT
 // JOIN         = value "+" value
+// MAP          = mappat "=>" STRING [","]
+// mappat       = STRING | IDENT
 // ARRAY        = "{" ITEM "}"
 // ITEM         = value [":" value | ">" value | "=>" IDENT] [","]
-// CALL         = IDENT "(" *(STRING [","]) ")"
+// CALL         = IDENT "(" (STRING [","])* ")"
 pub struct Parser<'input> {
     lexer: Lexer<'input>,
     source: &'input str,
@@ -169,21 +171,23 @@ impl<'input> Parser<'input> {
         let mark = self.mark();
         self.bump(L_CURLY);
 
-        while matches!(self.current(), IDENT | NUMBER | T![:] | L_CURLY | L_BRACK | L_PAREN) {
-            self.pair();
+        while matches!(self.current(), IDENT | NUMBER | STRING | T![:] | L_CURLY | L_BRACK | L_PAREN) {
+            self.pair_or_map();
         }
 
         self.bump_or_expect(R_CURLY);
         self.node(TABLE, mark);
     }
 
-    fn pair(&mut self) {
+    fn pair_or_map(&mut self) {
         let mark = self.mark();
+        let allow_map = matches!(self.current(), IDENT | STRING);
+        let mut kind = PAIR;
 
-        if matches!(self.current(), IDENT | NUMBER) {
+        if matches!(self.current(), IDENT | NUMBER | STRING) {
             self.bump_any();
         } else {
-            self.report_error("expected a ident or number");
+            self.report_error("expected a ident or number or string");
         }
 
         if matches!(self.current(), L_CURLY | L_BRACK) {
@@ -191,11 +195,17 @@ impl<'input> Parser<'input> {
             self.value();
         } else if self.current() == L_PAREN {
             self.ident_or_call();
-        } else if self.bump_or_expect(T![:]) {
+        } else if self.eat(T![:]) {
             self.value();
+        } else if allow_map && self.eat(T![=>]) {
+            self.bump_or_expect(STRING);
+            kind = MAP;
+        } else {
+            let tok = self.current().human_readable();
+            self.report_error(format_args!("unexpected {tok}, expected colon or `=>`"));
         }
         self.eat(T![,]);
-        self.node(PAIR, mark);
+        self.node(kind, mark);
     }
 
     fn array(&mut self) {

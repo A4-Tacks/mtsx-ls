@@ -36,6 +36,8 @@ mod tests {
         {
             match: /foo/,
             1: "red"
+            "name" => "mapto"
+            default => "m"
         }
         "#;
         let (root, errors) = parse_file(Span::new_full(src));
@@ -43,9 +45,9 @@ mod tests {
 
         let table = root.table().unwrap();
         let pairs = table.pairs().collect::<Vec<_>>();
+        let maps = table.maps().collect::<Vec<_>>();
         assert_eq!(pairs.len(), 2);
         let keys = pairs.iter().map(|it| it.key().unwrap()).collect::<Vec<_>>();
-        let values = pairs.iter().map(|it| it.value().unwrap()).collect::<Vec<_>>();
         expect![[r#"
             [
                 IDENT(
@@ -56,6 +58,7 @@ mod tests {
                 ),
             ]
         "#]].assert_debug_eq(&keys);
+        let values = pairs.iter().map(|it| it.value().unwrap()).collect::<Vec<_>>();
         expect![[r#"
             [
                 Literal(
@@ -74,5 +77,27 @@ mod tests {
                 ),
             ]
         "#]].assert_debug_eq(&values);
+        let mappats = maps.iter().map(|it| it.mappat().unwrap()).collect::<Vec<_>>();
+        expect![[r#"
+            [
+                STRING(
+                    STRING@70..76 "\"name\"",
+                ),
+                IDENT(
+                    IDENT@100..107 "default",
+                ),
+            ]
+        "#]].assert_debug_eq(&mappats);
+        let maptos = maps.iter().map(|it| it.map_to().unwrap()).collect::<Vec<_>>();
+        expect![[r#"
+            [
+                STRING(
+                    STRING@80..87 "\"mapto\"",
+                ),
+                STRING(
+                    STRING@111..114 "\"m\"",
+                ),
+            ]
+        "#]].assert_debug_eq(&maptos);
     }
 }

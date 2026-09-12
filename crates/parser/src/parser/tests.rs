@@ -393,7 +393,7 @@ fn some_incomplete_state() {
         {
             com
         }
-     // ^ unexpected `}`, expected colon
+     // ^ unexpected `}`, expected colon or `=>`
         "#,
         expect![[r#"
             SOURCE_FILE@0..45
@@ -406,6 +406,78 @@ fn some_incomplete_state() {
                 WHITESPACE@26..35 "\n        "
                 R_CURLY@35..36 "}"
               WHITESPACE@36..45 "\n        "
+        "#]],
+    );
+    check(
+        r#"
+        {
+            "key"
+        }
+     // ^ unexpected `}`, expected colon or `=>`
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..47
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..38
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                PAIR@23..28
+                  STRING@23..28 "\"key\""
+                WHITESPACE@28..37 "\n        "
+                R_CURLY@37..38 "}"
+              WHITESPACE@38..47 "\n        "
+        "#]],
+    );
+    check(
+        r#"
+        {
+            "key" =>
+        }
+     // ^ unexpected `}`, expected string
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..50
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..41
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                MAP@23..31
+                  STRING@23..28 "\"key\""
+                  WHITESPACE@28..29 " "
+                  FAT_ARROW@29..31 "=>"
+                WHITESPACE@31..40 "\n        "
+                R_CURLY@40..41 "}"
+              WHITESPACE@41..50 "\n        "
+        "#]],
+    );
+    check(
+        r#"
+        {
+            "key" =>
+            default => "xxx"
+         // ^^^^^^^ unexpected ident, expected string
+        }
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..79
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..70
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                MAP@23..31
+                  STRING@23..28 "\"key\""
+                  WHITESPACE@28..29 " "
+                  FAT_ARROW@29..31 "=>"
+                WHITESPACE@31..44 "\n            "
+                MAP@44..60
+                  IDENT@44..51 "default"
+                  WHITESPACE@51..52 " "
+                  FAT_ARROW@52..54 "=>"
+                  WHITESPACE@54..55 " "
+                  STRING@55..60 "\"xxx\""
+                WHITESPACE@60..69 "\n        "
+                R_CURLY@69..70 "}"
+              WHITESPACE@70..79 "\n        "
         "#]],
     );
     check(
@@ -434,7 +506,7 @@ fn some_incomplete_state() {
         {
             comment:
             foo: []
-            // ^ expected a ident or number
+            // ^ expected a ident or number or string
         }
         "#,
         expect![[r#"
@@ -568,10 +640,10 @@ fn some_incomplete_state() {
         r#"
         {
             {a b c}
-         // ^ expected a ident or number
-            // ^ unexpected ident, expected colon
-              // ^ unexpected ident, expected colon
-               // ^ unexpected `}`, expected colon
+         // ^ expected a ident or number or string
+            // ^ unexpected ident, expected colon or `=>`
+              // ^ unexpected ident, expected colon or `=>`
+               // ^ unexpected `}`, expected colon or `=>`
             match: /x/
         }
         "#,
@@ -609,7 +681,7 @@ fn some_incomplete_state() {
         r#"
         {
             [a b c]
-         // ^ expected a ident or number
+         // ^ expected a ident or number or string
             match: /x/
         }
         "#,
@@ -650,7 +722,7 @@ fn some_incomplete_state() {
         r#"
         {
             (a b c)
-         // ^ expected a ident or number
+         // ^ expected a ident or number or string
           // ^ unexpected ident, expected string
             // ^ unexpected ident, expected string
               // ^ unexpected ident, expected string

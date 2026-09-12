@@ -15,7 +15,9 @@ macro_rules! impl_ast_token_for_enum {
                     })
             }
         }
-
+        impl_ast_token_for_enum!($name $(.$variant)+);
+    };
+    ($name:ident $(. $variant:ident)+) => {
         #[derive(Debug, Clone, PartialEq, Eq, Hash)]
         pub enum $name {
             $($variant(SyntaxToken),)+
@@ -30,6 +32,15 @@ macro_rules! impl_ast_token_for_enum {
                         _ => None,
                     }
                 })*
+
+                pub fn cast(token: SyntaxToken) -> Option<Self> {
+                    match token.kind() {
+                        $(
+                            SyntaxKind::$variant => Some(Self::$variant(token)),
+                        )*
+                        _ => None,
+                    }
+                }
             }
         }
 
@@ -155,8 +166,9 @@ macro_rules! define_nodes {
 
 define_nodes! {
     SourceFile.SOURCE_FILE [table.Table];
-    Table.TABLE [*pairs.Pair];
+    Table.TABLE [*pairs.Pair, *maps.Map];
     Pair.PAIR [value.Value];
+    Map.MAP [];
     Literal.LITERAL [];
     Join.JOIN [];
     Array.ARRAY [*items.Item];
@@ -168,6 +180,8 @@ define_nodes! {
 impl_ast_token_for_enum!(Key.IDENT.NUMBER for Pair.key);
 impl_ast_token_for_enum!(CallName.IDENT for Call.name);
 impl_ast_token_for_enum!(Lit.BUILTIN.STRING.NUMBER.REGEX.MARK.COLOR.STYLE.IDENT for Literal.lit);
+impl_ast_token_for_enum!(Mappat.STRING.IDENT);
+impl_ast_token_for_enum!(Str.STRING);
 
 impl Item {
     fn value_pair(&self) -> (Option<Value>, Option<SyntaxToken>, Option<Value>) {
@@ -195,6 +209,38 @@ impl Item {
 
     pub fn sep(&self) -> Option<SyntaxToken> {
         self.value_pair().1
+    }
+}
+
+impl Map {
+    fn mappat_pair(&self) -> (Option<Mappat>, Option<SyntaxToken>, Option<Str>) {
+        let node = self.syntax();
+        let mut mappat = None;
+        let mut sep = None;
+        let mut map_to = None;
+        let mut children = node.children_with_tokens().filter_map(|it| it.into_token());
+        while let Some(token) = children.next() {
+            match token.kind() {
+                T![=>] => {
+                    sep.get_or_insert(token);
+                    map_to = children.find_map(Str::cast);
+                }
+                _ => mappat = mappat.or_else(|| Mappat::cast(token))
+            }
+        }
+        (mappat, sep, map_to)
+    }
+
+    pub fn mappat(&self) -> Option<Mappat> {
+        self.mappat_pair().0
+    }
+
+    pub fn map_to(&self) -> Option<Str> {
+        self.mappat_pair().2
+    }
+
+    pub fn sep(&self) -> Option<SyntaxToken> {
+        self.mappat_pair().1
     }
 }
 
