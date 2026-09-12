@@ -218,6 +218,8 @@ impl Analysis {
                         "colors" => Location::Styles,
                         "style" => Location::Color,
                         "color" => Location::Color,
+                        "childrenStyle" => Location::Color,
+                        "missingStyle" => Location::Color,
                         "name" => Location::Disabled,
                         "defines" => Location::Defines,
                         "match" => Location::Pattern,
@@ -1171,6 +1173,22 @@ mod tests {
             expect!["Color, Color !1"],
         );
         check_loc(
+            r#"{contains: [{match: /foo/, 0:$0}]}"#,
+            expect!["Color !1, Color"],
+        );
+        check_loc(
+            r#"{contains: [{start: {match: ""}, color:$0}]}"#,
+            expect!["Color !1, Color"],
+        );
+        check_loc(
+            r#"{contains: [{start: {match: ""}, childrenStyle:$0}]}"#,
+            expect!["Color !1, Color"],
+        );
+        check_loc(
+            r#"{contains: [{start: {match: ""}, missingStyle:$0}]}"#,
+            expect!["Color !1, Color"],
+        );
+        check_loc(
             r#"{contains: [{builtin: $0}]}"#,
             expect!["Value !1, BuiltinMatcher"],
         );
@@ -1288,6 +1306,8 @@ mod tests {
         }"#, expect![[r#"
             style
             childrenStyle
+            missingStyle
+            childrenSyntax
             endPriority
             mustMatchEnd
             contains
