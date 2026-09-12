@@ -759,6 +759,53 @@ fn some_incomplete_state() {
               WHITESPACE@63..72 "\n        "
         "#]],
     );
+    check(
+        r#"
+        {
+            contains: [
+                {
+                    match: /a/
+                    ?
+                 // ^ unexpected error token, expected ident or number or string
+                }
+            ]
+        }
+        "#,
+        expect![[r#"
+            SOURCE_FILE@0..156
+              WHITESPACE@0..9 "\n        "
+              TABLE@9..147
+                L_CURLY@9..10 "{"
+                WHITESPACE@10..23 "\n            "
+                PAIR@23..137
+                  IDENT@23..31 "contains"
+                  COLON@31..32 ":"
+                  WHITESPACE@32..33 " "
+                  ARRAY@33..137
+                    L_BRACK@33..34 "["
+                    WHITESPACE@34..51 "\n                "
+                    ITEM@51..123
+                      TABLE@51..123
+                        L_CURLY@51..52 "{"
+                        WHITESPACE@52..73 "\n                    "
+                        PAIR@73..83
+                          IDENT@73..78 "match"
+                          COLON@78..79 ":"
+                          WHITESPACE@79..80 " "
+                          LITERAL@80..83
+                            REGEX@80..83 "/a/"
+                        WHITESPACE@83..104 "\n                    "
+                        ERROR@104..105
+                          ERROR@104..105 "?"
+                        WHITESPACE@105..122 "\n                "
+                        R_CURLY@122..123 "}"
+                    WHITESPACE@123..136 "\n            "
+                    R_BRACK@136..137 "]"
+                WHITESPACE@137..146 "\n        "
+                R_CURLY@146..147 "}"
+              WHITESPACE@147..156 "\n        "
+        "#]],
+    );
 }
 
 #[test]

@@ -171,8 +171,13 @@ impl<'input> Parser<'input> {
         let mark = self.mark();
         self.bump(L_CURLY);
 
-        while matches!(self.current(), IDENT | NUMBER | STRING | T![:] | L_CURLY | L_BRACK | L_PAREN) {
-            self.pair_or_map();
+        while !self.current().is_close_delim() && !self.is_eof() {
+            if matches!(self.current(), IDENT | NUMBER | STRING | T![:] | L_CURLY | L_BRACK | L_PAREN) {
+                self.pair_or_map();
+            } else {
+                let tok = self.current().human_readable();
+                self.bump_error(format_args!("unexpected {tok}, expected ident or number or string"));
+            }
         }
 
         self.bump_or_expect(R_CURLY);
