@@ -8,6 +8,8 @@ trait StrExt: Sized {
         let mut skip = (0..n).map(|_| true);
         self.take(|ch| skip.next().unwrap_or_else(|| on(ch)))
     }
+    fn all(self, pred: impl FnMut(char) -> bool) -> bool;
+    fn split_in(self, pred: impl FnMut(char) -> bool) -> Option<(Self, Self)>;
 }
 
 impl StrExt for &str {
@@ -20,6 +22,14 @@ impl StrExt for &str {
     fn take(&mut self, mut on: impl FnMut(char) -> bool) -> Self {
         let i = self.find(|ch| !on(ch)).unwrap_or(self.len());
         self.split_off(i)
+    }
+
+    fn all(self, pred: impl FnMut(char) -> bool) -> bool {
+        self.chars().all(pred)
+    }
+
+    fn split_in(self, pred: impl FnMut(char) -> bool) -> Option<(Self, Self)> {
+        self.find(pred).map(|i| self.split_at(i))
     }
 }
 
@@ -89,8 +99,12 @@ fn lex<'input>(source: &mut &'input str) -> Option<(SyntaxKind, &'input str)> {
     } else if any!("0-9", ch) {
         (NUMBER, source.take(any!("0-9")))
     } else if ch == '#'
-        && source.chars().skip(1).find(any!(!"0-9a-zA-Z_")) == Some('#')
-        && source.chars().skip(1).skip_while(any!("0-9a-zA-Z_")).nth(1).is_none_or(any!(!"0-9a-fA-F"))
+        && source[1..].split_in(any!(^"0-9a-zA-Z_")).map_or_else(
+            || !source[1..].all(any!("0-9a-fA-F")),
+            |(name, joint)| {
+                joint.strip_prefix(any!("#$")).map_or_else(|| !name.all(any!("0-9a-fA-F")), any!(!"0-9a-fA-F"))
+            },
+        )
     {
         (BUILTIN, source.take_skip(1, |ch| once(any!("0-9a-zA-Z_", ch), ch == '#')))
     } else if any!("#$", ch) {
@@ -217,6 +231,48 @@ mod tests {
             COLOR      "#ffff1b"
             COLOR      "$ffff2c"
         "##]]);
+        check("#FFFF1B#FFFF2C", expect![[r##"
+            COLOR      "#FFFF1B"
+            COLOR      "#FFFF2C"
+        "##]]);
+        check("#INVALID#FFFF2C", expect![[r##"
+            COLOR      "#"
+            IDENT      "INVALID"
+            COLOR      "#FFFF2C"
+        "##]]);
+        check("##FFFF2C", expect![[r##"
+            COLOR      "#"
+            COLOR      "#FFFF2C"
+        "##]]);
+    }
+
+    #[test]
+    fn builtin_literal() {
+        check("#BUILTI", expect![[r##"
+            BUILTIN    "#BUILTI"
+        "##]]);
+        check("#BUILTI#INVALID", expect![[r##"
+            BUILTIN    "#BUILTI#"
+            IDENT      "INVALID"
+        "##]]);
+        check("#ABC#", expect![[r##"
+            BUILTIN    "#ABC#"
+        "##]]);
+        check("#BUILTI ", expect![[r##"
+            BUILTIN    "#BUILTI"
+            WHITESPACE " "
+        "##]]);
+        check("#ABC# ", expect![[r##"
+            BUILTIN    "#ABC#"
+            WHITESPACE " "
+        "##]]);
+        check("##", expect![[r###"
+            BUILTIN    "##"
+        "###]]);
+        check("## ", expect![[r###"
+            BUILTIN    "##"
+            WHITESPACE " "
+        "###]]);
     }
 
     #[test]

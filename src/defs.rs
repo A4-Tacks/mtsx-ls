@@ -1,4 +1,4 @@
-pub const COMPLETE_MARKER: &str = "abcdef"; // 考虑到颜色, 不要超出f字母
+pub const COMPLETE_MARKER: &str = "compMarker"; // 考虑到不需要补全颜色, 超出f字母, 有lexer支持
 pub const MANIFEST_ATTRS: &[(&str, &str)] = &[
     ("name",                    r#"name: ["$1", "$2"]"#),
     ("hide",                    r#"hide: ${0:false}"#),

@@ -1634,6 +1634,58 @@ mod tests {
     }
 
     #[test]
+    fn test_complete_builtins() {
+        check_complete(
+            r#"{codeFormatter: $0}"#,
+            expect![[r##"
+                BUILT_IN_CSS_FORMATTER"#BUILT_IN_CSS_FORMATTER#"
+                BUILT_IN_HTML_FORMATTER"#BUILT_IN_HTML_FORMATTER#"
+                BUILT_IN_JAVA_FORMATTER"#BUILT_IN_JAVA_FORMATTER#"
+                BUILT_IN_JS_FORMATTER"#BUILT_IN_JS_FORMATTER#"
+                BUILT_IN_JSON_FORMATTER"#BUILT_IN_JSON_FORMATTER#"
+                BUILT_IN_XML_FORMATTER"#BUILT_IN_XML_FORMATTER#"
+                BUILT_IN_SMALI_FORMATTER"#BUILT_IN_SMALI_FORMATTER#"
+            "##]],
+        );
+        check_complete(
+            r#"{codeFormatter: #$0}"#,
+            expect![[r#"
+                BUILT_IN_CSS_FORMATTER"BUILT_IN_CSS_FORMATTER#"
+                BUILT_IN_HTML_FORMATTER"BUILT_IN_HTML_FORMATTER#"
+                BUILT_IN_JAVA_FORMATTER"BUILT_IN_JAVA_FORMATTER#"
+                BUILT_IN_JS_FORMATTER"BUILT_IN_JS_FORMATTER#"
+                BUILT_IN_JSON_FORMATTER"BUILT_IN_JSON_FORMATTER#"
+                BUILT_IN_XML_FORMATTER"BUILT_IN_XML_FORMATTER#"
+                BUILT_IN_SMALI_FORMATTER"BUILT_IN_SMALI_FORMATTER#"
+            "#]],
+        );
+        check_complete(
+            r#"{codeFormatter: #B$0}"#,
+            expect![[r#"
+                BUILT_IN_CSS_FORMATTER"BUILT_IN_CSS_FORMATTER#"
+                BUILT_IN_HTML_FORMATTER"BUILT_IN_HTML_FORMATTER#"
+                BUILT_IN_JAVA_FORMATTER"BUILT_IN_JAVA_FORMATTER#"
+                BUILT_IN_JS_FORMATTER"BUILT_IN_JS_FORMATTER#"
+                BUILT_IN_JSON_FORMATTER"BUILT_IN_JSON_FORMATTER#"
+                BUILT_IN_XML_FORMATTER"BUILT_IN_XML_FORMATTER#"
+                BUILT_IN_SMALI_FORMATTER"BUILT_IN_SMALI_FORMATTER#"
+            "#]],
+        );
+        check_complete(
+            r#"{codeFormatter: #BU$0}"#,
+            expect![[r#"
+                BUILT_IN_CSS_FORMATTER"BUILT_IN_CSS_FORMATTER#"
+                BUILT_IN_HTML_FORMATTER"BUILT_IN_HTML_FORMATTER#"
+                BUILT_IN_JAVA_FORMATTER"BUILT_IN_JAVA_FORMATTER#"
+                BUILT_IN_JS_FORMATTER"BUILT_IN_JS_FORMATTER#"
+                BUILT_IN_JSON_FORMATTER"BUILT_IN_JSON_FORMATTER#"
+                BUILT_IN_XML_FORMATTER"BUILT_IN_XML_FORMATTER#"
+                BUILT_IN_SMALI_FORMATTER"BUILT_IN_SMALI_FORMATTER#"
+            "#]],
+        );
+    }
+
+    #[test]
     fn test_complete_children_syntaxes() {
         check_complete(
             r#"{
