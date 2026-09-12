@@ -149,7 +149,7 @@ enum Location {
     Group,
     BuiltinMatcher,
     BuiltinFormatter,
-    BuiltinShinker,
+    BuiltinShrinker,
     Boolean,
     Pattern,
     Disabled,
@@ -228,7 +228,7 @@ impl Analysis {
                         "group" => Location::Group,
                         "builtin" => Location::BuiltinMatcher,
                         "codeFormatter" => Location::BuiltinFormatter,
-                        "codeShinker" => Location::BuiltinShinker,
+                        "codeShrinker" => Location::BuiltinShrinker,
                         "hide" | "recordAllGroups" | "matchEndFirst" |
                         "mustMatchEnd" | "ignoreCase" | "insertSpace" |
                         "addToContains" => Location::Boolean,
@@ -344,7 +344,7 @@ impl Analysis {
                     make_item(*name, &format!("#{name}#"), "")
                 }).collect()
             },
-            Location::BuiltinShinker => {
+            Location::BuiltinShrinker => {
                 BUILTIN_SHINKERS.iter().map(|name| {
                     make_item(*name, &format!("#{name}#"), "")
                 }).collect()
@@ -485,7 +485,7 @@ impl Analysis {
             Location::Manifest | Location::Styles | Location::CommentDef
             | Location::Defines | Location::Value | Location::Group
             | Location::BuiltinMatcher | Location::BuiltinFormatter
-            | Location::BuiltinShinker | Location::Boolean | Location::Pattern
+            | Location::BuiltinShrinker | Location::Boolean | Location::Pattern
             | Location::Syntax
             | Location::Disabled => return None,
             Location::IncludeRegex => {
@@ -556,7 +556,7 @@ impl Analysis {
 
         let text_range = match loc {
             Location::Manifest | Location::CommentDef | Location::Value | Location::Group
-            | Location::BuiltinMatcher | Location::BuiltinFormatter | Location::BuiltinShinker
+            | Location::BuiltinMatcher | Location::BuiltinFormatter | Location::BuiltinShrinker
             | Location::Boolean | Location::Pattern | Location::Syntax
             | Location::Disabled => return None,
             Location::IncludeRegex => {
@@ -1473,7 +1473,7 @@ mod tests {
         );
         check_complete(
             r#"{
-                codeShinker: $0
+                codeShrinker: $0
             }"#,
             expect![[r##"
                 BUILT_IN_CSS_SHRINKER"#BUILT_IN_CSS_SHRINKER#"
@@ -1483,7 +1483,7 @@ mod tests {
         );
         check_complete(
             r#"{
-                codeShinker: #$0
+                codeShrinker: #$0
             }"#,
             expect![[r#"
                 BUILT_IN_CSS_SHRINKER"BUILT_IN_CSS_SHRINKER#"
@@ -1493,7 +1493,7 @@ mod tests {
         );
         check_complete(
             r#"{
-                codeShinker: #$0#
+                codeShrinker: #$0#
             }"#,
             expect![[r#"
                 BUILT_IN_CSS_SHRINKER"BUILT_IN_CSS_SHRINKER"
