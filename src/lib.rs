@@ -138,10 +138,12 @@ pub struct ActionResult {
 enum Location {
     Manifest,
     Styles,
+    Syntax,
     CommentDef,
     Defines,
     IncludeRegex,
     IncludeMatcher,
+    IncludeLanguage,
     Color,
     Value,
     Group,
@@ -190,6 +192,17 @@ impl Analysis {
     }
 
     fn location(&self, node: &SyntaxNode) -> Location {
+        fn include_analysis(p: &ast::Pair) -> Location {
+            let is_langs = p.syntax().parent().and_then(ast::Table::cast)
+                .and_then(|it| ast::Pair::cast(it.syntax().parent()?))
+                .and_then(|it| it.key()?.into_ident())
+                .is_some_and(|it| it.text() == "childrenSyntax");
+            if is_langs {
+                Location::IncludeLanguage
+            } else {
+                Location::IncludeMatcher
+            }
+        }
         node.ancestors()
             .filter_map(Or::<Or<ast::Pair, ast::Item>, Or<ast::Call, ast::Table>>::cast)
             .find_map(|it| Some(match it {
@@ -209,7 +222,7 @@ impl Analysis {
                         "defines" => Location::Defines,
                         "match" => Location::Pattern,
                         "start" | "end" => Location::Value,
-                        "include" => Location::IncludeMatcher,
+                        "include" => include_analysis(&p),
                         "group" => Location::Group,
                         "builtin" => Location::BuiltinMatcher,
                         "codeFormatter" => Location::BuiltinFormatter,
@@ -226,7 +239,7 @@ impl Analysis {
                         return None;
                     }
                     match item.sep()?.kind() {
-                        T![:] if !is_matcher(&assoc) => Location::Pattern,
+                        T![:] if def::is_regex(&assoc) => Location::Pattern,
                         T![:] => Location::Value,
                         T![>] => Location::Color,
                         _ => return None,
@@ -250,6 +263,7 @@ impl Analysis {
                     {
                         match key.text() {
                             "comment" => Location::CommentDef,
+                            "childrenSyntax" => Location::Syntax,
                             _ => Location::Value,
                         }
                     } else {
@@ -333,6 +347,14 @@ impl Analysis {
                     make_item(*name, &format!("#{name}#"), "")
                 }).collect()
             },
+            Location::Syntax => {
+                let table = elem.ancestors().find_map(ast::Table::cast);
+                SYNTAX_ATTRS.iter()
+                    .filter(|_| elem.kind() != SyntaxKind::STRING)
+                    .filter(|(name, _)| retain_attrs(name, table.as_ref()))
+                    .map(|(name, snip)| make_item(*name, *snip, ""))
+                    .collect()
+            },
             Location::Color => {
                 let user_colors = self.styles().map(|(name, qualifiers)| {
                     let mut range = name.token.text_range();
@@ -407,7 +429,7 @@ impl Analysis {
             Location::Defines => vec![],
             Location::IncludeRegex => {
                 self.defines()
-                    .filter(|(_, value)| !is_matcher(value))
+                    .filter(|(_, value)| def::is_regex(value))
                     .map(|(name, value)| {
                         let detail = def_detail(&name, &value);
                         make_item(name.sym_text(), name.token.text(), &detail)
@@ -416,7 +438,16 @@ impl Analysis {
             },
             Location::IncludeMatcher => {
                 self.defines()
-                    .filter(|(_, value)| is_matcher(value))
+                    .filter(|(_, value)| def::is_matcher(value))
+                    .map(|(name, value)| {
+                        let detail = def_detail(&name, &value);
+                        make_item(name.sym_text(), name.token.text(), &detail)
+                    })
+                    .collect()
+            },
+            Location::IncludeLanguage => {
+                self.defines()
+                    .filter(|(_, value)| def::is_langs(value))
                     .map(|(name, value)| {
                         let detail = def_detail(&name, &value);
                         make_item(name.sym_text(), name.token.text(), &detail)
@@ -453,16 +484,23 @@ impl Analysis {
             | Location::Defines | Location::Value | Location::Group
             | Location::BuiltinMatcher | Location::BuiltinFormatter
             | Location::BuiltinShinker | Location::Boolean | Location::Pattern
+            | Location::Syntax
             | Location::Disabled => return None,
             Location::IncludeRegex => {
                 let (name, value) = self.defines().find(|(name, value)| {
-                    id == name && !is_matcher(value)
+                    id == name && def::is_regex(value)
                 })?;
                 def_detail(&name, &value)
             },
             Location::IncludeMatcher => {
                 let (name, value) = self.defines().find(|(name, value)| {
-                    id == name && is_matcher(value)
+                    id == name && def::is_matcher(value)
+                })?;
+                def_detail(&name, &value)
+            },
+            Location::IncludeLanguage => {
+                let (name, value) = self.defines().find(|(name, value)| {
+                    id == name && def::is_langs(value)
                 })?;
                 def_detail(&name, &value)
             },
@@ -517,22 +555,28 @@ impl Analysis {
         let text_range = match loc {
             Location::Manifest | Location::CommentDef | Location::Value | Location::Group
             | Location::BuiltinMatcher | Location::BuiltinFormatter | Location::BuiltinShinker
-            | Location::Boolean | Location::Pattern | Location::Disabled => return None,
+            | Location::Boolean | Location::Pattern | Location::Syntax
+            | Location::Disabled => return None,
             Location::IncludeRegex => {
                 self.defines().find(|(name, value)| {
-                    id == name && !is_matcher(value)
+                    id == name && def::is_regex(value)
                 })?.0
             },
             Location::IncludeMatcher => {
                 self.defines().find(|(name, value)| {
-                    id == name && is_matcher(value)
+                    id == name && def::is_matcher(value)
+                })?.0
+            },
+            Location::IncludeLanguage => {
+                self.defines().find(|(name, value)| {
+                    id == name && def::is_langs(value)
                 })?.0
             },
             Location::Defines => {
                 let def = tok.parent_ancestors().find_map(ast::Item::cast).and_then(|it| it.assoc());
-                let def_is_matcher = def.as_ref().is_none_or(is_matcher);
+                let def_kind = def.as_ref().map_or(def::ValueKind::Matcher, def::kind);
                 self.defines().find(|(name, value)| {
-                    id == name && is_matcher(value) == def_is_matcher
+                    id == name && def::kind(value) == def_kind
                 })?.0
             },
             Location::Color | Location::Styles => {
@@ -574,17 +618,18 @@ impl Analysis {
                     .filter(|it| it == def_id)
                     .collect()
             },
-            Location::Defines if assoc.as_ref().is_some_and(is_matcher) => {
+            Location::Defines if assoc.as_ref().is_some_and(def::is_matcher) => {
                 self.root.syntax()
                     .descendants()
                     .filter_map(ast::Table::cast)
                     .flat_map(|table| table.get(|k| k == "include"))
+                    .filter(|value| self.location(value.syntax()) == Location::IncludeMatcher)
                     .filter_map(|value| value.into_literal()?.lit()?.into_string())
                     .map(SymId::new)
                     .filter(|it| it == def_id)
                     .collect()
             },
-            Location::Defines => {
+            Location::Defines if assoc.as_ref().is_some_and(def::is_regex) => {
                 self.root.syntax()
                     .descendants()
                     .filter_map(ast::Call::cast)
@@ -594,6 +639,17 @@ impl Analysis {
                     .flat_map(|call| call.syntax().children_with_tokens())
                     .filter_map(NodeOrToken::into_token)
                     .filter(|it| it.kind() == SyntaxKind::STRING)
+                    .map(SymId::new)
+                    .filter(|it| it == def_id)
+                    .collect()
+            },
+            Location::Defines if assoc.as_ref().is_some_and(def::is_langs) => {
+                self.root.syntax()
+                    .descendants()
+                    .filter_map(ast::Table::cast)
+                    .flat_map(|table| table.get(|k| k == "include"))
+                    .filter(|value| self.location(value.syntax()) == Location::IncludeLanguage)
+                    .filter_map(|value| value.into_literal()?.lit()?.into_string())
                     .map(SymId::new)
                     .filter(|it| it == def_id)
                     .collect()
@@ -810,8 +866,40 @@ fn test_extract_style() {
     }
 }
 
-fn is_matcher(value: &ast::Value) -> bool {
-    matches!(value, ast::Value::Table(_) | ast::Value::Array(_))
+mod def {
+    use syntax::ast;
+
+    pub fn is_matcher(value: &ast::Value) -> bool {
+        matches!(value, ast::Value::Table(_) | ast::Value::Array(_))
+            && !is_langs(value)
+    }
+
+    pub fn is_langs(value: &ast::Value) -> bool {
+        matches!(value, ast::Value::Table(it) if it.maps().next().is_some())
+    }
+
+    pub fn is_regex(value: &ast::Value) -> bool {
+        !matches!(value, ast::Value::Table(_) | ast::Value::Array(_))
+    }
+
+    pub fn kind(value: &ast::Value) -> ValueKind {
+        if is_matcher(value) {
+            ValueKind::Matcher
+        } else if is_regex(value) {
+            ValueKind::Regex
+        } else if is_langs(value) {
+            ValueKind::Langs
+        } else {
+            unreachable!()
+        }
+    }
+
+    #[derive(Debug, Copy, Clone, Eq, PartialEq)]
+    pub enum ValueKind {
+        Matcher,
+        Langs,
+        Regex,
+    }
 }
 
 fn def_detail(name: &SymId, value: &ast::Value) -> String {
@@ -829,6 +917,8 @@ fn retain_attrs(name: &str, table: Option<&ast::Table>) -> bool {
     }
     table.is_none_or(|table| {
         table.get(|it| it == name).next().is_none()
+            && table.maps().all(|it| it.mappat()
+                .is_some_and(|it| it.syntax().text() != name))
     })
 }
 
@@ -1049,6 +1139,10 @@ mod tests {
             expect!["CommentDef, CommentDef !1"],
         );
         check_loc(
+            r#"{contains: [{childrenSyntax: {$0}}]}"#,
+            expect!["Syntax, Syntax !1"],
+        );
+        check_loc(
             r#"{contains: [$0]}"#,
             expect!["Value, Value"],
         );
@@ -1099,6 +1193,10 @@ mod tests {
         check_loc(
             r#"{contains: [{include: $0}]}"#,
             expect!["Value !1, IncludeMatcher"],
+        );
+        check_loc(
+            r#"{contains: [{childrenSyntax: {capture: 1, include: $0}}]}"#,
+            expect!["Syntax !1, IncludeLanguage"],
         );
         check_loc(
             r#"{contains: [{match: keywordsToRegex("$0")}]}"#,
@@ -1516,6 +1614,69 @@ mod tests {
     }
 
     #[test]
+    fn test_complete_children_syntaxes() {
+        check_complete(
+            r#"{
+                contains: [
+                    {
+                        start: {match: ""}
+                        childrenSyntax: {
+                            $0
+                        }
+                    }
+                ]
+            }"#,
+            expect![[r#"
+                capture             "capture: ${0:1}"
+                include             "include: \"$1\""
+                ignoreCase          "ignoreCase: ${0:false}"
+                default             "default => \"$1\""
+            "#]],
+        );
+        check_complete(
+            r#"{
+                contains: [
+                    {
+                        start: {match: ""}
+                        childrenSyntax: {
+                            capture: 1
+                            include: "langs"
+                            $0
+                            default => "mmm"
+                        }
+                    }
+                ]
+            }"#,
+            expect![[r#"
+                include             "include: \"$1\""
+                ignoreCase          "ignoreCase: ${0:false}"
+            "#]],
+        );
+        check_complete(
+            r#"{
+                contains: [
+                    {
+                        start: {match: ""}
+                        childrenSyntax: { default => "$0" }
+                    }
+                ]
+            }"#,
+            expect![],
+        );
+        check_complete(
+            r#"{
+                contains: [
+                    {
+                        start: {match: ""}
+                        childrenSyntax: { "$0" }
+                    }
+                ]
+            }"#,
+            expect![],
+        );
+    }
+
+    #[test]
     fn test_define_completion() {
         check(
             r#"{
@@ -1529,6 +1690,7 @@ mod tests {
                     // xxx
                     "matcher1": {match: /x/}
                     "matcher2": [{match: /x/}]
+                    "langs": {"a" => b}
                 ]
                 contains: [
                     {match: include("$0")}
@@ -1551,6 +1713,7 @@ mod tests {
                     // xxx
                     "matcher1": {match: /x/}
                     "matcher2": [{match: /x/}]
+                    "langs": {"a" => b}
                 ]
                 contains: [
                     {include: "$0"}
@@ -1574,6 +1737,27 @@ mod tests {
             }"#,
             expect![[r#"
                 x                   "// foo\n// xxx\n\"x\": {match: /a/}"
+            "#]],
+        );
+        check(
+            r#"{
+                defines: [
+                    "x": /a/
+                    "matcher": {match: /x/}
+                    // xxx
+                    "langs": {a => b} // foo
+                ]
+                contains: [
+                    {
+                        start: {match: ""}
+                        childrenSyntax: {
+                            include: "$0"
+                        }
+                    }
+                ]
+            }"#,
+            expect![[r#"
+                langs               "// foo\n// xxx\n\"langs\": {a => b}"
             "#]],
         );
     }
@@ -1861,18 +2045,32 @@ mod tests {
         check_goto_define(
             r#"{
                 defines: [
+                    "red": {"css" => ".css"}
+                    "red": {match: /x/}
                     "$0red": /x/
                 ]
             }"#,
-            expect!["3:22"],
+            expect!["5:22"],
         );
         check_goto_define(
             r#"{
                 defines: [
+                    "red": {"css" => ".css"}
+                    "red": /x/
                     "$0red": {match: /x/}
                 ]
             }"#,
-            expect!["3:22"],
+            expect!["5:22"],
+        );
+        check_goto_define(
+            r#"{
+                defines: [
+                    "red": {match: /x/}
+                    "red": /x/
+                    "$0red": {"css" => ".css"}
+                ]
+            }"#,
+            expect!["5:22"],
         );
     }
 
@@ -1887,15 +2085,21 @@ mod tests {
                 defines: [
                     "a": /x/
                     $0"a": {match: /x/, 0: "a"}
+                    "a": {"css" => ".css"}
                     "foo": {start: {match: /x/}, style: "a"}
                 ]
                 contains: [
                     {include: "a"}
-                    {match: include("a")}
+                    {
+                        start: {match: include("a")}
+                        childrenSyntax: {
+                            include: "a"
+                        }
+                    }
                 ]
             }"#,
             expect![[r#"
-                12:32
+                13:32
                 8:22
             "#]],
         );
@@ -1908,16 +2112,49 @@ mod tests {
                 defines: [
                     $0"a": /x/
                     "a": {match: /x/, 0: "a"}
+                    "a": {"css" => ".css"}
                     "foo": {start: {match: /x/}, style: "a"}
                 ]
                 contains: [
                     {include: "a"}
-                    {match: include("a")}
+                    {
+                        start: {match: include("a")}
+                        childrenSyntax: {
+                            include: "a"
+                        }
+                    }
                 ]
             }"#,
             expect![[r#"
-                13:38
+                15:49
                 7:22
+            "#]],
+        );
+        check_references(
+            r#"{
+                styles: [
+                    "a" > "red"
+                    "x" > "a"
+                ]
+                defines: [
+                    "a": /x/
+                    "a": {match: /x/, 0: "a"}
+                    $0"a": {"css" => ".css"}
+                    "foo": {start: {match: /x/}, style: "a"}
+                ]
+                contains: [
+                    {include: "a"}
+                    {
+                        start: {match: include("a")}
+                        childrenSyntax: {
+                            include: "a"
+                        }
+                    }
+                ]
+            }"#,
+            expect![[r#"
+                17:39
+                9:22
             "#]],
         );
         check_references(
@@ -1929,16 +2166,22 @@ mod tests {
                 defines: [
                     "a": /x/
                     "a": {match: /x/, 0: "a"}
+                    "a": {"css" => ".css"}
                     "foo": {start: {match: /x/}, style: "a"}
                 ]
                 contains: [
                     {include: "a"}
-                    {match: include("a")}
+                    {
+                        start: {match: include("a")}
+                        childrenSyntax: {
+                            include: "a"
+                        }
+                    }
                 ]
             }"#,
             expect![[r#"
                 8:43
-                9:58
+                10:58
                 4:28
                 3:22
             "#]],
@@ -1952,6 +2195,7 @@ mod tests {
                 defines: [
                     "a": /x/
                     "a": {match: /x/, 0: "a"}
+                    "a": {"css" => ".css"}
                     "foo": {start: {match: /x/}, style: "a"}
                     "bar": {start: {match: /x/}, style: "parseColor(a, a, a, a)"}
                 ]
@@ -1962,8 +2206,8 @@ mod tests {
             }"#,
             expect![[r#"
                 8:43
-                9:58
-                10:78
+                10:58
+                11:78
                 4:28
                 3:22
             "#]],
@@ -1987,6 +2231,7 @@ mod tests {
                 "b": /x/
                 "c": {match: /x/}
                 "c": /y/
+                "c": {"css" => ".css"}
                 "d": /y/
                 "d": /z/
             ]
@@ -2014,6 +2259,8 @@ mod tests {
                     "b": /x/
                     "c": {match: /x/}
                     "c": /y/
+                  // ^ define duplicate name: `c`
+                    "c": {"css" => ".css"}
                   // ^ define duplicate name: `c`
                     "d": /y/
                     "d": /z/

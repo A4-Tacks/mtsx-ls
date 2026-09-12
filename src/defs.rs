@@ -12,6 +12,12 @@ pub const MANIFEST_ATTRS: &[(&str, &str)] = &[
     ("codeFormatter",           r#"codeFormatter: #$1#"#),
     ("codeShrinker",            r#"codeShrinker: #$1#"#),
 ];
+pub const SYNTAX_ATTRS: &[(&str, &str)] = &[
+    ("capture",                 r#"capture: ${0:1}"#),
+    ("include",                 r#"include: "$1""#),
+    ("ignoreCase",              r#"ignoreCase: ${0:false}"#),
+    ("default",                 r#"default => "$1""#),
+];
 pub const BUILTIN_COLORS: &[(&str, &str, &str)] = &[
     ("default",      "#000000",     "#A9B7C6"),
     ("string",       "#067D17",     "#6A8759"),
@@ -74,6 +80,7 @@ pub const MATCHER_SCHEMA: &[((&str, &str), &[(&str, &str)])] = &[
         ("end", "end: $0"),
         ("style", "style: \"$1\""),
         ("childrenStyle", "childrenStyle: \"$1\""),
+        ("childrenSyntax", "childrenSyntax: $0"),
         ("matchEndFirst", "matchEndFirst: ${0:false}"),
         ("endPriority", "endPriority: ${0:0}"),
         ("mustMatchEnd", "mustMatchEnd: ${0:false}"),
@@ -94,7 +101,7 @@ pub const PATTERNS: &[(&str, &str)] = &[
     ("include",                 r#"include("$1")"#),
     ("keywordsToRegex",         r#"keywordsToRegex("$1")"#),
 ];
-pub const ALLOW_DUP_KEYS: &[&str] = &["comment", "lineBackground"];
+pub const ALLOW_DUP_KEYS: &[&str] = &["comment", "lineBackground", "include"];
 pub const COMMENT_DEFS: &[(&str, &str)] = &[
     ("startsWith",              r#"startsWith: "$1""#),
     ("endsWith",                r#"endsWith: "$1""#),
