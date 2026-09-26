@@ -1083,9 +1083,11 @@ mod tests {
         let src = Span::new_full(src);
         let pos = lsp_pos(&src.create(TextRange::empty(TextSize::new(index.try_into().unwrap()))));
         let completions = completions(src.source(), pos, &Tracer::new("test"));
+        let width = completions.iter().map(|it| it.label.len()).max()
+            .unwrap_or(0).max(19)+1;
         let completions = completions.iter().map(|item| {
             let text = item.insert_text.as_deref().unwrap_or(&item.label);
-            format!("{:20}{text:?}\n", item.label)
+            format!("{:width$}{text:?}\n", item.label)
         }).collect::<String>();
         expect.assert_eq(&completions);
     }
@@ -1476,9 +1478,9 @@ mod tests {
                 codeShrinker: $0
             }"#,
             expect![[r##"
-                BUILT_IN_CSS_SHRINKER"#BUILT_IN_CSS_SHRINKER#"
-                BUILT_IN_HTML_SHRINKER"#BUILT_IN_HTML_SHRINKER#"
-                BUILT_IN_JSON_SHRINKER"#BUILT_IN_JSON_SHRINKER#"
+                BUILT_IN_CSS_SHRINKER  "#BUILT_IN_CSS_SHRINKER#"
+                BUILT_IN_HTML_SHRINKER "#BUILT_IN_HTML_SHRINKER#"
+                BUILT_IN_JSON_SHRINKER "#BUILT_IN_JSON_SHRINKER#"
             "##]],
         );
         check_complete(
@@ -1486,9 +1488,9 @@ mod tests {
                 codeShrinker: #$0
             }"#,
             expect![[r#"
-                BUILT_IN_CSS_SHRINKER"BUILT_IN_CSS_SHRINKER#"
-                BUILT_IN_HTML_SHRINKER"BUILT_IN_HTML_SHRINKER#"
-                BUILT_IN_JSON_SHRINKER"BUILT_IN_JSON_SHRINKER#"
+                BUILT_IN_CSS_SHRINKER  "BUILT_IN_CSS_SHRINKER#"
+                BUILT_IN_HTML_SHRINKER "BUILT_IN_HTML_SHRINKER#"
+                BUILT_IN_JSON_SHRINKER "BUILT_IN_JSON_SHRINKER#"
             "#]],
         );
         check_complete(
@@ -1496,9 +1498,9 @@ mod tests {
                 codeShrinker: #$0#
             }"#,
             expect![[r#"
-                BUILT_IN_CSS_SHRINKER"BUILT_IN_CSS_SHRINKER"
-                BUILT_IN_HTML_SHRINKER"BUILT_IN_HTML_SHRINKER"
-                BUILT_IN_JSON_SHRINKER"BUILT_IN_JSON_SHRINKER"
+                BUILT_IN_CSS_SHRINKER  "BUILT_IN_CSS_SHRINKER"
+                BUILT_IN_HTML_SHRINKER "BUILT_IN_HTML_SHRINKER"
+                BUILT_IN_JSON_SHRINKER "BUILT_IN_JSON_SHRINKER"
             "#]],
         );
     }
@@ -1638,49 +1640,49 @@ mod tests {
         check_complete(
             r#"{codeFormatter: $0}"#,
             expect![[r##"
-                BUILT_IN_CSS_FORMATTER"#BUILT_IN_CSS_FORMATTER#"
-                BUILT_IN_HTML_FORMATTER"#BUILT_IN_HTML_FORMATTER#"
-                BUILT_IN_JAVA_FORMATTER"#BUILT_IN_JAVA_FORMATTER#"
-                BUILT_IN_JS_FORMATTER"#BUILT_IN_JS_FORMATTER#"
-                BUILT_IN_JSON_FORMATTER"#BUILT_IN_JSON_FORMATTER#"
-                BUILT_IN_XML_FORMATTER"#BUILT_IN_XML_FORMATTER#"
-                BUILT_IN_SMALI_FORMATTER"#BUILT_IN_SMALI_FORMATTER#"
+                BUILT_IN_CSS_FORMATTER   "#BUILT_IN_CSS_FORMATTER#"
+                BUILT_IN_HTML_FORMATTER  "#BUILT_IN_HTML_FORMATTER#"
+                BUILT_IN_JAVA_FORMATTER  "#BUILT_IN_JAVA_FORMATTER#"
+                BUILT_IN_JS_FORMATTER    "#BUILT_IN_JS_FORMATTER#"
+                BUILT_IN_JSON_FORMATTER  "#BUILT_IN_JSON_FORMATTER#"
+                BUILT_IN_XML_FORMATTER   "#BUILT_IN_XML_FORMATTER#"
+                BUILT_IN_SMALI_FORMATTER "#BUILT_IN_SMALI_FORMATTER#"
             "##]],
         );
         check_complete(
             r#"{codeFormatter: #$0}"#,
             expect![[r#"
-                BUILT_IN_CSS_FORMATTER"BUILT_IN_CSS_FORMATTER#"
-                BUILT_IN_HTML_FORMATTER"BUILT_IN_HTML_FORMATTER#"
-                BUILT_IN_JAVA_FORMATTER"BUILT_IN_JAVA_FORMATTER#"
-                BUILT_IN_JS_FORMATTER"BUILT_IN_JS_FORMATTER#"
-                BUILT_IN_JSON_FORMATTER"BUILT_IN_JSON_FORMATTER#"
-                BUILT_IN_XML_FORMATTER"BUILT_IN_XML_FORMATTER#"
-                BUILT_IN_SMALI_FORMATTER"BUILT_IN_SMALI_FORMATTER#"
+                BUILT_IN_CSS_FORMATTER   "BUILT_IN_CSS_FORMATTER#"
+                BUILT_IN_HTML_FORMATTER  "BUILT_IN_HTML_FORMATTER#"
+                BUILT_IN_JAVA_FORMATTER  "BUILT_IN_JAVA_FORMATTER#"
+                BUILT_IN_JS_FORMATTER    "BUILT_IN_JS_FORMATTER#"
+                BUILT_IN_JSON_FORMATTER  "BUILT_IN_JSON_FORMATTER#"
+                BUILT_IN_XML_FORMATTER   "BUILT_IN_XML_FORMATTER#"
+                BUILT_IN_SMALI_FORMATTER "BUILT_IN_SMALI_FORMATTER#"
             "#]],
         );
         check_complete(
             r#"{codeFormatter: #B$0}"#,
             expect![[r#"
-                BUILT_IN_CSS_FORMATTER"BUILT_IN_CSS_FORMATTER#"
-                BUILT_IN_HTML_FORMATTER"BUILT_IN_HTML_FORMATTER#"
-                BUILT_IN_JAVA_FORMATTER"BUILT_IN_JAVA_FORMATTER#"
-                BUILT_IN_JS_FORMATTER"BUILT_IN_JS_FORMATTER#"
-                BUILT_IN_JSON_FORMATTER"BUILT_IN_JSON_FORMATTER#"
-                BUILT_IN_XML_FORMATTER"BUILT_IN_XML_FORMATTER#"
-                BUILT_IN_SMALI_FORMATTER"BUILT_IN_SMALI_FORMATTER#"
+                BUILT_IN_CSS_FORMATTER   "BUILT_IN_CSS_FORMATTER#"
+                BUILT_IN_HTML_FORMATTER  "BUILT_IN_HTML_FORMATTER#"
+                BUILT_IN_JAVA_FORMATTER  "BUILT_IN_JAVA_FORMATTER#"
+                BUILT_IN_JS_FORMATTER    "BUILT_IN_JS_FORMATTER#"
+                BUILT_IN_JSON_FORMATTER  "BUILT_IN_JSON_FORMATTER#"
+                BUILT_IN_XML_FORMATTER   "BUILT_IN_XML_FORMATTER#"
+                BUILT_IN_SMALI_FORMATTER "BUILT_IN_SMALI_FORMATTER#"
             "#]],
         );
         check_complete(
             r#"{codeFormatter: #BU$0}"#,
             expect![[r#"
-                BUILT_IN_CSS_FORMATTER"BUILT_IN_CSS_FORMATTER#"
-                BUILT_IN_HTML_FORMATTER"BUILT_IN_HTML_FORMATTER#"
-                BUILT_IN_JAVA_FORMATTER"BUILT_IN_JAVA_FORMATTER#"
-                BUILT_IN_JS_FORMATTER"BUILT_IN_JS_FORMATTER#"
-                BUILT_IN_JSON_FORMATTER"BUILT_IN_JSON_FORMATTER#"
-                BUILT_IN_XML_FORMATTER"BUILT_IN_XML_FORMATTER#"
-                BUILT_IN_SMALI_FORMATTER"BUILT_IN_SMALI_FORMATTER#"
+                BUILT_IN_CSS_FORMATTER   "BUILT_IN_CSS_FORMATTER#"
+                BUILT_IN_HTML_FORMATTER  "BUILT_IN_HTML_FORMATTER#"
+                BUILT_IN_JAVA_FORMATTER  "BUILT_IN_JAVA_FORMATTER#"
+                BUILT_IN_JS_FORMATTER    "BUILT_IN_JS_FORMATTER#"
+                BUILT_IN_JSON_FORMATTER  "BUILT_IN_JSON_FORMATTER#"
+                BUILT_IN_XML_FORMATTER   "BUILT_IN_XML_FORMATTER#"
+                BUILT_IN_SMALI_FORMATTER "BUILT_IN_SMALI_FORMATTER#"
             "#]],
         );
     }
