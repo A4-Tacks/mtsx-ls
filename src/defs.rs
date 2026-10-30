@@ -66,11 +66,16 @@ pub const BUILTIN_FORMATTERS: &[&str] = &[
     "BUILT_IN_JSON_FORMATTER",
     "BUILT_IN_XML_FORMATTER",
     "BUILT_IN_SMALI_FORMATTER",
+    "BUILT_IN_LUA_FORMATTER",
+    "BUILT_IN_PYTHON_FORMATTER",
+    "BUILT_IN_TS_FORMATTER",
+    "BUILT_IN_MTSX_FORMATTER",
 ];
 pub const BUILTIN_SHINKERS: &[&str] = &[
     "BUILT_IN_CSS_SHRINKER",
     "BUILT_IN_HTML_SHRINKER",
     "BUILT_IN_JSON_SHRINKER",
+    "BUILT_IN_JS_SHRINKER",
 ];
 pub const MATCHER_SCHEMA: &[((&str, &str), &[(&str, &str)])] = &[
     (("match", "match: $0"), &[
