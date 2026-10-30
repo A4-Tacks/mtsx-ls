@@ -1,3 +1,5 @@
+name: Release
+
 permissions:
   contents: write
 
@@ -55,7 +57,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: cd editors/code && npm ci
-      - run: cd editors/code && tsc
+      - run: cd editors/code && npx tsc
       - run: cd editors/code && npx vsce package
       - run: |
           ref=${{ github.ref }}
